@@ -198,7 +198,7 @@ sub _dberror {
   }
 }
 
-=head3 C<_clean( I<$sql> )
+=head3 C<_clean( I<$sql> )>
 
 Intelligently escape single quote characters (" ' ") so that
 user-supplied input cannot break out of quotes in SQL statements.  We
@@ -215,7 +215,7 @@ sub _clean {
   return $sql;
 }
 
-=head3 C<_clean_num( I<$number> )
+=head3 C<_clean_num( I<$number> )>
 
 Strips the supplied statement of all non-numeric characters (0-9, +,
 -, e, .) but makes no attempt to syntactically assure that the
