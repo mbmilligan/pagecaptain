@@ -23,11 +23,37 @@
 listhost server</a> to subscribe to our mailing list.
 </p>
 
+% if ($User->isvalid) {
+<h3>Watched Items</h3>
+
+%   if ($#watchlist > -1) {
+<& user/itemtable.mas, list => \@watchlist &>
+%   } else {
+<p>You are not watching any items at this time.</p>
+%   }
+% }
+
 <%method title>
 <& PARENT:title &> HQ
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sat Apr 24 01:02:45 CDT 2004
+Last modified: Sat Apr 24 03:28:04 CDT 2004
 <!-- hhmts end -->
 </%method>
+
+<%init>
+
+# If we are a validated user, generate a watchlist
+
+my @watchlist = ( );
+if ($User->isvalid) {
+  my @items = PageCapt::DB::get_watched_byuser( $User );
+
+  foreach my $id (@items) {
+    my ( $item ) = PageCapt::DB::load_list( { number => $id } );
+    push @watchlist, $item;
+  }
+}
+
+</%init>
