@@ -20,7 +20,7 @@ CREATE INDEX user_login_idx ON Users(login);
 CREATE TABLE List (
 	inum smallint NOT NULL UNIQUE,
 	points double precision,
-	type smallint[],
+	type smallint,
 	status smallint,
 	description text,
 	scoring text,
