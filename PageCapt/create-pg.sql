@@ -40,6 +40,7 @@ CREATE TABLE Tip (
 	class smallint,
 	creator integer,
 	reference integer,
+	used smallint DEFAULT '0',
 	data text
 	);
 
