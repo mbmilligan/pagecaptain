@@ -60,13 +60,29 @@ which the session cookies may be extracted.
 
 sub extract_cookie {
   my $cgi = shift;
-  my $cookie = $cgi->cookie($cookiename);
-  my $user = new PageCapt::User( $cookie->{uid} );
+  my %cookie = $cgi->cookie($cookiename);
+  my $user = new PageCapt::User( $cookie{uid} );
   my $hash = _compose_hash( $user );
 
   $user->assert_validity;
-  return $user if $hash eq $cookie->{mac};
+  return $user if $hash eq $cookie{mac};
   return undef;
+}
+
+=head3 C<logout_cookie()>
+
+Return a cookie that, when submitted to the client, will nullify any
+previously existing login cookie.  This is accomplished by both
+setting the value to null, and setting the expiration to a time in the
+past.
+
+=cut
+
+sub logout_cookie {
+  return CGI::cookie( -name  => $cookiename,
+		      -value => '',
+		      -expires => '-1d'
+		    );
 }
 
 =head2 Other Functions
