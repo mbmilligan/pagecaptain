@@ -27,7 +27,7 @@ $PageCapt::Web::secret = "foo";
 $PageCapt::Web::cookiename = "PCauth";
 $PageCapt::Web::pass_length = 6;
 $PageCapt::Web::sendmail = "/usr/lib/sendmail -t";
-$PageCapt::Web::fromaddr = 'ScavHunt Website <mbmillig@midway.uchicago.edu>';
+$PageCapt::Web::fromaddr = 'ScavHunt Website <mmilligan@astro.umn.edu>';
 $PageCapt::Web::reminder_message = <<'END';
 To: $email
 From: $fromaddr
