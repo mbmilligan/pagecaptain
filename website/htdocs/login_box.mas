@@ -1,0 +1,9 @@
+    <form action="<& REQUEST:base &>users/login.mhtml" method="get">
+      <p class="title">Login</p>
+      <p><label for="loginname">Login name:</label>
+	<input type="text" name="loginname" size="12">
+      </p>
+      <p><label for="password">Password"</label>
+	<input type="password" name="password" size="12">
+      </p>
+    </form>

@@ -1,8 +1,8 @@
     <div id="nav">
       <p class="title">Quick Links</p>
-      <p>Go To <a href="index.mhtml">HQ</a></p>
-      <p>take the <a href="survey.mhtml">SURVEY</a></p>
-      <p><a href="tips.mhtml">Dumpster Dive!</a></p>
+      <p>Go To <a href="<& SELF:base &>index.mhtml">HQ</a></p>
+      <p>take the <a href="<& SELF:base &>survey.mhtml">SURVEY</a></p>
+      <p><a href="<& SELF:base &>tips.mhtml">Dumpster Dive!</a></p>
       <p>email <a href="mailto:mbmillig@uchicago.edu">MIKE</a></p>
       <p>email <a href="mailto:jbjalbrz@uchicago.edu">JESSICA</a></p>
       <p>The Hunt <a href="http://www.periphrastic.com/">FILM</a></p>

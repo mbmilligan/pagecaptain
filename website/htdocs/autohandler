@@ -10,6 +10,9 @@
   <body>
     <div id="nav">
       <& nav.mas &>
+% unless $User {
+      <& login_box.mas &>
+% }
     </div>
     <div id="body">
 % $m->call_next;
@@ -29,20 +32,24 @@ use PageCapt;
 
 </%once>
 
-<%init>
+<%shared>
 
 my $User = PageCapt::Web::extract_cookie( $m->cgi_object() );
 
-</%init>
+</%shared>
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Wed Apr 30 18:24:18 CDT 2003
+Last modified: Thu May  1 08:53:39 CDT 2003
 <!-- hhmts end -->
 </%method>
 
 <%method title>
 FIST: Deleuzean Potato
+</%method>
+
+<%method base>
+/\
 </%method>
 
 <%flags>
