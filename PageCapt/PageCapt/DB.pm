@@ -12,15 +12,14 @@ my %tip_classes = (
 
 my %schema =
   (
-   GET_TIP_STMT =>
-     sprintf("SELECT time, extract('epoch' from time), creator, data FROM Tip" .
-	     " WHERE class = '%u' AND used = '0'", $tip_classes{dump} ),
-   TIP_AGE_COND => " AND age(time) <= interval '%d day'",
+   GET_TIP_STMT => "SELECT time, age('now',time), extract('epoch' from time), creator, data " .
+      "FROM Tip WHERE class = '%u' AND used = '0'",
+   TIP_AGE_COND => " AND age('now',time) <= interval '%d day'",
    TIP_UID_COND => " AND creator = '%u'",
    GET_TIP_SUFX => " ORDER BY time DESC",
 
-   ADD_TIP_ANON_STMT =>
-     sprintf("INSERT INTO Tip (class, data) VALUES ('%u','%%s')", $tip_classes{dump})
+   ADD_TIP_ANON_STMT => "INSERT INTO Tip (class, data) VALUES ('%u','%s')",
+   ADD_TIP_WUID_STMT => "INSERT INTO Tip (class, creator, data) VALUES ('%u','%u','%s')"
   );
 
 =head1 NAME
@@ -102,10 +101,11 @@ created less than I<$days> days ago will be returned.  The default is 3 days.
 This function returns a list containing a newest-first ordered list of tip
 objects.  Each of these is a hash-ref containing the following structure:
 
-  timestamp => textual time-stamp
-  epoch     => seconds since UNIX epoch (for feeding to gmtime())
-  uid       => UID of user who created this tip, if defined
-  content   => text of the tip
+  timestamp  => textual time-stamp
+  age	     => textual age since creation
+  epoch	     => seconds since UNIX epoch (for feeding to gmtime())
+  uid	     => UID of user who created this tip, if defined
+  content    => text of the tip
 
 This function is really a convenience wrapper around C<get_user_dumptips()>.
 
@@ -127,8 +127,8 @@ get all tips, regardless of creation time.
 
 sub get_user_dumptips {
   my $days = _clean_num(shift);
-  my $user = _clean_num(shift);
-  my $stmt = $schema{GET_TIP_STMT};
+  my $user = _clean_num( ref (my $u = shift) ? $u->uid : $u );
+  my $stmt = sprintf( $schema{GET_TIP_STMT}, $tip_classes{dump} );
   $stmt .= sprintf( $schema{TIP_AGE_COND}, $days ) if $days;
   $stmt .= sprintf( $schema{TIP_UID_COND}, $user ) if $user;
   $stmt .= $schema{GET_TIP_SUFX};
@@ -137,10 +137,11 @@ sub get_user_dumptips {
   my @data = _runq($stmt);
   my @result;
   foreach $row (@data) {
-    push @result, { timestamp  => $row->[0],
-		    epoch      => $row->[1],
-		    uid	       => $row->[2],
-		    content    => $row->[3] };
+    push @result, { timestamp	=> $row->[0],
+		    age		=> $row->[1],
+		    epoch	=> $row->[2],
+		    uid		=> $row->[3],
+		    content	=> $row->[4] };
   }
   return @result;
 }
@@ -156,7 +157,7 @@ object, but for now it does nothing.  Returns nothing.
 sub add_dumptip {
   my $tip = _clean(shift);
   my $user = shift;  # ignored for now
-  my $stmt = sprintf( $schema{ADD_TIP_ANON_STMT}, $tip );
+  my $stmt = sprintf( $schema{ADD_TIP_ANON_STMT}, $tip_classes{dump}, $tip );
 
   init();
   _runq($stmt);
