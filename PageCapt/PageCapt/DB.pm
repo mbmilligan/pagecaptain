@@ -13,9 +13,12 @@ my %schema =
    TIP_UID_COND => " AND creator = '%u'",
    GET_TIP_SUFX => " ORDER BY time DESC",
 
+   SRVY_FIELD_COND => " AND substring( data FROM '1' FOR position(':' IN data)-1 ) ILIKE '%s'",
+
    ADD_TIP_ANON_STMT => "INSERT INTO Tip (class, data) VALUES ('%u','%s')",
    ADD_TIP_WUID_STMT => "INSERT INTO Tip (class, creator, data) VALUES ('%u','%u','%s')",
 
+   GET_UIDS_STMT => "SELECT uid from Users",
    GET_USER_STMT  => "SELECT uid, login, name, address, phone, email, contact, password from Users",
    USER_UID_COND  => " WHERE uid = '%u'",
    USER_NICK_COND => " WHERE login = '%s'",
@@ -136,8 +139,9 @@ get all tips, regardless of creation time.
 =cut
 
 sub get_user_dumptips {
+  my $u;
   my $days = _clean_num(shift);
-  my $user = _clean_num( ref (my $u = shift) ? $u->uid : $u );
+  my $user = _clean_num( ref ($u = shift) ? $u->uid : $u );
   my $stmt = sprintf( $schema{GET_TIP_STMT}, $tip_classes{dump} );
   $stmt .= sprintf( $schema{TIP_AGE_COND}, $days ) if $days;
   $stmt .= sprintf( $schema{TIP_UID_COND}, $user ) if $user;
@@ -165,9 +169,14 @@ object, but for now it does nothing.  Returns nothing.
 =cut
 
 sub add_dumptip {
+  my $u;
   my $tip = _clean(shift);
-  my $user = shift;  # ignored for now
-  my $stmt = sprintf( $schema{ADD_TIP_ANON_STMT}, $tip_classes{dump}, $tip );
+  my $user = _clean_num( ref ($u = shift) ? $u->uid : $u );
+  my $stmt = $user ?
+    sprintf( $schema{ADD_TIP_WUID_STMT},
+	     $tip_classes{dump}, $user, $tip ) :
+    sprintf( $schema{ADD_TIP_ANON_STMT},
+	     $tip_classes{dump}, $tip );
 
   init();
   _runq($stmt);
@@ -203,12 +212,31 @@ respectively, is not stored in the resulting data structure.
 
 =cut
 
+
+
 =head2 User Data
 
 These routines know nothing about authentication or the current request, since
 this module does not even import the PageCapt::User class.  Therefore you
 should really avoid calling these routines directly from front-end code, as
 invoking the appropriate User methods will be more likely to do what you want.
+
+=head3 C<list_user_ids()>
+
+Return a list containing the UIDs of every user in the system.  Use
+the C<PageCapt::User> class or C<load_user_data()> to retrieve
+additional information about these users.
+
+=cut
+
+sub list_user_ids {
+  my @uids;
+  my $stmt = $schema{GET_UIDS_STMT};
+  my @results = _runq($stmt);
+
+  foreach $row (@results) { push @uids, $row->[0]; }
+  return @uids;
+}
 
 =head3 C<load_user_data( I<$user>, [ C<{'uid'|'nick'}> ])>
 

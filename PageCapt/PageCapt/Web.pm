@@ -16,6 +16,10 @@ cookies (we assume a CGI environment in this module).  Although the web site
 is implemented in Mason, any Mason-specific code should go in Mason
 components, not here.
 
+In particular, many of the routines here deal with various hashing
+operations (password generation, cookie signing, etc.), that can be
+used by non-web interfaces as well.
+
 =cut
 
 use PageCapt::User;
@@ -104,6 +108,56 @@ sub url {
   $url->path($path);
   $url->query_form(%query) if %query;
   return $url->canonical;
+}
+
+=head3 C<mail_password( [I<$user> [,...] ] )>
+
+Send out a standard password reminder email.  If one or more I<$user>
+parameters is provided, send email to those users only.  If no
+parameters are provided, do a mass-mailing to all users in the system.
+
+We return C<undef> in case of drastic error.
+
+Based on the F<massmail-pass.pl> utility program.
+
+=cut
+
+sub mail_password {
+  my @uids = @_;
+  @uids = PageCapt::DB::list_user_ids unless @uids;
+  foreach my $id (@uids) {
+    my $u = PageCapt::User->new($id);
+    my $login = $u->login;
+    my $name = $u->name;
+    my $email = $u->email;
+    my $password = $u->password;
+    my $message = eval qq{"$reminder_message"};
+
+    open (SENDMAIL, "|$sendmail") || die "Can't run sendmail!";
+    print SENDMAIL $message;
+    close SENDMAIL;
+  }
+}
+
+=head3 C<generate_password( [ I<$string>, [ I<$length> ] ] )>
+
+Generate a random password of specified length.  If this length is not
+provided, a default should be defined in the F<PageCapt.pm>
+meta-module.  The I<$string> is required for generation to be
+deterministic, as we will otherwise use some handy source of
+randomness.  At most 27 characters will be returned (the length of a
+base-64 encoded 160-bit digest).
+
+=cut
+
+sub generate_password {
+  my $seed = shift || time();
+  my $length = shift || $pass_length;
+  my $hash = new Digest::SHA1;
+
+  $hash->add($seed);
+  $hash->add($secret);
+  return substr( $hash->b64digest, 1, $length );
 }
 
 =head2 Internal Routines
