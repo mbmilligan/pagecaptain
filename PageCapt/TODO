@@ -1,0 +1,30 @@
+OVERVIEW
+
+* Import ScavCode-current into CVS on neutrino
+* Begin a branch for modularized codebase
+* Begin cleanups for this year's Hunt
+* Upgrades for this year's hunt:
+  -- Minor: add a Helpwanted status tag
+  -- Major: revamp categories into keywords system
+
+NEW FEATURES
+
+* Keywords system
+  -- Dynamic: user assigns from existing tags or creates new ones
+  -- Non-exclusive: associate many tags to each item (e.g. trip AND craft)
+  -- Will require a new table (index, tagname)
+     + Get tags by SELECT UNIQUE tagname FROM tags
+     + Get item's tags by SELECT tagname FROM list JOIN tags WHERE ...
+
+WISHLIST AND CRAZY IDEAS
+
+* List Grid
+  -- Navigating the list is troublesome because of its length, so display
+     data 2-D color coded for easy navigation
+  -- Color code generally used for status, but data can be filtered first
+     by keyword, sorted
+  -- Since we have 2 dimensions, consider sorting by different properties
+     on each axis, e.g. by status and point value, or others
+  -- Output as a table; each cell contains just an index number linked
+     to the item data page
+  -- As always, the defaults will determine how much use this gets
