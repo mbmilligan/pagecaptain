@@ -28,8 +28,11 @@
 	</tr>
 	<tr>
 % foreach (qw/ email phone address contact /) { next unless $user->$_;
+%   if ( $_ eq 'email' ) {
+	  <td><a href="mailto:<% $user->$_ %>"><% $user->$_ %></a></td>\
+%   } else {
 	  <td><% $user->$_ %></td>\
-% }
+% } }
 	</tr>
     </table>
 

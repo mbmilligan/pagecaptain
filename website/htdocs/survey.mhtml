@@ -117,21 +117,22 @@
 	Physical address: 
 	<textarea name="address" rows="4" cols="40"><% $ARGS{address} %></textarea>
 	<br>
-	Something else: 
+	Something else (AIM screennames, ICQ numbers, and such are particularly helpful): 
 	<textarea name="contact" rows="2" cols="50"><% $ARGS{contact} %></textarea>
       </p>
 
       <P><B>Meal Points</B>
 	<br>
-	Are you willing to donate 3 meal points to the team so we can get some 
-	snacklings and some food with which to bribe the judges? (Hint to 
+	Are you willing to donate 3 some points to the team so we can get some 
+	snacklings and some food with which to bribe the judges?  What about flex 
+        dollars, or Bartlett bucks?  (Hint to 
 	first-years: You are not going to manage to use all of your meal points, 
 	particularly during Spring Quarter).
       </p>
-      <p>If yes, please also enter your ISO number (the long number above the
-	barcode on your UC ID)
+      <p>If yes, please enter your ISO number (the long number above the
+	barcode on your UC ID) and what you're willing to give.
 	<br>
-	<input type="TEXT" name="points" size="50" value="<% $ARGS{points} |h %>">
+	<input type="TEXT" name="points" size="70" value="<% $ARGS{points} |h %>">
       </p>
 
       <p><B>Age:</B>
