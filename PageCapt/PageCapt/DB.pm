@@ -573,6 +573,8 @@ sub load_list {
   my %params = %$p;
   my $stmt = $schema{GET_ITEM_STMT};
   my %sortmap = ( points=>'ITEM_PNT_ORD', cost=>'ITEM_COST_ORD', number=>'ITEM_NUM_ORD' );
+  my %types = _invert_hash( %ItemTypeMap );
+  my %status = _invert_hash( %ItemStatMap );
   my @cond;
   my $sort;
 
@@ -607,8 +609,8 @@ sub load_list {
   foreach $row (@list) {
     push @return, { number => $row->[0],
 		    points => $row->[1],
-		    type   => $ItemTypeMap{$row->[2]},
-		    status => $ItemStatMap{$row->[3]},
+		    type   => $types{$row->[2]},
+		    status => $status{$row->[3]},
 		    cost   => $row->[6],
 		    owner  => $row->[7],
 		    desc   => $row->[4],
@@ -784,6 +786,28 @@ sub _clean_word {
   my $string = shift;
   $string =~ s/[^0-9a-zA-Z-]//g;
   return $string;
+}
+
+=head3 C<_invert_hash( I<%hash> )>
+
+I don't why Perl doesn't make this easier, but here is a utility
+funtion to switch the keys and values in a hash table.  Returns the
+inverted object.  Obviously, this operation is only reversible if the
+values in the I<%hash> are unique.  If you pass
+
+  ( a => 1,
+    b => 1 )
+
+then we cannot define whether I<$inverted{1}> will be C<'a'> or
+C<'b'>.  So avoid doing that if you need reversibility.
+
+=cut
+
+sub _invert_hash {
+  my %hash = @_;
+  my %return;
+  foreach (keys %hash) { $return{$hash{$_}} = $_; }
+  return %return;
 }
 
 1;

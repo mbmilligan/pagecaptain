@@ -7,8 +7,18 @@ use PageCapt::DB;
 #
 
 $PageCapt::DB::db_string = "dbname=scavhunt user=user password=password";
-%PageCapt::DB::ItemTypeMap = ( );
-%PageCapt::DB::ItemStatMap = ( );
+%PageCapt::DB::ItemTypeMap = ( RoadTrip	    => 1,
+			       Food	    => 2,
+			       Craft	    => 3,
+			       Performance  => 4,
+			       Trivia	    => 5,
+			       Olympics	    => 6,
+			       Event	    => 7
+			     );
+%PageCapt::DB::ItemStatMap = ( Ongoing	   => 1,
+			       Done	   => 2,
+			       Impossible  => 3
+			     );
 
 %PageCapt::Web::tubers = ( mbmillig=>1, jbjalbrz=>1, scavcat=>1 );
 $PageCapt::Web::secret = "foo";
