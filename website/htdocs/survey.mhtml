@@ -31,16 +31,16 @@
 
       <P>
 	<B>Name:</B> 
-	<input type="TEXT" name="name" size="50" value="<% $ARGS{name} %>">
+	<input type="TEXT" name="name" size="50" value="<% $ARGS{name} |h %>">
       </P>
 
       <p><b>Email:</b>
-	<input type="text" name="email" size="50" value="<% $ARGS{email} %>">
+	<input type="text" name="email" size="50" value="<% $ARGS{email} |h %>">
       </p>
       
       <P>
 	<B>Major:</B> 
-	<input type="text" name="major" size="25" value="<% $ARGS{major} %>">
+	<input type="text" name="major" size="25" value="<% $ARGS{major} |h %>">
       </P>
       
       <P>
@@ -89,11 +89,11 @@
       <p>If yes, please also enter your ISO number (the long number above the
 	barcode on your UC ID)
 	<br>
-	<input type="TEXT" name="points" size="50" value="<% $ARGS{points} %>">
+	<input type="TEXT" name="points" size="50" value="<% $ARGS{points} |h %>">
       </p>
 
       <p><B>Age:</B>
-	<input type="TEXT" name="age" size="10" value="<% $ARGS{age} %>">
+	<input type="TEXT" name="age" size="10" value="<% $ARGS{age} |h %>">
       </p>
       
       <P><B>Schedule</B>
@@ -126,8 +126,16 @@
     <form action="survey.mhtml" method="GET">
       <input type="hidden" name="msg" value="<% $message %>">
       <input type="hidden" name="beta_msg" value="<% $beta_message %>">
-      <input type="hidden" name="name" value="<% $ARGS{name} %>">
-      <input type="hidden" name="email" value="<% $ARGS{email} %>">
+      <input type="hidden" name="name" value="<% $ARGS{name} |h %>">
+      <input type="hidden" name="email" value="<% $ARGS{email} |h %>">
+      <input type="hidden" name="major" value="<% $ARGS{major} |h %>">
+      <input type="hidden" name="talents" value="<% $ARGS{talents} |h %>">
+      <input type="hidden" name="connections" value="<% $ARGS{connections} |h %>">
+      <input type="hidden" name="nudity" value="<% $ARGS{nudity} |h %>">
+      <input type="hidden" name="home" value="<% $ARGS{home} |h %>">
+      <input type="hidden" name="points" value="<% $ARGS{points} |h %>">
+      <input type="hidden" name="age" value="<% $ARGS{age} |h %>">
+      <input type="hidden" name="schedule" value="<% $ARGS{schedule} |h %>">
       <input type="hidden" name="beta" value="<% $ARGS{beta} %>">
       <input type="hidden" name="send" value="1">
       <input type="SUBMIT" value="Send Survey Emails">
@@ -135,7 +143,9 @@
 
 % } else {
     <h2>Sent Surveys</h2>
-    <p>The following emails have been dispatched.  Your work here is done.</p>
+    <p>The following emails have been dispatched.  Your work here is done.
+      See below for your username and password if you haven't previously
+      created a user account here.</p>
 % }
 
     <p><pre>
@@ -164,11 +174,24 @@ $send => 0;
       
 <%init>
 
-use MIME::Base64;
-
-my $sendmail = "/usr/lib/sendmail -t";
+my $sendmail = $PageCapt::Web::sendmail;
 my $to = "Cate Tolzmann <scavcat\@myrealbox.com>";
 my $beta_to = "Michael Milligan <mbmillig\@uchicago.edu>";
+
+if ( $User->isvalid ) {
+  my %oldsurvey	     = PageCapt::DB::load_survey_user( $User );
+  $ARGS{name}	     = $User->name unless $ARGS{name};
+  $ARGS{email}	     = $User->email unless $ARGS{email};
+  $ARGS{major}	     = $oldsurvey{major}{content} unless $ARGS{major};
+  $ARGS{talents}     = $oldsurvey{talents}{content} unless $ARGS{talents};
+  $ARGS{connections} = $oldsurvey{connections}{content} unless $ARGS{connections};
+  $ARGS{nudity}	     = $oldsurvey{nudity}{content} unless $ARGS{nudity};
+  $ARGS{home}	     = $oldsurvey{home}{content} unless $ARGS{home};
+  $ARGS{points}	     = $oldsurvey{points}{content} unless $ARGS{points};
+  $ARGS{age}	     = $oldsurvey{age}{content} unless $ARGS{age};
+  $ARGS{schedule}    = $oldsurvey{schedule}{content} unless $ARGS{schedule};
+  $ARGS{beta}	     = $oldsurvey{beta}{content} unless $ARGS{beta};
+}
 
 my $beta_headers = <<EOF;
 To: $beta_to
@@ -239,7 +262,24 @@ if ($send != 0) {
   $user->email($ARGS{email});
   $user->password( PageCapt::Web::generate_password($ARGS{name}) );
   $created = $user->create;
-  PageCapt::Web::mail_password( $user->uid ) if $created;
+
+  my $surveystruct = {
+    major        => $ARGS{major},
+    talents	 => $ARGS{talents},
+    connections	 => $ARGS{connections},
+    nudity	 => $ARGS{nudity},
+    home	 => $ARGS{home},
+    points	 => $ARGS{points},
+    age		 => $ARGS{age},
+    schedule	 => $ARGS{schedule},
+    beta	 => $ARGS{beta}
+  };
+
+  if ($created) {
+    PageCapt::Web::mail_password( $user->uid );
+    PageCapt::DB::new_survey( $user, $surveystruct ); }
+  elsif ( $User->isvalid ) {
+    PageCapt::DB::new_survey( $User, $surveystruct ); }
 }
 
 </%init>
@@ -249,6 +289,6 @@ if ($send != 0) {
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Fri May  2 18:02:22 CDT 2003
+Last modified: Sat May  3 13:51:53 CDT 2003
 <!-- hhmts end -->
 </%method>
