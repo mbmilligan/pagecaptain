@@ -6,6 +6,12 @@
 	Deleuzean Potato
       </h2>
     </div>
+
+    <p><i>Bleed!</i>  So said Sawyer in forwarding 
+      <a href="<& SELF:base &><% PageCapt::Web::url('user/intel.mhtml',{show=>3}) %>">
+	this email</a>.  Do as he says on this one.
+    </p>
+
     <p><b>Cate</b> sayeth:</p>
 
     <p>Not getting FIST emails? Hop over to
@@ -33,6 +39,13 @@
     </ul>
     
     <p><b>Tech Turnip Michael</b> sayeth:</p>
+
+    <p>The list database is creaking back to life; note the "Last Year's List"
+      link in your navigation sidebar.  It'll be getting up to speed
+      overnight, so feel free to test it out and make suggestions.  I've
+      already gotten a few helpful remarks on it.  But I've got less than a
+      day to get the last bits to fall in place, so time is of the essence.
+    </p>
 
     <p>User accounts work now.  Note the login boxes to your right.  If you
       fill out the <a href="<& SELF:base &>survey.mhtml">survey</a>, you can
@@ -63,6 +76,6 @@
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Tue May  6 00:55:13 CDT 2003
+Last modified: Tue May  6 23:03:07 CDT 2003
 <!-- hhmts end -->
 </%method>

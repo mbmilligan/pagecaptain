@@ -28,6 +28,11 @@ input {
 	font-size: smaller;
 }
 
+tt {
+	margin-left: 5em;
+	margin-right: 5em;
+}
+
 .field {
 	font-weight: hold;
 }

@@ -16,6 +16,37 @@
       here.  Maybe.
     </p>
 
+    <h2>Not exactly espionage</h2>
+
+% if ( $show == 4 ) {
+    <& intel04.mas &>
+% } else {
+    <p><a href="<% PageCapt::Web::url('intel.mhtml',{show=>4}) %>">
+	Sam sez stay out of the mysterious shed. </a>
+    </p>
+% }
+
+% if ( $show == 3 ) {
+    <& intel03.mas &>
+% } else {
+    <p><a href="<% PageCapt::Web::url('intel.mhtml',{show=>3}) %>">
+	Bleed! </a>
+    </p>
+% }
+
+    <p>Do we have a 100-foot extension cord handy?  Find out why --
+      Colin has been scouting the Quads for prospective encampment
+      locations.  Peruse his report 
+% if ( $show == 2 ) {
+      below:
+      <br>
+      <& intel02.mas &>
+% } else {
+      <a href="<% PageCapt::Web::url( 'intel.mhtml', {show=>2} ) %>">
+	here </a>. 
+% }
+    </p>
+
     <h2>From the Captains' List</h2>
 
     <p>Someone has a thing for Latin American Civ.  Dan's working on a primer,
@@ -47,5 +78,5 @@
     </p>
 
 <%args>
-$show => undef;
+$show => undef
 </%args>
