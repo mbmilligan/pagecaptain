@@ -220,7 +220,7 @@ my $created = undef;
 my $user = blank PageCapt::User;
 
 if ( $send ) {
-  my ($login) = $ARGS{email} =~ /([^@]+)@/;
+  my ($login) = $User->isvalid ? $User->login : $ARGS{email} =~ /([^@]+)@/;
   $user = byname PageCapt::User ($login);
   foreach (@userfields) {
     $user->$_ ($ARGS{$_}) if $ARGS{$_};
@@ -253,6 +253,6 @@ if ( $send ) {
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sun May  4 01:59:57 CDT 2003
+Last modified: Sat Apr 24 01:25:07 CDT 2004
 <!-- hhmts end -->
 </%method>
