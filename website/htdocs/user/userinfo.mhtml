@@ -20,7 +20,7 @@
       <a href="<& SELF:base &>survey.mhtml">survey page</a>.
     </p>
 
-    <table title="Contact Information">
+    <table id="contact" title="Contact Information">
 	<tr>
 % foreach (qw/ email phone address contact /) { next unless $user->$_;
 	  <th class="field"><% $fields{$_} %></th>\
@@ -34,7 +34,7 @@
     </table>
 
     <h3>Survey Responses</h3>
-    <table title="Survey Responses">
+    <table id="survey" title="Survey Responses">
 	<tr><th colspan="2">Survey Responses</th></tr>
 % foreach (qw/ major talents connections nudity home points age schedule beta /) {
 	<tr><td class="field"><% $fields{$_} %></td>
@@ -81,6 +81,6 @@ my %survey = PageCapt::DB::load_survey_user( $uid );
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sun May  4 03:54:50 CDT 2003
+Last modified: Tue May  6 16:50:19 CDT 2003
 <!-- hhmts end -->
 </%method>
