@@ -24,6 +24,10 @@
 	font-style: italic;
 }
 
+input {
+	font-size: smaller;
+}
+
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #FFFFFF;
