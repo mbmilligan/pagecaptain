@@ -20,6 +20,12 @@
       and password; use them to log in with the box in the side menu.
     </p>
 
+    <p>You don't have to fill out every field, but please give us as much
+      information as you're comfortable with sharing.  However, you have to
+      fill out the fields marked <b>required</b> -- otherwise you'll just
+      get an error.
+    </p>
+
     <p>If you've already filled out the survey, you should have a user name
       and password.  Use those to log in, and then you will be able to update
       the information you provided.
@@ -45,11 +51,11 @@
     <form action="survey.mhtml" method="GET">
 
       <P>
-	<B>Name:</B> 
+	<B>Name (required):</B> 
 	<input type="TEXT" name="name" size="50" value="<% $ARGS{name} |h %>">
       </P>
 
-      <p><b>Email:</b>
+      <p><b>Email (required):</b>
 	<input type="text" name="email" size="50" value="<% $ARGS{email} |h %>">
       </p>
       
