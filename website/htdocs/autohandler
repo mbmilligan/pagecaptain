@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html">
     <title><& SELF:title, %ARGS &></title>
-    <link href="fist.css" rel="stylesheet" type="text/css">
+    <link href="<& SELF:base &>fist.css" rel="stylesheet" type="text/css">
   </head>
   <body>
     <div id="nav">
@@ -58,7 +58,7 @@ if ($ARGS{logout}) {
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Fri May  2 16:38:07 CDT 2003
+Last modified: Sun May  4 04:26:38 CDT 2003
 <!-- hhmts end -->
 </%method>
 
