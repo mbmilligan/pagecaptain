@@ -24,7 +24,20 @@
 %   }
 % } elsif ( $edit ) {
 	    <& formhead, data=>$data &>
+%   if ( $User->login eq 'mbmillig' ) {
+    <form method="GET" action="userinfo.mhtml">
+      <p><select name="uid">
+	  <option selected value="<% uid $User %>">Yourself</option>
+% foreach ( PageCapt::DB::list_user_ulns('name') ) {
+	  <option value="<% @$_[0] %>">
+% my $n = @$_[2];
+% print length($n) > 30 ? substr($n,0,30) . "..." : $n;
+	  </option>
+% }
+	</select>
+% } else {
 	      <input type="hidden" name="owner" value="<% $User->uid %>">
+% }
 	      <input type="SUBMIT" value="Claim This Item">
 	    </form>
 % } else {
@@ -34,7 +47,7 @@
 
 	<tr>
 	  <td class="field">Category</td><td>
-% if ($form) {
+% if ($form || $User->login eq "mbmillig") {
 	    <form method="GET" action="edititem.mhtml">
 	      <input type="hidden" name="item" value="<% $data->{number} %>">
 	      <input type="hidden" name="update" value="1">
@@ -55,7 +68,7 @@
 
 	<tr>
 	  <td class="field">Status</td><td>
-% if ($form) {
+% if ($form || $User->login eq "mbmillig") {
 	    <& formhead, data=>$data &>
 	    <select name="status">
 	      <option selected value="<% $data->{status} || 'none' %>">
