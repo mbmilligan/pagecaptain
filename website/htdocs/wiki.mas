@@ -6,7 +6,8 @@ delete $ENV{REQUEST_METHOD};
 my @params = ( );
 
 foreach my $arg (keys %ARGS) {
-  push @params, $arg . "=" . $ARGS{$arg};
+  push @params, $arg . "=" . 
+    $m->interp->apply_escapes( $ARGS{$arg}, 'u' );
 }
 
 my $pid = open(WIKI, "-|");
