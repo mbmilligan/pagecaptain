@@ -16,10 +16,14 @@
 % if ( $data->{owner} ) { 
 <a href="<% PageCapt::Web::url('userinfo.mhtml', {uid=>$data->{owner}}) %>">
 <% PageCapt::User->new($data->{owner})->name %></a>
+%   if ( $data->{owner} == $User->uid ) {
+	    <& formhead, data=>$data &>
+	      <input type="hidden" name="owner" value="none">
+	      <input type="SUBMIT" value="Renounce Item!">
+	    </form>
+%   }
 % } elsif ( $edit ) {
-	    <form method="GET" action="edititem.mhtml">
-	      <input type="hidden" name="item" value="<% $data->{number} %>">
-	      <input type="hidden" name="update" value="1">
+	    <& formhead, data=>$data &>
 	      <input type="hidden" name="owner" value="<% $User->uid %>">
 	      <input type="SUBMIT" value="Claim This Item">
 	    </form>
