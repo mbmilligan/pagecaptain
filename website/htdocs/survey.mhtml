@@ -1,7 +1,7 @@
     <h1>ScavHunt Survey</h1>
 
-% if ($send == 0) {
-
+% if (not $created) {
+%   unless ( $send or $User->isvalid ) {
     <h2> This is a Very Important Poll (TM).</h2>
     <P> Seriously, folks, we need to have this information sorted out into a 
       database before the Hunt begins. I will hunt you down if you do not 
@@ -14,9 +14,15 @@
       Cate Tolzmann, Spring 2001<BR>
       scavcat@myrealbox.com</p>
 
-    <p>Fill out the survey!  If you haven't done it before, this will
+    <p><b>Instructions</b><br>
+      Fill out the survey!  If you haven't done it before, this will
       create a user account for you.  You will be given a user name
       and password; use them to log in with the box in the side menu.
+    </p>
+
+    <p>If you've already filled out the survey, you should have a user name
+      and password.  Use those to log in, and then you will be able to update
+      the information you provided.
     </p>
 
     <p>Don't hit <b>Send Survey</b> until you are happy with your
@@ -26,6 +32,15 @@
     </p>
 
     <p>...Michael Milligan, Tech Turnip</p>
+
+% } 
+% if ( $send and not $User->isvalid ) {
+    <p><b>Something went wrong.  The most likely explanation is that you have
+	already created a user account by submitting the survey, but you are
+	not logged in.  You can only change your information if you log in.
+	Contact Michael for help if you don't know what to do now.</b>
+    </p>
+% }
 
     <form action="survey.mhtml" method="GET">
 
@@ -79,6 +94,22 @@
 	<textarea name="home" rows="2" cols="70"><% $ARGS{home} %></textarea>
       </p>
 
+      <p><b>Contact Information</b>
+	<br>
+	Related question.  How can we get ahold of you during the Hunt.  We've
+	already got your email address, but if someone needs you <i>right this
+	  instant</i>, how do they do it?  A few possibilities follow.
+	<br>
+	Phone number: <input name="phone" value="<% $ARGS{phone} |h %>"
+			     size="30">
+	<br>
+	Physical address: 
+	<textarea name="address" rows="4" cols="40"><% $ARGS{address} %></textarea>
+	<br>
+	Something else: 
+	<textarea name="contact" rows="2" cols="50"><% $ARGS{contact} %></textarea>
+      </p>
+
       <P><B>Meal Points</B>
 	<br>
 	Are you willing to donate 3 meal points to the team so we can get some 
@@ -112,48 +143,48 @@
 	</select>
       </p>
 
-      <input type="hidden" name="send" value="0">
-      <input type="SUBMIT" value="Update Survey"> <input type="RESET" value="Reset">
+%if ($User->isvalid) {
+      <input type="hidden" name="send" value="1">
+      <input type="SUBMIT" value="Send Survey">
+% } else {
+      <input type="SUBMIT" value="Update Survey"> 
+% }
+      <input type="RESET" value="Reset">
     </form>
 
 % }
 
-% if ($send == 0) { 
-    <h2>Prepared Emails</h2>
-    <p>When you hit the "Send" button, the following emails will be sent (note that,
-      until you hit that button, your survey <b>has not</b> been sent yet):</p>
+% if (not ($created || $User->isvalid)) { 
+    <h2>Prepared Responses</h2>
+    <p>When you hit the "Send" button, the following responses will be stored
+      in our system (note that, until you hit that button, your survey <b>has
+	not</b> been sent yet):</p> 
+
+%foreach (@fields) {
+    <p><b><% $_ %>:</b> <% $ARGS{$_} %></p>
+%}
 
     <form action="survey.mhtml" method="GET">
-      <input type="hidden" name="msg" value="<% $message %>">
-      <input type="hidden" name="beta_msg" value="<% $beta_message %>">
       <input type="hidden" name="name" value="<% $ARGS{name} |h %>">
       <input type="hidden" name="email" value="<% $ARGS{email} |h %>">
-% foreach (@fields) {
+%   foreach (@fields) {
       <input type="hidden" name="<% $_ %>" value="<% $ARGS{$_} |h %>">
-% }
+%   }
       <input type="hidden" name="send" value="1">
-      <input type="SUBMIT" value="Send Survey Emails">
+      <input type="SUBMIT" value="Send Survey Responses">
     </form>
+% } 
 
-% } else {
-    <h2>Sent Surveys</h2>
-    <p>The following emails have been dispatched.  Your work here is done.
-      See below for your username and password if you haven't previously
-      created a user account here.</p>
-% }
-
-    <p><pre>
-<% CGI::escapeHTML($headers . MIME::Base64::decode($send == 0 ? $message : $ARGS{msg})) %>
-    </pre></p>
-
-% if ( $ARGS{beta} eq "yes" ) { 
-    <p><pre>
-<% CGI::escapeHTML($beta_headers . MIME::Base64::decode($send == 0 ? $beta_message : $ARGS{beta_msg})) %>
-    </pre></p>
-% }
-% if ( $created ) {
+% if ($created) {
+    <h2>User Account Created</h2>
     <p>You have created a user account for <% $user->name %> in the
-      Potato system:</p> 
+      Potato system.  Below find your login name and password.  This
+      information will also be emailed to you.</p> 
+
+    <p>After you have logged in, go back to the <a href="<& SELF:base &>">
+	SURVEY page </a> if you want to update any of the information that you
+      submitted.</p>
+
     <ul>
       <li>Your login name is: <% $user->login %></li>
       <li>Your password is: <% $user->password %></li>
@@ -168,66 +199,19 @@ $send => 0;
       
 <%init>
 
-my $sendmail = $PageCapt::Web::sendmail;
-my $to = "Cate Tolzmann <scavcat\@myrealbox.com>";
-my $beta_to = "Michael Milligan <mbmillig\@uchicago.edu>";
-my @fields = qw( major talents connections nudity home points age
-	schedule beta );
+my @fields = qw( major talents connections nudity home points age schedule
+    beta ); 
+my @userfields = qw( name email phone address contact );
 
 if ( $User->isvalid ) {
   my %oldsurvey	= PageCapt::DB::load_survey_user( $User );
-  $ARGS{name}	= $User->name unless $ARGS{name};
-  $ARGS{email}	= $User->email unless $ARGS{email};
+  foreach (@userfields) {
+    $ARGS{$_}	= $User->$_ unless $ARGS{$_};
+  }
   foreach (@fields) {
     $ARGS{$_}	= $oldsurvey{$_}{content} unless $ARGS{$_};
   }
 }
-
-my $beta_headers = <<EOF;
-To: $beta_to
-Subject: FIST Beta test volunteer - $ARGS{name}
-From: ScavHunt Survey <mbmillig\@midway.uchicago.edu>
-
-EOF
-
-my $beta_message = MIME::Base64::encode( <<EOF, "" );
-The following user has volunteered for the beta test corps!
-$ARGS{name}
-$ARGS{email}
-
-EOF
-
-my $headers = <<EOF;
-To: $to
-CC: $beta_to
-Subject: FIST Survey result for $ARGS{name}
-From: ScavHunt Survey <mbmillig\@midway.uchicago.edu>
-
-EOF
-
-my $message = MIME::Base64::encode( <<EOF, "" );
-Survey results for $ARGS{name}: 
-
- Email address: $ARGS{email}
-
- Talents: $ARGS{talents}
-
- Connections: $ARGS{connections}
-
- Major: $ARGS{major}
-	    
- Nudity: $ARGS{nudity}
-
- Home: $ARGS{home}
-
- Meal points: $ARGS{points}
-
- Age: $ARGS{age}
-
- Schedule: $ARGS{schedule}
-
-Thank you.
-EOF
 
 my $yes_selected = "selected" if $ARGS{beta} eq "yes";
 my $no_selected = "selected" if $ARGS{beta} eq "no";
@@ -235,21 +219,12 @@ my $no_selected = "selected" if $ARGS{beta} eq "no";
 my $created = undef;
 my $user = blank PageCapt::User;
 
-if ($send != 0) {
-  open(SENDMAIL, "|$sendmail") || die "Major problem: can't open sendmail!";
-  print SENDMAIL $headers . MIME::Base64::decode($ARGS{msg});
-  close SENDMAIL;
-
-  if ( $ARGS{beta} eq "yes" ) {
-      open(SENDMAIL, "|$sendmail") || die "Major problem: can't open sendmail!";
-  print SENDMAIL $beta_headers . MIME::Base64::decode($ARGS{beta_msg});
-  close SENDMAIL;
-  }
-
+if ( $send ) {
   my ($login) = $ARGS{email} =~ /([^@]+)@/;
   $user = byname PageCapt::User ($login);
-  $user->name($ARGS{name});
-  $user->email($ARGS{email});
+  foreach (@userfields) {
+    $user->$_ ($ARGS{$_}) if $ARGS{$_};
+  }
   $user->password( PageCapt::Web::generate_password($ARGS{name}) );
   $created = $user->create;
 
@@ -262,7 +237,13 @@ if ($send != 0) {
     PageCapt::Web::mail_password( $user->uid );
     PageCapt::DB::new_survey( $user, $surveystruct ); }
   elsif ( $User->isvalid ) {
-    PageCapt::DB::new_survey( $User, $surveystruct ); }
+    PageCapt::DB::new_survey( $User, $surveystruct ); 
+    $user = $User->clone_validity;
+    foreach (@userfields) {
+      $user->$_ ($ARGS{$_}) if $ARGS{$_};
+    }
+    $user->commit;
+  }
 }
 
 </%init>
@@ -272,6 +253,6 @@ if ($send != 0) {
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sat May  3 18:03:43 CDT 2003
+Last modified: Sun May  4 01:59:57 CDT 2003
 <!-- hhmts end -->
 </%method>

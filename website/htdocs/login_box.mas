@@ -4,9 +4,9 @@
 % if ( defined $ARGS{attempt} && $ARGS{attempt} == 1 ) {
 	Last Attepmt Failed
 % }
-	<label for="loginname">Login name:</label>
+	<label for="loginname">Login name:</label><br>
 	<input type="text" name="loginname" size="12">
-	<label for="password">Password:</label>
+	<label for="password">Password:</label><br>
 	<input type="password" name="password" size="12">
 	<input type="hidden" name="attempt" value="1">
 	<input type="submit" value="OK">

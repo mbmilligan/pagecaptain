@@ -29,6 +29,14 @@ input {
 	font-size: smaller;
 }
 
+.field {
+	font-weight: hold;
+}
+
+table {
+	border: 1pt;
+}
+
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #FFFFFF;

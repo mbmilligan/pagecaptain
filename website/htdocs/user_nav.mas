@@ -1,4 +1,9 @@
-    <p>Good <% $am %>, <% $User->name %></p>
+    <p>Good <% $am %>, <% name $User %></p>
+
+    <p>User
+      <a href="<& SELF:base &>user/userinfo.mhtml">Information</a>
+    </p>
+
     <p>
       <a href="<& SELF:base &><% 
 	 PageCapt::Web::url( 'login.mhtml', { logout=>1 } ) 
