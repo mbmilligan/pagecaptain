@@ -18,13 +18,13 @@ CREATE TABLE Users (
 CREATE INDEX user_login_idx ON Users(login);
 
 CREATE TABLE List (
-	inum smallint NOT NULL, UNIQUE,
-	points double,
-	type[] smallint,
+	inum smallint NOT NULL UNIQUE,
+	points double precision,
+	type smallint[],
 	status smallint,
 	description text,
 	scoring text,
-	cost double,
+	cost double precision,
 	owner integer REFERENCES Users(uid)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE,
