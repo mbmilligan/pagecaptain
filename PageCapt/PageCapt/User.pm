@@ -63,6 +63,25 @@ sub blank {
   bless { }, $class;
 }
 
+=head3 C<byname( I<$login> )>
+
+A convenient wrapper constructor.  Create a new User object identified
+only by a login name, ready for password validation.  As an added
+bonus, this constructor leaves freshness undefined, so immediately
+C<reload>-ing this object will let us fetch data by login name.
+
+=cut
+
+sub byname {
+  my $self = shift || return undef;
+  my $class = ref $self || $self;
+  my $login = shift || return undef;
+  my $new = $class->blank;
+  $new->login( $login );
+  $new->{fresh} = undef;
+  return $new;
+}
+
 =head1 METHODS
 
 =head2 Accessors
@@ -150,7 +169,7 @@ sub %s {
   if ( defined $data ) 
     { $self->{data}{%s} = $data;
       $self->{fresh} = 1; }
-  if ( (not defined $self->{data}{%s}) && $self->uid )
+  if ( (not defined $self->{data}{%s}) and $self->uid || $self->login )
     { $self->reload; }
   return $self->{data}{%s};
 }
@@ -272,7 +291,8 @@ sub validate_password {
   return undef unless $self->login;
   my $data = PageCapt::DB::get_user_by_login( $self->login );
   if ( $data->{pass} eq $password )
-    { $self->assert_validity; }
+    { $self->assert_validity;
+      $self->{data} = $data; }
   else { $self->invalidate }
   return $self->isvalid;
 }
