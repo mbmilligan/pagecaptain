@@ -51,6 +51,9 @@ my %schema =
    ITEM_STAT_COND => " status = '%u' ",
    ITEM_OWN_COND  => " owner = '%u' ",
    ITEM_SRCH_COND => " description || scoring ~* '%s' ",
+   ITEM_PNT_ORD   => " ORDER BY points DESC, inum ",
+   ITEM_COST_ORD  => " ORDER BY cost DESC, inum ",
+   ITEM_NUM_ORD   => " ORDER BY inum ",
    
    LOGIC_AND => " AND ",
    LOGIC_OR  => " OR ",
@@ -533,7 +536,25 @@ inclusion in a larger data structure.
 Return a list of hash-refs of the structure described above.  By
 default, all items will be returned (this will be a large hunk of
 data).  I<$parameters> is a hash-ref containing constraints to place
-upon the search, defined below.
+upon the search, defined below.  A general rule of thumb to this
+structure is to recall, though, that it is essentially a template of
+the item(s) being searched for, so the keys and possible values should
+resemble those found in the Item structure.
+
+  { number => retrieve item number; if set, all other parameters are ignored
+    type   => return only items of this type
+    status => return only items with this status
+    owner  => return only items owned by this user
+    desc   => regexp search the description and scoring fields for this
+                (words will be split on whitespace and matched individually)
+    order  => { points | cost | number } sort on this field (default: number)
+  }
+
+=cut
+
+sub load_list {
+  my $params = shift || undef;
+}
 
 =head2 Internal Functions
 
