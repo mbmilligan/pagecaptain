@@ -174,7 +174,7 @@ $watch => undef
     if ($form || $PageCapt::Web::tubers{$User->login} ) {
       $data = PageCapt::DB::update_list( $template ) || $data;
       if ( $owner && $owner ne "none" ) {
-	PageCapt::DB::add_watchitem( $template{owner} || $User, $item ) 
+	PageCapt::DB::add_watchitem( $template->{owner} || $User, $item ) 
 		unless $watching;
       }
     }
