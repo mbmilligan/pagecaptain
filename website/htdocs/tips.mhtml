@@ -4,8 +4,9 @@
       a way to record and share hot tips on the state of the neighborhood
       trash heaps and other goldmines.  It should be dead-easy to use.  Up
       top, we've got the tips that have been submitted so far.  If you want to
-      see a shorter list, type in a smaller number of days to view.  Typing 0
-      (zero) or leaving the box blank will show you all of them.
+      see a shorter list, type in a smaller number of days to view (decimals
+      work the way you'd expect).  Typing 0 (zero) or leaving the box blank
+      will show you all of them. 
     </p>
 
     <p>Below the list of tips, is a box.  It does what you think it does.
@@ -49,7 +50,7 @@
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Mon Apr 21 16:36:37 CDT 2003
+Last modified: Wed Apr 23 17:43:25 CDT 2003
 <!-- hhmts end -->
 </%method>\
 
