@@ -48,8 +48,11 @@ my %schema =
    GET_ITEM_STMT => "SELECT inum, points, type, status, description, scoring, cost, owner from List WHERE",
    ITEM_NUM_COND  => " inum = '%u' ",
    ITEM_TYPE_COND => " type = '%u' ",
+   ITEM_NTYP_COND => " type is null ",
    ITEM_STAT_COND => " status = '%u' ",
+   ITEM_NSTA_COND => " status is null ",
    ITEM_OWN_COND  => " owner = '%u' ",
+   ITEM_NOWN_COND => " owner is null ",
    ITEM_SRCH_COND => " description || scoring ~* '%s' ",
    ITEM_PNT_ORD   => " ORDER BY points DESC, inum ",
    ITEM_COST_ORD  => " ORDER BY cost DESC, inum ",
@@ -550,10 +553,15 @@ resemble those found in the Item structure.
     sort   => { points | cost | number } sort on this field (default: number)
   }
 
+In this object, the keys I<type>, I<status>, and I<owner> may take the
+value C<none>, which will return only items for which the
+corresponding property is null.
+
 =cut
 
 sub load_list {
-  my %params = ( %{shift()} or ( order=>'number' ) );
+  my $p = shift || { sort=>'number' };
+  my %params = %$p;
   my $stmt = $schema{GET_ITEM_STMT};
   my %sortmap = ( points=>'ITEM_PNT_ORD', cost=>'ITEM_COST_ORD', number=>'ITEM_NUM_ORD' );
   my @cond;
@@ -563,12 +571,18 @@ sub load_list {
     elsif ($_ eq 'number') { @cond = ( sprintf( $schema{ITEM_NUM_COND},
 						_clean_num($params{$_}) ) );
 			     last; }
-    elsif ($_ eq 'type')   { push @cond, sprintf $schema{ITEM_TYPE_COND},
-						 $ItemTypeMap{$params{$_}}; }
-    elsif ($_ eq 'status') { push @cond, sprintf $schema{ITEM_STAT_COND},
-						 $ItemStatMap{$params{$_}}; }
-    elsif ($_ eq 'owner')  { push @cond, sprintf $schema{ITEM_OWN_COND},
-						  _clean_num($params{$_}); }
+    elsif ($_ eq 'type')   {
+      if ( $params{$_} eq 'none' ) { push @cond, $schema{ITEM_NTYP_COND}; }
+      else { push @cond, sprintf $schema{ITEM_TYPE_COND},
+				 $ItemTypeMap{$params{$_}}; } }
+    elsif ($_ eq 'status') {
+      if ( $params{$_} eq 'none' ) { push @cond, $schema{ITEM_NSTA_COND}; }
+      else { push @cond, sprintf $schema{ITEM_STAT_COND},
+				 $ItemStatMap{$params{$_}}; } }
+    elsif ($_ eq 'owner')  {
+      if ( $params{$_} eq 'none' ) { push @ond, $schema{ITEM_NOWN_COND}; }
+      else { push @cond, sprintf $schema{ITEM_OWN_COND},
+	                         _clean_num($params{$_}); } }
     elsif ($_ eq 'desc')   { push @cond, sprintf $schema{ITEM_SRCH_COND},
 						 _clean($params{$_}); }
 
