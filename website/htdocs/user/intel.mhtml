@@ -1,0 +1,51 @@
+    <h1>Intelligence Report</h1>
+
+    <p>And <i>they</i> said, let there be a place, wherein all the juicy
+      tibits we overhear in passing, all the scavish innuendo and layers of
+      intrigue might be gathered and laid bare for the Spuds to see and
+      examine with their own eyes, that they might better understand the
+      cunning minds of the Judges, and so strike awe unto the same with their
+      fierce understanding and wit.  And so the Turnip did make such a place,
+      and whether the Rhizomes beheld it and found it good, or an utter waste
+      of time better spent picking lint from their navels, only time will
+      tell.
+    </p>
+
+    <p>If <i>you</i> have a contribution to the intelligence report, forward
+      it to a Michael (or any one of the uber-tubers) and it'll make its way
+      here.  Maybe.
+    </p>
+
+    <h2>From the Captains' List</h2>
+
+    <p>Someone has a thing for Latin American Civ.  Dan's working on a primer,
+      but check out the primary source
+% if ( $show == 1 ) {
+      below:
+      <br>
+      <& intel01.mas &>
+% } else {
+    <a href="<% PageCapt::Web::url( 'intel.mhtml', { show=>1 } )%>">here.</a>
+  </p>
+% }
+
+    <h2>From the Rumor Mill</h2>
+
+    <p>Paperwork has been filed, and money has changed hands, by the Judges to
+      reserve a room in BSLC Thursday night.  They've got it until after 8 pm
+      at least, because they had to pay for a night building manager.
+    </p>
+
+    <p>The Judges have mentioned making sure to hide the alcohol at the Quads
+      party.  Meaning there will still be one, or else the Judges are messing
+      with us in a slightly uncharacteristic way.  Usually they're either
+      blatantly abusing us, or being hopelessly abstruse, after all.
+    </p>
+
+    <p>A little bird tells us that the Judges have been at least discussing a
+      LotR item in the past few days.  Not surprising, but good to know.
+    </p>
+
+<%args>
+$show => undef;
+</%args>

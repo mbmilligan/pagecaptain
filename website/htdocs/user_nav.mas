@@ -2,6 +2,8 @@
 
     <p>User
       <a href="<& SELF:base &>user/userinfo.mhtml">Information</a>
+      <br>
+      Intel <a href="<& SELF:base &>user/intel.mhtml">Briefs</a>
     </p>
 
     <p>
