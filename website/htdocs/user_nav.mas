@@ -1,0 +1,6 @@
+    <p>
+      <a href="<& SELF:base &><% 
+	 PageCapt::Web::url( 'login.mhtml', { logout=>1 } ) 
+	 %>">
+	LOG OUT</a>
+    </p>
