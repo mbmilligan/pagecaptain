@@ -1,81 +1,67 @@
-    <div id="header">
-      <p>Welcome to the fledgling web home of the glorious</p>
-      <h1>Deleuzean Potato</h1>
-      <h2>Or: Lush Puppies Mk. III:
-	The F.I.S.T. Deux:
-	Deleuzean Potato
-      </h2>
-    </div>
+<div id="header">
+<p>Welcome to the fledgling web home of the glorious</p>
+<h1>Deleuzean Potato</h1>
+<h2>Or: Lush Puppies Mk. III:
+The F.I.S.T. Deux:
+Deleuzean Potato
+</h2>
+</div>
 
-    <p><i>Bleed!</i>  So said Sawyer in forwarding 
-      <a href="<& SELF:base &><% PageCapt::Web::url('user/intel.mhtml',{show=>3}) %>">
-	this email</a>.  Do as he says on this one.
-    </p>
+<p><b>Cate</b> sayeth:</p>
+<p>Today's Schedule for Friday:</p>
+<ul>
+<li>Give Blood! (Item 248)</li>
+<li>Rickshaws from 9am-3pm (Item 30)</li>
+<li>Private mail system (Item 83)</li>
+<li>Propogate our meme (potatoes) (Item 122)</li>
+<li>OmBudMan in the afternoon (144)</li>
+<li>Quad Party at 8:30pm (Item 297)</li>
+<li>Judge Tuck-In (Item 170)</li>
+</ul>
 
-    <p><b>Cate</b> sayeth:</p>
+<p>About the French Revolutionary Calendar:
+A day has 10 hours, and each hour contains 100 minutes. As for the days, dates, and months, all that matters is this:</p>
+<ul>
+<li>18 Floreal = Octidi = Wednesday</li>
+<li>19 Floreal = Nonidi = Thursday</li>
+<li>20 Floreal = Decadi = Friday</li>
+<li>21 Floreal = Primidi = Saturday</li>
+<li>22 Floreal = Duodi = Sunday</li>
+</ul>
 
-    <p>Not getting FIST emails? Hop over to
-	<a href="https://listhost.uchicago.edu/mailman/listinfo/potato"> the
-	  listhost server</a> to subscribe to our mailing list.
-    </p>
+<p>Some Notes About the Database:</p>
+<ul>
+<li>The item numbers are color-coded to show current status:
+<ul>
+<li>White = Unassigned</li>
+<li>Green = Completed</li>
+<li>Yellow = In Progress</li>
+<li>Orange = Help Wanted</li>
+<li>Red = Impossible/Canceled</li>
+</ul>
+<li>The Scav Olympics items are in the database, under item numbers 401-417.
+</ul>
 
-    <p>Coming Soon: List Release Day (Wednesday)</p>
-    <ul>
-      <li>Meet outside the Burton-Judson dining hall at 6 pm for dinner as a
-	group. Some first-years have generously offered many meal points, so
-	we will all be able to get in. Thank you to those first-years!</li>
-      <li>After dinner, stick around if you can to help with load-in. We need
-	some folks with cars to pick up stuff like TVs and food from around
-	the neighborhood. We need people with an organizational sense to set
-	up Home Base in Upper Burton. And we need people with arms to get all
-	of the stuff out from underneath the floor in the black box.</li>
-      <li>Around 11 pm, with all of these annoying logistics finally out of the
-	way for good (until Sunday), we will begin partying in earnest. Bring
-	your CDs (we'll have a stereo), bring your wifebeaters (we'll have 
-	markers), bring yourselves (we'll have food). We'll be in Upper
-	Burton, where we will stay  for the duration of the Hunt.</li>
-      <li>At 11:59, the list is (theoretically) released, and there is no
-	planning what happens after that!</li>
-    </ul>
-    
-    <p><b>Tech Turnip Michael</b> sayeth:</p>
+<p>Not getting FIST emails? Hop over to
+<a href="https://listhost.uchicago.edu/mailman/listinfo/potato"> the
+listhost server</a> to subscribe to our mailing list.
+</p>
+<p><b>Tech Turnip Michael</b> sayeth:</p>
 
-    <p>The list database is creaking back to life; note the "Last Year's List"
-      link in your navigation sidebar.  It'll be getting up to speed
-      overnight, so feel free to test it out and make suggestions.  I've
-      already gotten a few helpful remarks on it.  But I've got less than a
-      day to get the last bits to fall in place, so time is of the essence.
-    </p>
-
-    <p>User accounts work now.  Note the login boxes to your right.  If you
-      fill out the <a href="<& SELF:base &>survey.mhtml">survey</a>, you can
-      get an account, too.  If you've already gotten your password (in your
-      email, maybe?), please log in and update your information (again, on
-      the survey page). 
-    </p>
-
-    <p>Cooler still, now you can see the info for other users, as well.  Just
-      log in and you'll see how!  No, really.  Try it!</p>
-
-    <p>Check out the <a href="tips.mhtml"> Dumpster Dive Tip
-	Hotline </a> now.  Especially those of you with cars, grocery carts,
-      and other means of carting away street treasure.
-    </p>
-
-    <p>Thanks to Steve -- he was the first beta tester to notice that I broke
-      the website and complain to me.  It's better now.
-    </p>
-
-    <p>
-      That's all for now; I'm going back to real work.
-      <br> <span style="margin-left: 1in">...Michael</span>
-    </p>
+<p>The database is feature complete. Contact Cate or me with any 
+questions about how to use it.
+<br> <span style="margin-left: 1in">...Michael</span>
+</p>
 
 <%method title>
 <& PARENT:title &> HQ
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Tue May  6 23:03:07 CDT 2003
+Last modified: Tue May 6 23:03:07 CDT 2003
 <!-- hhmts end -->
 </%method>
+--------------------------------
+
+Cate, the ScavCat
+684-2145 (but I am probably in HQ)
