@@ -5,6 +5,8 @@ OVERVIEW
 * Upgrades for this year's hunt:
   -- Minor: add a Helpwanted status tag
   -- Major: revamp categories as below
+	    move presentation system to Mason
+	    add email notifications
 
 UPGRADES
 
@@ -37,6 +39,15 @@ NEW FEATURES
        as newly completed items, outstanding helpwanted items, etc).
   -- Calendaring system emails sent as reminders of upcoming appointments;
        probably part of the calendaring system, really.
+
+* Move presentation to Mason
+  -- The entire web-app portion of this system should be rewritten as
+       Mason components using the CGI handler (probably with 
+       speedy-cgi-perl).
+  -- This allows the DB code to be isolated in a resuable module (e.g.
+       for the email interface).
+  -- This gets me out of the business of composing HTML in Perl: Cate
+       can do the pages for me, with minimal intervention.
 
 WISHLIST AND CRAZY IDEAS
 
