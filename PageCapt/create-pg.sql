@@ -38,8 +38,12 @@ CREATE TABLE Tip (
 	time timestamp 
 		DEFAULT CURRENT_TIMESTAMP,
 	class smallint,
-	creator integer,
-	reference integer,
+	creator integer REFERENCES Users(uid)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	reference integer REFERENCES List(inum)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
 	used smallint DEFAULT '0',
 	data text
 	);

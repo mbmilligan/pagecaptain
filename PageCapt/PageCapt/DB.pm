@@ -54,7 +54,7 @@ my %schema =
    ITEM_PNT_ORD   => " ORDER BY points DESC, inum ",
    ITEM_COST_ORD  => " ORDER BY cost DESC, inum ",
    ITEM_NUM_ORD   => " ORDER BY inum ",
-   
+
    LOGIC_AND => " AND ",
    LOGIC_OR  => " OR ",
    LOGIC_T   => " TRUE ",
@@ -282,7 +282,7 @@ new row is inserted instead.
 =cut
 
 sub new_survey {
-  my $u, $stmt;
+  my ( $u, $stmt );
   my $user = _clean_num( ref ($u = shift) ? $u->uid : $u ) || return undef;
   my $new = shift || return undef;
   my %new = %$new;
@@ -547,13 +547,49 @@ resemble those found in the Item structure.
     owner  => return only items owned by this user
     desc   => regexp search the description and scoring fields for this
                 (words will be split on whitespace and matched individually)
-    order  => { points | cost | number } sort on this field (default: number)
+    sort   => { points | cost | number } sort on this field (default: number)
   }
 
 =cut
 
 sub load_list {
-  my $params = shift || undef;
+  my %params = ( %{shift()} or ( order=>'number' ) );
+  my $stmt = $schema{GET_ITEM_STMT};
+  my %sortmap = ( points=>'ITEM_PNT_ORD', cost=>'ITEM_COST_ORD', number=>'ITEM_NUM_ORD' );
+  my @cond;
+  my $sort;
+  foreach (keys %params) {
+    unless ( defined $params{$_} ) { next; }
+    elsif ($_ eq 'number') { @cond = ( sprintf( $schema{ITEM_NUM_COND},
+						_clean_num($params{$_}) ) );
+			     last; }
+    elsif ($_ eq 'type')   { push @cond, sprintf $schema{ITEM_TYPE_COND},
+						 $ItemTypeMap{$params{$_}}; }
+    elsif ($_ eq 'status') { push @cond, sprintf $schema{ITEM_STAT_COND},
+						 $ItemStatMap{$params{$_}}; }
+    elsif ($_ eq 'owner')  { push @cond, sprintf $schema{ITEM_OWN_COND},
+						  _clean_num($params{$_}); }
+    elsif ($_ eq 'desc')   { push @cond, sprintf $schema{ITEM_SRCH_COND},
+						 _clean($params{$_}); }
+
+    elsif ($_ eq 'sort') { $sort = $schema{$sortmap{$_}}; }
+  }
+
+  $stmt .= join( $schema{LOGIC_AND}, @cond ) || $schema{LOGIC_T};
+  $stmt .= $sort if $sort;
+  my @list = _runq($stmt);
+  my @return;
+  foreach $row (@list) {
+    push @return, { number => $row->[0],
+		    points => $row->[1],
+		    type   => $ItemTypeMap{$row->[2]},
+		    status => $ItemStatMap{$row->[3]},
+		    cost   => $row->[6],
+		    owner  => $row->[7],
+		    desc   => $row->[4],
+		    score  => $row->[5] };
+  }
+  return @return;
 }
 
 =head2 Internal Functions
