@@ -10,7 +10,12 @@
     <p>User accounts work now.  Note the login boxes to your right.  If you
       fill out the <a href="<& SELF:base &>survey.mhtml">survey</a>, you can
       get an account, too.  If you've already gotten your information (in your
-      email, maybe?), try logging in.
+      email, maybe?), try logging in and updating your information (again, on
+      the survey page). 
+    </p>
+
+    <p>Cooler still, now you can see the info for other users, as well.  Just
+      log in and you'll see how!  No, really.  Try it!
     </p>
 
     <p>The ScavHunt 2003 website is up.  Highly recommended reading, if only
@@ -82,6 +87,6 @@
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Fri May  2 18:46:54 CDT 2003
+Last modified: Sun May  4 04:38:26 CDT 2003
 <!-- hhmts end -->
 </%method>
