@@ -17,7 +17,7 @@
 % if ( $data->{owner} ) { 
 <a href="<% PageCapt::Web::url('userinfo.mhtml', {uid=>$data->{owner}}) %>">
 <% PageCapt::User->new($data->{owner})->name %></a>\
-%   if ( $data->{owner} == $User->uid || $User->login eq "mbmillig") {
+%   if ( $data->{owner} == $User->uid || $PageCapt::Web::tubers{$User->login} ) {
 	    <& formhead, data=>$data &>
 	      <input type="hidden" name="owner" value="none">
 	      <input type="SUBMIT" value="Renounce Item!">
@@ -25,7 +25,7 @@
 %   }
 % } elsif ( $edit ) {
 	    <& formhead, data=>$data &>
-%   if ( $User->login eq 'mbmillig' ) {
+%   if ( $PageCapt::Web::tubers{$User->login} ) {
       <p><select name="owner">
 	  <option selected value="<% uid $User %>">Yourself</option>
 % foreach ( PageCapt::DB::list_user_ulns('name') ) {
@@ -53,7 +53,7 @@
 
 	<tr>
 	  <td class="field">Category</td><td>
-% if ($form || $User->login eq "mbmillig") {
+% if ($form || $PageCapt::Web::tubers{$User->login} ) {
 	    <form method="GET" action="edititem.mhtml">
 	      <input type="hidden" name="item" value="<% $data->{number} %>">
 	      <input type="hidden" name="update" value="1">
@@ -74,7 +74,7 @@
 
 	<tr>
 	  <td class="field">Status</td><td>
-% if ($form || $User->login eq "mbmillig") {
+% if ($form || $PageCapt::Web::tubers{$User->login} ) {
 	    <& formhead, data=>$data &>
 	    <select name="status">
 	      <option selected value="<% $data->{status} || 'none' %>">
@@ -171,7 +171,7 @@ $watch => undef
       if ( $_ == $User->uid ) { $watching = 1; last; }
     }
 
-    if ($form || $User->login eq "mbmillig") {
+    if ($form || $PageCapt::Web::tubers{$User->login} ) {
       $data = PageCapt::DB::update_list( $template ) || $data;
       if ( $owner && $owner ne "none" ) {
 	PageCapt::DB::add_watchitem( $User, $item ) unless $watching;
