@@ -1,17 +1,7 @@
 <%init>
 
-# my @params = "";
-# foreach my $arg (keys %ARGS) {
-#   push @params, $arg . '="' . $ARGS{$arg} . '" ';
-# }
-# 
-# my $cmd = "perl wiki.pl " . join(" ", @params);
-# 
-# my $output = `LANG=en_US $cmd`;
-
 # "Safe-pipe" method
 
-local %ENV;
 delete $ENV{REQUEST_METHOD};
 my @params = ( );
 
@@ -23,11 +13,7 @@ my $pid = open(WIKI, "-|");
 unless ($pid) { exec("perl", "wiki.pl", @params); }
 
 my @lines = <WIKI>;
-my $output = join("\n", @lines);
-
-my $out = $output;
-my $ccmd = 'echo $HTTP_COOKIE';
-my $cinfo = `$ccmd`;
+my $output = join("", @lines);
 
 my ( $cookie ) = ( $output =~ m{Set-Cookie: (.*)$}mi );
 $r->header_out( 'Set-Cookie' => $cookie) if $cookie;
@@ -36,28 +22,7 @@ $output =~ s{mason_handler.pl}{$m->base_comp->name()}eg;
 $output =~ s{^.*?<body[^>]*>}{}si;
 $output =~ s{</body.*$}{}si;
 
-$out =~ s/</&lt;/g; $out =~ s/>/&gt;/g; $out =~ s/"/quot;/; #" syntax balancing
-
 </%init>
-<pre>
-ARGS = {
-% foreach (keys %ARGS) {
-  <% $_ %> => "<% $ARGS{$_} %>",
-% }
-};
-
-ENV = {
-% foreach (keys %ENV) {
-  <% $_ %> => "<% $ENV{$_} %>",
-% }
-};
-
-CWD = <% `pwd` %>
-
-Returned Cookie: <% $cookie %>
-Sent Cookie: <% $cinfo %>
-Full (escaped) output: <% $out %>
-</pre>
 <% $output %>
 
 <%method title>
