@@ -592,7 +592,7 @@ sub load_list {
       else { push @cond, sprintf $schema{ITEM_STAT_COND},
 				 $ItemStatMap{$params{$_}}; } }
     elsif ($_ eq 'owner')  {
-      if ( $params{$_} eq 'none' ) { push @ond, $schema{ITEM_NOWN_COND}; }
+      if ( $params{$_} eq 'none' ) { push @cond, $schema{ITEM_NOWN_COND}; }
       else { push @cond, sprintf $schema{ITEM_OWN_COND},
 	                         _clean_num($params{$_}); } }
     elsif ($_ eq 'desc')   { push @cond, sprintf $schema{ITEM_SRCH_COND},
