@@ -2,6 +2,7 @@ package PageCapt::DB;
 
 my %tip_classes = (
 		   dump=>1,
+		   survey=>2
 		  );
 
 my %schema =
@@ -173,6 +174,35 @@ sub add_dumptip {
   return;
 }
 
+=head2 Survey Data
+
+Survey data are free-form items of descriptive information associated
+with our users, stored in the Tips table.  The data field is formatted
+as "Field: content more content"; we will split on the first colon and
+split these objects into a per-user structure like this:
+
+  %user_survey =
+  ( field1 => { timestamp => creation time
+                content => "content more content" }
+    field2 => { ... }
+    ...
+  )
+
+We are also interested in extracting one common field for all users
+(e.g. a client wants to answer the question, WHO has volunteered meal
+points).  In this case, we should extract records using a selection
+clause along the lines of
+
+  WHERE substring( data FROM '1' to position(':' in data)-1 ) == 'Field'
+
+These results would be returned in a structure resembling the one
+above, but keyed on UID or user login name, rather than field name.
+Note that in both cases, the onus falls upon the requesting code to
+keep track of what was requested, as the user or field name queried,
+respectively, is not stored in the resulting data structure.
+
+=cut
+
 =head2 User Data
 
 These routines know nothing about authentication or the current request, since
@@ -307,7 +337,7 @@ sub update_user {
   my @sets;
   if ( defined $user->{nick} )
     { push @sets, sprintf( $schema{USER_NICK_SET},
-			   _clean_word($user->{nick}) ); }
+			   _clean_word(lc($user->{nick})) ); }
   if ( defined $user->{name} )
     { push @sets, sprintf( $schema{USER_NAME_SET}, _clean($user->{name}) ); }
   if ( defined $user->{addr} )
