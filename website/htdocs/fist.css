@@ -47,16 +47,25 @@ table#list td {
 	border-right: thin solid white;
 }
 
-tr.status_Ongoing {
-	background-color: yellow;
+a#num {
+	color: white;
+	text-decoration: underline;
 }
 
-tr.status_Done {
-	background-color: green;
+tr.status_HelpWanted a#num {
+	color: orange;
 }
 
-tr.status_Impossibe {
-	background-color: red;
+tr.status_Ongoing a#num {
+	color: yellow;
+}
+
+tr.status_Done a#num {
+	color: green;
+}
+
+tr.status_Impossible a#num {
+	color: red;
 }
 
 body {
