@@ -9,7 +9,7 @@ my %tip_classes = (
 
 my %schema =
   (
-   GET_TIP_STMT	   => "SELECT time, age('now',time), extract('epoch' from time), creator, data, reference FROM Tip",
+   GET_TIP_STMT	   => "SELECT time, date_trunc('minute',age('now',time)), extract('epoch' from time), creator, data, reference FROM Tip",
    TIP_CLASS_COND  => " WHERE class = '%u'",
    TIP_USED_COND   => " AND used = '%u'",
    TIP_UNUSED	   => " AND used = '0'",
