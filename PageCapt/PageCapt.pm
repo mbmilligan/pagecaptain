@@ -16,7 +16,8 @@ $PageCapt::DB::db_string = "dbname=scavhunt user=user password=password";
 			       Event	    => 7,
 			       Thing        => 8,
 			       AllStars     => 9,
-			       FridayParty  => 10
+			       FridayParty  => 10,
+			       Showcase     => 11
 			     );
 %PageCapt::DB::ItemStatMap = ( Ongoing	   => 1,
 			       Done	   => 2,
@@ -24,7 +25,8 @@ $PageCapt::DB::db_string = "dbname=scavhunt user=user password=password";
 			       HelpWanted  => 4
 			     );
 
-%PageCapt::Web::tubers = ( mmilligan=>1, scavcat=>1, arsinoe=>1 ); 
+%PageCapt::Web::tubers = ( mmilligan=>1, scavcat=>1, arsinoe=>1, cmcfaul=>1, gtg590s=>1,
+			   sasmith=>1, sperkins=>1, igor47=>1, onansolo=>1 ); 
 $PageCapt::Web::secret = "foo";
 $PageCapt::Web::cookiename = "PCauth";
 $PageCapt::Web::pass_length = 6;
