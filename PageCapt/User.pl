@@ -118,7 +118,7 @@ exit;
 
 =over 4
 
-=Synopsis
+=item Synopsis
 
 Generate a user information page and return the HTML in a string.
 This page will contain the outputs of C<user_info()>, C<user_items()>,
@@ -128,7 +128,7 @@ produce elements of the page as their names suggest.
 As a special case, C<I<$uid> = 'nobody'> gives a list of un-claimed
 items.
 
-=Arguments
+=item Arguments
 
 I<$uid> is the numeric UID of the user whose page is to be generated,
 or the string "nobody".
