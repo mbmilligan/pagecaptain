@@ -38,6 +38,7 @@ CREATE TABLE Tip (
 	time timestamp 
 		DEFAULT CURRENT_TIMESTAMP,
 	class smallint,
+	creator integer,
 	reference integer,
 	data text
 	);
