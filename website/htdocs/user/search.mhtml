@@ -1,13 +1,56 @@
     <h1>Search the List</h1>
 
+    <p>The following filters will let you view some or all of the
+      List.  Just hit "GO" to get the whole thing, or enter some
+      criteria to narrow down your view.
+    </p>
+
     <form method="GET" action="search.mhtml">
       <input type="hidden" name="search" value="1">
-      <p>Retrieve item number (blank for everything)
+      <p>Retrieve item number:
 	<input name="number" size="3">
+      </p>
+      <p>Or show me items:
 	<br>
-	Search for the word 
+	...matching the word
 	<input name="keyword" size="20">
 	<br>
+	...in the category
+	<select name="type">
+	  <option selected value="">Anything</option>
+	  <option value="none">Uncategorized</option>
+% foreach my $cat (keys %PageCapt::DB::ItemTypeMap) {
+	  <option value="<% $cat %>"><% $cat %></option>
+% }
+        </select>
+	<br>
+	...that are 
+	<select name="status">
+	  <option selected value="">Any status</option>
+	  <option value="none">unknown status</option>
+% foreach my $stat (keys %PageCapt::DB::ItemStatMap) {
+	  <option value="<% $stat %>"><% $stat %></option>
+% }
+	</select>
+	<br>
+	...claimed by
+	<select name="owner">
+	  <option selected value="">Anybody</option>
+	  <option value="<% uid $User %>">Yourself</option>
+	  <option value="none">Nobody</option>
+% foreach ( PageCapt::DB::list_user_ulns('name') ) {
+	  <option value="<% @$_[0] %>">
+% my $n = @$_[2];
+% print length($n) > 30 ? substr($n,0,30) . "..." : $n;
+	  </option>
+% }
+	</select>
+	<br>
+	and sort them according to 
+	<select name="sort">
+	  <option selected value="number">Item Number</option>
+	  <option value="points">Possible Points</option>
+	</select>
 	<input type="submit" value="GO">
       </p>
     </form>
@@ -20,6 +63,10 @@
 $search => 0
 $number => undef
 $keyword => undef
+$type => undef
+$status => undef
+$owner => undef
+$sort => undef
 </%args>
 
 <%init>
@@ -29,6 +76,10 @@ my %template;
 if ($search) {
   $template{number} = $number if $number;
   $template{desc} = $keyword if $keyword;
+  $template{type} = $type if $type;
+  $template{status} = $status if $status;
+  $template{owner} = $owner if $owner;
+  $template{sort} = $sort if $sort;
   @list = PageCapt::DB::load_list( \%template );
 }
 

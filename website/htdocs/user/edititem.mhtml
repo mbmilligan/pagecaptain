@@ -1,0 +1,122 @@
+    <h1>Examine</h1>
+
+    <table id="list">
+      <tbody>
+	<tr>
+	  <td class="field">Item Number</td><td><% $data->{number} %></td>
+	</tr>
+	<tr>
+	  <td class="field">Description</td><td><% $data->{desc} %></td>
+	</tr>
+	<tr>
+	  <td class="field">Scoring Criteria</td><td><% $data->{score} %></td>
+	</tr>
+	<tr>
+	  <td class="field">Contact / Owner</td><td>\
+% if ( $data->{owner} ) { 
+<a href="<% PageCapt::Web::url('userinfo.mhtml', {uid=>$data->{owner}}) %>">
+<% PageCapt::User->new($data->{owner})->name %></a>
+% } elsif ( $edit ) {
+	    <form method="GET" action="edititem.mhtml">
+	      <input type="hidden" name="item" value="<% $data->{number} %>">
+	      <input type="hidden" name="update" value="1">
+	      <input type="hidden" name="owner" value="<% $User->uid %>">
+	      <input type="SUBMIT" value="Claim This Item">
+	    </form>
+% } else {
+	    This item is not claimed by anybody
+% }
+	</tr>
+
+	<tr>
+	  <td class="field">Category</td><td>
+% if ($form) {
+	    <form method="GET" action="edititem.mhtml">
+	      <input type="hidden" name="item" value="<% $data->{number} %>">
+	      <input type="hidden" name="update" value="1">
+	      <select name="type">
+		<option selected value="<% $data->{type} || 'none' %>">
+		  <% $data->{type} || 'Not yet categorized' %></option>
+% foreach my $type (keys %PageCapt::DB::ItemTypeMap) {
+		<option value="<% $type %>"><% $type %></option>
+% }
+	      </select>
+	      <input type="SUBMIT" value="Change Category">
+	    </form>
+% } else {
+	    <% $data->{type} || 'Not yet categorized' %>
+% }
+	  </td>
+	</tr>
+
+	<tr>
+	  <td class="field">Status</td><td>
+% if ($form) {
+	    <& formhead, data=>$data &>
+	    <select name="status">
+	      <option selected value="<% $data->{status} || 'none' %>">
+		<% $data->{status} || 'Unknown' %></option>
+% foreach my $status (keys %PageCapt::DB::ItemStatMap) {
+	    <option value="<% $status %>"><% $status %></option>
+% }
+	  </select>
+	    <input type="SUBMIT" value="Set Status">
+	  </form>
+% } else {
+	    <% $data->{type} || 'Unknown' %>
+% }
+	  </td>
+	</tr>
+
+	<tr>
+	  <td class="field">Potential Points</td><td>
+% if ($form) {
+	    <& formhead, data=>$data &>
+	    <input type="text" name="points" size="10" 
+		   value="<% $data->{points} %>">
+	    <input type="SUBMIT" value="Change value">
+	  </form>
+% } else {
+	    <% $data->{points} || 'Nothing entered' %>
+% }
+	  </td>
+	</tr>
+
+      </tbody>
+    </table>
+
+<%args>
+$item
+$edit => 1
+$update => 0
+$points => undef
+$type => undef
+$status => undef
+$cost => undef
+$owner => undef
+</%args>
+
+<%init>
+
+my $template = { number => $item };
+foreach (qw/ points type status cost owner /) {
+  $template->{$_} = $ARGS{$_} if $ARGS{$_};
+}
+
+my $data = ( PageCapt::DB::load_list({ number=>$item }) )[0];
+my $form = ( $edit && ( ! $data->{owner} || $data->{owner} == $User->uid ) );
+
+if ($form) {
+  $data = PageCapt::DB::update_list( $template ) || $data;
+}
+
+</%init>
+
+<%def formhead>\
+    <form method="GET" action="edititem.mhtml">
+      <input type="hidden" name="item" value="<% $data->{number} %>">
+      <input type="hidden" name="update" value="1">
+<%args>
+$data
+</%args>
+</%def>

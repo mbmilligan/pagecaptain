@@ -18,13 +18,14 @@
     </div>
     <div id="body">
 % $m->call_next;
-    </div>
-    <hr>
+      <hr>
     <address>
       <a href="mailto:mbmillig at uchicago dot edu">Michael Milligan</a><br>
       <a href="mailto:sperkins@nmu.edu">Sam Perkins-Harbin</a> (1337 page redux designer)
     </address>
     <p><& SELF:time_stamp &></p>
+    </div>
+
   </body>
 </html>
 
@@ -58,7 +59,7 @@ if ($ARGS{logout}) {
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sun May  4 04:26:38 CDT 2003
+Last modified: Wed May  7 15:37:54 CDT 2003
 <!-- hhmts end -->
 </%method>
 

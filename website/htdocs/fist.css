@@ -47,6 +47,18 @@ table#list td {
 	border-right: thin solid white;
 }
 
+tr.status_Ongoing {
+	background-color: yellow;
+}
+
+tr.status_Done {
+	background-color: green;
+}
+
+tr.status_Impossibe {
+	background-color: red;
+}
+
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: smaller;

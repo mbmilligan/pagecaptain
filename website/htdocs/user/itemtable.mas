@@ -6,10 +6,14 @@
       </thead>
       <tbody>
 % foreach my $row (@list) {
-	<tr class="status_<% $row->{status} ? $row->{status} : "none" %>">
-	  <td><% $row->{number} %></td>
-	  <td><% length($row->{desc})>150 ? substr($row->{desc},0,150)."..." : $row->{desc} %></td>
-	  <td><% length($row->{score})>60 ? substr($row->{score},0,60)."..." : $row->{score} %></td>
+	<tr class="<& cssclass, row=>$row &>">
+	  <td>
+	    <a href="<% 
+	    PageCapt::Web::url('edititem.mhtml', {item=>$row->{number}}) %>">
+	      <% $row->{number} %></a>
+	  </td>
+	  <td><& trunc, str=>$row->{desc},len=>160 &></td>
+	  <td><& trunc, str=>$row->{score},len=>30 &></td>
 	  <td><a href="<& SELF:base &>user/<% PageCapt::Web::url('userinfo.mhtml',{uid=>$row->{owner}}) %>">
 	      <% $usermap{$row->{owner}} %></a></td>
 	</tr>
@@ -30,3 +34,21 @@ foreach my $row (PageCapt::DB::list_user_ulns) {
   $usermap{$row->[0]} = $row->[1]; }
 
 </%init>
+
+<%def cssclass>\
+status_<% $row->{status} ? $row->{status} : "none" %>\
+<%args>
+$row
+</%args>
+</%def>
+
+<%def trunc>\
+% print length($str)>$len && $full == 0 ? 
+%   substr($str,0,$len) . "..." : 
+%   $str;
+<%args>
+$full => 0
+$str
+$len
+</%args>
+</%def>
