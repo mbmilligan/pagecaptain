@@ -1,0 +1,73 @@
+    <h3>Welcome to the fledgling web home of the glorious</h3>
+    <h1>Deleuzean Potato</h1>
+    <h2>Or: Lush Puppies Mk. III:
+      The F.I.S.T. Deux:
+      Deleuzean Potato
+    </h2>
+
+
+    <p>If you haven't already done so, <a href="survey.mhtml">go take the
+	survey</a>!!!</p>
+
+    <p><b>Tech Turnip Michael</b> sez:</p>
+
+    <p>First things first, if you don't like how I've spelled our Team Name,
+      tell me (I've fixed it twice already).  This actually applies to
+      anything you don't like about this site.  Second, yeah, this is ugly.
+      Post content I've promised people first, make site purty later.  Oh, and
+      you guys <i>can</i> email me, you know.  My address is at the bottom of
+      the page.  Posting comments about the site in your survey responses just
+      means that I don't see it for a day or more.  Email, I read every
+      fifteen minutes or so.
+    </p>
+
+    <p>
+      Since I'm seeing the question come up from time to time in the survey
+      responses, here's the deal with the <b>"Beta Tester"</b> option.  The
+      website is going to be rapidly developing over the next week or so as I
+      get pieces of the database system working well enough to activate them
+      on the site.  Once that starts happening, I need a few people who will
+      regularly poke around in the site to report things that (most
+      importantly) are broken, or (also nice) could work better or be more
+      useful.  This is easier if you have used the database before, but it
+      isn't necessary.  Since the goal is for everyone to be able to use the
+      database by the time the Hunt starts, computer expertise is
+      <i>absolutely not</i> a requirement.
+    </p>
+
+    <p>
+      To those of you complaining that the site is ugly: 
+    <ol>
+      <li>I'm writing code, and I have bad taste in colors anyway.  Check out
+	<a href="http://neutrino.webhop.org">some of my prettier work</a> to
+	see for yourself.</li> 
+      <li>If you want to help, why don't you copy this page out of your
+	browser and pretty it up.  Post the result somewhere or send it to me,
+	and I'll take a look at incorporating your ideas.</li>
+      <li>If you do the above, try to avoid fancy hacks.  They don't work in
+	all browsers; I don't want to have to work around them when
+	(frequently) updating pages; I'm not writing HTML, I'm writing
+	programs that spit out HTML, and programs don't cope with fancy hacks
+	all that well, especially if the guy writing them doesn't really
+	understand the hacks himself.  In short, I probably won't use your
+	uber-neato Javascript dynamic rewrite fancification engine.</li>
+      <li>Stuff I can use once everywhere, on the other hand, is really
+	nifty.  Give me a CSS file that you think looks good, and it's easy
+	for me to make all the pages use it.  I'll be happy to give that a
+	whirl. </li>
+    </ol>
+  </p>
+
+    <p>
+      That's all for now; I'm going back to real work.
+      <br> <span style="margin-left: 1in">...Michael</span>
+    </p>
+ 
+<%method title>
+<& PARENT:title &> HQ
+</%method>
+<%method time_stamp>
+<!-- hhmts start -->
+Last modified: Wed Apr 16 14:28:56 CDT 2003
+<!-- hhmts end -->
+</%method>

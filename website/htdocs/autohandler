@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+     "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html">
+    <title><& SELF:title, %ARGS &></title>
+  </head>
+  <body>
+% $m->call_next;
+    
+    <hr>
+    <p><a href="/index.mhtml"> Return Home </a>
+    <address>
+      <a href="mailto:mbmillig at uchicago dot edu">Michael Milligan</a>
+    </address>
+    <p><& SELF:time_stamp &></p>
+  </body>
+</html>
+
+<%once>
+
+use PageCapt::DB;
+
+</%once>
+
+<%method time_stamp>
+<!-- hhmts start -->
+Last modified: Wed Apr 16 13:44:56 CDT 2003
+<!-- hhmts end -->
+</%method>
+
+<%method title>
+FIST: Deleuzean Potato
+</%method>
+

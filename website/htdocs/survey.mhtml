@@ -1,0 +1,226 @@
+    <h1>ScavHunt Survey</h1>
+
+% if ($send == 0) {
+
+    <h2> This is a Very Important Poll (TM).</h2>
+    <P> Seriously, folks, we need to have this information sorted out into a 
+      database before the Hunt begins. I will hunt you down if you do not 
+      write me back. And honest answers only, please.
+    </P>
+
+    <P>Thank you,</P>
+
+    <UL>   Cate Tolzmann, Spring 2001<BR>
+	scavcat@myrealbox.com</UL>
+
+    <p>Yeah, you've all probably seen this survey at one time or
+      another, since we've been using it in one form or another for a
+      few years now.  I've changed it very little, although be happy
+      if it works, since it is the first evidence of my new backend
+      system working.
+    </p>
+    <p>Two new things: first, when you hit submit, the page will reload, and at the
+      bottom you will be shown the email that will be sent to someone or other.  When
+      you are happy with your answers, hit the <b>Send Survey</b> button.  Second,
+      please notice the addition of the "Beta Tester" option.  I'm going to need
+      testers soon.
+    </p>
+    <p>...Michael Milligan, Tech Turnip</p>
+
+    <form action="survey.mhtml" method="GET">
+
+      <P>
+	<B>Name:</B> 
+	<input type="TEXT" name="name" size="70" value="<% $ARGS{name} %>">
+      </P>
+
+      <p><b>Email:</b>
+	<input type="text" name="email" size="50" value="<% $ARGS{email} %>">
+      </p>
+      
+      <P>
+	<B>Major:</B> 
+	<input type="text" name="major" size="25" value="<% $ARGS{major} %>">
+      </P>
+      
+      <P>
+	<B>Talents</B>
+	<br> 
+      	Please list your talents, no matter how bizarre. Can you play the
+	kazoo? Stand on your head? Eat large amounts of bacon without
+	getting sick? Sew?
+	<br>
+	<textarea name="talents" rows="5" cols="70"><% $ARGS{talents} %></textarea>
+      </P> 
+
+      <p><b>Connections</b>
+	<br>
+	Buddies with Boyer?  Friend of a faculty member?  Compadre to
+	the cops?  Let us know, so we can exploit your connections and
+	influence!
+	<br>
+	<textarea name="connections" rows="3" cols="70"><% $ARGS{connections} %></textarea>
+      </p>
+
+      <P><B>Nudity</B>
+	<br>
+	How naked are you willing to get? Down to your underwear? Totally 
+	topless? Maybe bottomless but not topless?  How public are you willing for
+	that nudity to be? 
+	<br>
+	<textarea name="nudity" rows="2" cols="70"><% $ARGS{nudity} %></textarea> 
+      </p>
+
+      <P><B>Home</B>
+	<br>
+	Where is home? Would your parents be willing to send your childhood toys in
+	the mail? (or drive them here?)
+	<br>
+	<textarea name="home" rows="2" cols="70"><% $ARGS{home} %></textarea>
+      </p>
+
+      <P><B>Meal Points</B>
+	<br>
+	Are you willing to donate 3 meal points to the team so we can get some 
+	snacklings and some food with which to bribe the judges? (Hint to 
+	first-years: You are not going to manage to use all of your meal points, 
+	particularly during Spring Quarter).
+      </p>
+      <p>If yes, please also enter your ISO number (the long number above the
+	barcode on your UC ID)
+	<br>
+	<input type="TEXT" name="points" size="70" value="<% $ARGS{points} %>">
+      </p>
+
+      <p><B>Age:</B>
+	<input type="TEXT" name="age" size="10" value="<% $ARGS{age} %>">
+      </p>
+      
+      <P><B>Schedule</B>
+	<br>
+	If you have a general sense of your schedule during Scav Hunt, please 
+	let us know. Are you totally booked on Thursday afternoon? Free early 
+	Friday morning?
+	<br>
+	<textarea name="schedule" rows="5" cols="70"><% $ARGS{schedule} %></textarea>
+      </p>
+
+      <p><b>Beta Tester:</b>
+	<select name="beta">
+	  <option <% $no_selected %> value="no">No, thanks</option>
+	  <option <% $yes_selected %> value="yes">Sure, why not</option>
+	</select>
+      </p>
+
+      <input type="hidden" name="send" value="0">
+      <input type="SUBMIT" value="Update Survey"> <input type="RESET" value="Reset">
+    </form>
+
+% }
+
+% if ($send == 0) { 
+    <h2>Prepared Emails</h2>
+    <p>When you hit the "Send" button, the following emails will be sent (note that,
+      until you hit that button, your survey <b>has not</b> been sent yet):</p>
+
+    <form action="survey.mhtml" method="GET">
+      <input type="hidden" name="msg" value="<% $message %>">
+      <input type="hidden" name="beta_msg" value="<% $beta_message %>">
+      <input type="hidden" name="name" value="<% $ARGS{name} %>">
+      <input type="hidden" name="beta" value="<% $ARGS{beta} %>">
+      <input type="hidden" name="send" value="1">
+      <input type="SUBMIT" value="Send Survey Emails">
+    </form>
+
+% } else {
+    <h2>Sent Surveys</h2>
+    <p>The following emails have been dispatched.  Your work here is done.</p>
+% }
+
+    <p><pre><% CGI::escapeHTML($headers . ($send == 0 ? $message : $ARGS{msg})) %></pre></p>
+
+% if ( $ARGS{beta} eq "yes" ) { 
+    <p><pre><% CGI::escapeHTML($beta_headers . ($send == 0 ? $beta_message : $ARGS{beta_msg})) %></pre></p>
+% }
+
+<%args>
+$send => 0;
+</%args>
+      
+<%init>
+
+my $sendmail = "/usr/lib/sendmail -t";
+my $to = "Cate Tolzmann <scavcat\@myrealbox.com>";
+my $beta_to = "Michael Milligan <mbmillig\@uchicago.edu>";
+
+my $beta_headers = <<EOF;
+To: $beta_to
+Subject: FIST Beta test volunteer - $ARGS{name}
+From: ScavHunt Survey <mbmillig\@midway.uchicago.edu>
+
+EOF
+
+my $beta_message = <<EOF;
+The following user has volunteered for the beta test corps!
+$ARGS{name}
+$ARGS{email}
+
+EOF
+
+my $headers = <<EOF;
+To: $to
+CC: $beta_to
+Subject: FIST Survey result for $ARGS{name}
+From: ScavHunt Survey <mbmillig\@midway.uchicago.edu>
+
+EOF
+
+my $message = <<EOF;
+Survey results for $ARGS{name}: 
+
+ Email address: $ARGS{email}
+
+ Talents: $ARGS{talents}
+
+ Connections: $ARGS{connections}
+
+ Major: $ARGS{major}
+	    
+ Nudity: $ARGS{nudity}
+
+ Home: $ARGS{home}
+
+ Meal points: $ARGS{points}
+
+ Age: $ARGS{age}
+
+ Schedule: $ARGS{schedule}
+
+Thank you.
+EOF
+
+my $yes_selected = "selected" if $ARGS{beta} eq "yes";
+my $no_selected = "selected" if $ARGS{beta} eq "no";
+
+if ($send != 0) {
+  open(SENDMAIL, "|$sendmail") || die "Major problem: can't open sendmail!";
+  print SENDMAIL $headers . $ARGS{msg};
+  close SENDMAIL;
+
+  if ( $ARGS{beta} eq "yes" ) {
+      open(SENDMAIL, "|$sendmail") || die "Major problem: can't open sendmail!";
+  print SENDMAIL $beta_headers . $ARGS{beta_msg};
+  close SENDMAIL;
+  }
+}
+
+</%init>
+
+<%method title>
+<& PARENT:title &> - Team Survey
+</%method>
+<%method time_stamp>
+<!-- hhmts start -->
+Last modified: Thu Apr 17 17:09:16 CDT 2003
+<!-- hhmts end -->
+</%method>

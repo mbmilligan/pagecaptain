@@ -1,0 +1,74 @@
+    <h1>Dumpster Dive Tip Line</h1>
+
+    <p>You asked for it, you got it.  New to this year's database, we now have
+      a way to record and share hot tips on the state of the neighborhood
+      trash heaps and other goldmines.  It should be dead-easy to use.  Up
+      top, we've got the tips that have been submitted so far.  If you want to
+      see a shorter list, type in a smaller number of days to view.  Typing 0
+      (zero) or leaving the box blank will show you all of them.
+    </p>
+
+    <p>Below the list of tips, is a box.  It does what you think it does.
+      What you type, will become the next newest hot dumpstering tip.  You
+      can't delete or edit the tips, so do exercise some common sense please.
+      Otherwise, go nuts.
+    </p>
+
+    <form action="tips.mhtml" method="GET">
+      <p>How many days worth of tips are you interested in?
+	<input type="text" name="age" value="<% $age ? $age : "" %>" size="3">
+	<input type="submit" value="Refresh">
+      </p>
+    </form>
+
+    <hr>
+    <p>As of <% scalar gmtime(time) %>, the following <% $#tips + 1 %> tips
+      have been entered:</p>
+
+% foreach my $row (@tips) { $row->{content} =~ s/\n/<br>\n/gm;
+    <p>On <% scalar gmtime($row->{epoch}) %> the following tip was entered:
+      <br> <% $row->{content} %>
+    </p> 
+% }
+
+% if ($#tips == -1) { 
+    <p>An error occurred, or there are no tips in the system yet.  If
+      something is wrong, please report the following error message to
+      Michael. 
+    </p>
+    <pre><% eval "PageCapt::DB::_dberror()" || $@ %></pre>
+% }
+
+    <form action="tips.mhtml" method="GET">
+      <p>What's new?
+	<br>
+	<textarea name="tip" rows="5" cols="70"></textarea>
+      </p>
+      <input type="submit" value="Announce Tip Now">
+    </form>
+
+<%method time_stamp>
+<!-- hhmts start -->
+Last modified: Mon Apr 21 16:36:37 CDT 2003
+<!-- hhmts end -->
+</%method>\
+
+<%args>
+$age => 0
+$tip => undef
+</%args>\
+
+<%method title>
+<& PARENT:title &> - Dumpstering Tip Line
+</%method>
+
+<%init>
+
+$tip =~ s/^\s*(.*?)\s*$/$1/;
+if ($tip) {
+    PageCapt::DB::add_dumptip( $tip );
+}
+
+my @tips = PageCapt::DB::get_dumptips($age);
+
+</%init>
