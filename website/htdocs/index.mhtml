@@ -1,46 +1,21 @@
 <div id="header">
-<p>Welcome to the fledgling web home of the glorious</p>
-<h1>Deleuzean Potato</h1>
-<h2>Or: Lush Puppies Mk. III:
-The F.I.S.T. Deux:
-Deleuzean Potato
-</h2>
+<h1>The Database</h1>
+<h2>Welcome Back</h2>
 </div>
 
-<p><b>Cate</b> sayeth:</p>
-<p>Today's Schedule for Friday:</p>
-<ul>
-<li>Give Blood! (Item 248)</li>
-<li>Rickshaws from 9am-3pm (Item 30)</li>
-<li>Private mail system (Item 83)</li>
-<li>Propogate our meme (potatoes) (Item 122)</li>
-<li>OmBudMan in the afternoon (144)</li>
-<li>Quad Party at 8:30pm (Item 297)</li>
-<li>Judge Tuck-In (Item 170)</li>
-</ul>
+<p>I think we'll use the <a href="<& SELF:base &>../cgi/wiki.pl">Wiki</a> for
+    posting news and stuff, but this here is the Database.  Right now it has the
+    Virginia Hunt list loaded.
+</p>
 
-<p>About the French Revolutionary Calendar:
-A day has 10 hours, and each hour contains 100 minutes. As for the days, dates, and months, all that matters is this:</p>
-<ul>
-<li>18 Floreal = Octidi = Wednesday</li>
-<li>19 Floreal = Nonidi = Thursday</li>
-<li>20 Floreal = Decadi = Friday</li>
-<li>21 Floreal = Primidi = Saturday</li>
-<li>22 Floreal = Duodi = Sunday</li>
-</ul>
+<p>If you have an account from last year, please log in to update your
+    information (I've reset all the passwords to "scavhunt", because I know
+    better than to think anyone remembers theirs from a year ago).
+</p>
 
-<p>Some Notes About the Database:</p>
-<ul>
-<li>The item numbers are color-coded to show current status:
-<ul>
-<li>White = Unassigned</li>
-<li>Green = Completed</li>
-<li>Yellow = In Progress</li>
-<li>Orange = Help Wanted</li>
-<li>Red = Impossible/Canceled</li>
-</ul>
-<li>The Scav Olympics items are in the database, under item numbers 401-417.
-</ul>
+<p>If you <b>don't</b> have an account, take the 
+    <a href="<& SELF:base&>survey.mhtml">SURVEY</a> to get one.
+</p>
 
 <p>Not getting FIST emails? Hop over to
 <a href="https://listhost.uchicago.edu/mailman/listinfo/potato"> the
@@ -48,16 +23,11 @@ listhost server</a> to subscribe to our mailing list.
 </p>
 <p><b>Tech Turnip Michael</b> sayeth:</p>
 
-<p>The database is feature complete. Contact Cate or me with any 
-questions about how to use it.
-<br> <span style="margin-left: 1in">...Michael</span>
-</p>
-
 <%method title>
 <& PARENT:title &> HQ
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sat May 10 06:40:26 CDT 2003
+Last modified: Sat Apr  3 20:10:46 CST 2004
 <!-- hhmts end -->
 </%method>
