@@ -20,8 +20,26 @@ CREATE INDEX user_login_idx ON User(login);
 CREATE TABLE List (
 	inum smallint NOT NULL, UNIQUE,
 	points double,
-	type smallint,
+	type[] smallint,
 	status smallint,
 	description text,
 	scoring text,
 	cost double,
+	owner integer REFERENCES User(uid)
+		ON DELETE SET NULL
+		ON UPDATE CASCADE,
+
+	PRIMARY KEY (inum)
+	);
+
+CREATE INDEX list_owner_idx ON List(owner);
+
+CREATE TABLE Tip (
+	time timestamp 
+		DEFAULT CURRENT_TIMESTAMP,
+	class smallint,
+	reference integer,
+	data text
+	);
+
+CREATE INDEX tip_time_idx ON Tip(time);
