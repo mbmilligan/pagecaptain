@@ -1,6 +1,16 @@
+    <p>Good <% $am %>, <% $User->name %></p>
     <p>
       <a href="<& SELF:base &><% 
 	 PageCapt::Web::url( 'login.mhtml', { logout=>1 } ) 
 	 %>">
 	LOG OUT</a>
     </p>
+
+<%init>
+ my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+    localtime(time);
+
+ my $am = ($hour < 12) ? "Morning" :
+    ( ($hour < 19) ? "Afternoon" : "Evening" );
+
+</%init>

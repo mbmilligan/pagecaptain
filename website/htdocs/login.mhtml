@@ -4,23 +4,4 @@ $password => undef;
 $logout => undef;
 </%args>
 
-<%init>
-
-if ($logout) {
-  $r->header_out( 'Set-cookie' =>
-		  PageCapt::Web::logout_cookie() );
-  $User->invalidate;
-} else {
-  $User->login($loginname);
-  $User->validate_password($password);
-
-  my $cookie = PageCapt::Web::new_cookie( $User );
-  if ($cookie) {
-    $r->header_out( 'Set-Cookie' => $cookie );
-  }
-
-}
-
-</%init>
-
 <& index.mhtml &>

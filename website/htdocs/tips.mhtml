@@ -27,7 +27,12 @@
       have been entered:</p>
 
 % foreach my $row (@tips) { $row->{content} =~ s/\n/<br>\n/gm;
-    <p><% $row->{age} %> ago the following tip was entered:
+    <p><% $row->{age} %> ago 
+% if ( $row->{uid} ) {
+      <% PageCapt::User->new($row->{uid})->name %> said:
+% } else {
+      the following tip was entered:
+% }
       <br> <% $row->{content} %>
     </p> 
 % }
@@ -50,7 +55,7 @@
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Fri Apr 25 14:13:53 CDT 2003
+Last modified: Fri May  2 11:46:08 CDT 2003
 <!-- hhmts end -->
 </%method>\
 
@@ -67,7 +72,8 @@ $tip => undef
 
 $tip =~ s/^\s*(.*?)\s*$/$1/;
 if ($tip) {
-    PageCapt::DB::add_dumptip( $tip );
+    PageCapt::DB::add_dumptip( $tip, 
+       ($User->isvalid ? $User : undef) );
 }
 
 my @tips = PageCapt::DB::get_dumptips($age);

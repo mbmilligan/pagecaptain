@@ -14,19 +14,17 @@
       Cate Tolzmann, Spring 2001<BR>
       scavcat@myrealbox.com</p>
 
-    <p>Yeah, you've all probably seen this survey at one time or
-      another, since we've been using it in one form or another for a
-      few years now.
+    <p>Fill out the survey!  If you haven't done it before, this will
+      create a user account for you.  You will be given a user name
+      and password; use them to log in with the box in the side menu.
     </p>
-    <p>Two new things: first, when you hit submit, the page will
-      reload, and at the bottom you will be shown the email that will
-      be sent to someone or other.  When you are happy with your
-      answers, hit the <b>Send Survey</b> button.  If you don't see
-      your answers in the sample emails at the bottom, <b>don't hit
-      "Send" yet</b>, hit the <b>update</b> button first.  Second,
-      please notice the addition of the "Beta Tester" option.  see the
-      home page for details about that.
+
+    <p>Don't hit <b>Send Survey</b> until you are happy with your
+      answers!  That's what the <b>Update Survey</b> button is for.
+      Check the bottom of this page to see the survey results that
+      will be sent in when you hit the <b>Send</b> button.
     </p>
+
     <p>...Michael Milligan, Tech Turnip</p>
 
     <form action="survey.mhtml" method="GET">
@@ -129,6 +127,7 @@
       <input type="hidden" name="msg" value="<% $message %>">
       <input type="hidden" name="beta_msg" value="<% $beta_message %>">
       <input type="hidden" name="name" value="<% $ARGS{name} %>">
+      <input type="hidden" name="email" value="<% $ARGS{email} %>">
       <input type="hidden" name="beta" value="<% $ARGS{beta} %>">
       <input type="hidden" name="send" value="1">
       <input type="SUBMIT" value="Send Survey Emails">
@@ -147,6 +146,16 @@
     <p><pre>
 <% CGI::escapeHTML($beta_headers . MIME::Base64::decode($send == 0 ? $beta_message : $ARGS{beta_msg})) %>
     </pre></p>
+% }
+% if ( $created ) {
+    <p>You have created a user account for <% $user->name %> in the
+      Potato system:</p> 
+    <ul>
+      <li>Your login name is: <% $user->login %></li>
+      <li>Your password is: <% $user->password %></li>
+    </ul>
+    <p>This information has been emailed to the address that you gave
+      above.</p> 
 % }
 
 <%args>
@@ -210,6 +219,9 @@ EOF
 my $yes_selected = "selected" if $ARGS{beta} eq "yes";
 my $no_selected = "selected" if $ARGS{beta} eq "no";
 
+my $created = undef;
+my $user = blank PageCapt::User;
+
 if ($send != 0) {
   open(SENDMAIL, "|$sendmail") || die "Major problem: can't open sendmail!";
   print SENDMAIL $headers . MIME::Base64::decode($ARGS{msg});
@@ -220,6 +232,14 @@ if ($send != 0) {
   print SENDMAIL $beta_headers . MIME::Base64::decode($ARGS{beta_msg});
   close SENDMAIL;
   }
+
+  my ($login) = $ARGS{email} =~ /([^@]+)@/;
+  $user = byname PageCapt::User ($login);
+  $user->name($ARGS{name});
+  $user->email($ARGS{email});
+  $user->password( PageCapt::Web::generate_password($ARGS{name}) );
+  $created = $user->create;
+  PageCapt::Web::mail_password( $user->uid ) if $created;
 }
 
 </%init>
@@ -229,6 +249,6 @@ if ($send != 0) {
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Wed Apr 23 17:16:58 CDT 2003
+Last modified: Fri May  2 18:02:22 CDT 2003
 <!-- hhmts end -->
 </%method>
