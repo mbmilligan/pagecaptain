@@ -139,10 +139,14 @@
     <p>The following emails have been dispatched.  Your work here is done.</p>
 % }
 
-    <p><pre><% CGI::escapeHTML($headers . ($send == 0 ? $message : $ARGS{msg})) %></pre></p>
+    <p><pre>
+<% CGI::escapeHTML($headers . MIME::Base64::decode($send == 0 ? $message : $ARGS{msg})) %>
+    </pre></p>
 
 % if ( $ARGS{beta} eq "yes" ) { 
-    <p><pre><% CGI::escapeHTML($beta_headers . ($send == 0 ? $beta_message : $ARGS{beta_msg})) %></pre></p>
+    <p><pre>
+<% CGI::escapeHTML($beta_headers . MIME::Base64::decode($send == 0 ? $beta_message : $ARGS{beta_msg})) %>
+    </pre></p>
 % }
 
 <%args>
@@ -150,6 +154,8 @@ $send => 0;
 </%args>
       
 <%init>
+
+use MIME::Base64;
 
 my $sendmail = "/usr/lib/sendmail -t";
 my $to = "Cate Tolzmann <scavcat\@myrealbox.com>";
@@ -162,7 +168,7 @@ From: ScavHunt Survey <mbmillig\@midway.uchicago.edu>
 
 EOF
 
-my $beta_message = <<EOF;
+my $beta_message = MIME::Base64::encode( <<EOF, "" );
 The following user has volunteered for the beta test corps!
 $ARGS{name}
 $ARGS{email}
@@ -177,7 +183,7 @@ From: ScavHunt Survey <mbmillig\@midway.uchicago.edu>
 
 EOF
 
-my $message = <<EOF;
+my $message = MIME::Base64::encode( <<EOF, "" );
 Survey results for $ARGS{name}: 
 
  Email address: $ARGS{email}
@@ -206,12 +212,12 @@ my $no_selected = "selected" if $ARGS{beta} eq "no";
 
 if ($send != 0) {
   open(SENDMAIL, "|$sendmail") || die "Major problem: can't open sendmail!";
-  print SENDMAIL $headers . $ARGS{msg};
+  print SENDMAIL $headers . MIME::Base64::decode($ARGS{msg});
   close SENDMAIL;
 
   if ( $ARGS{beta} eq "yes" ) {
       open(SENDMAIL, "|$sendmail") || die "Major problem: can't open sendmail!";
-  print SENDMAIL $beta_headers . $ARGS{beta_msg};
+  print SENDMAIL $beta_headers . MIME::Base64::decode($ARGS{beta_msg});
   close SENDMAIL;
   }
 }
@@ -223,6 +229,6 @@ if ($send != 0) {
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Tue Apr 22 15:29:25 CDT 2003
+Last modified: Wed Apr 23 17:16:58 CDT 2003
 <!-- hhmts end -->
 </%method>
