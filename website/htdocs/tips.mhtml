@@ -27,11 +27,11 @@
       have been entered:</p>
 
 % foreach my $row (@tips) { $row->{content} =~ s/\n/<br>\n/gm;
-    <p><% $row->{age} %> ago 
+    <p><span class="tipintro"><% $row->{age} %> ago 
 % if ( $row->{uid} ) {
       <% PageCapt::User->new($row->{uid})->name %> said:
 % } else {
-      the following tip was entered:
+      the following tip was entered: </span>
 % }
       <br> <% $row->{content} %>
     </p> 
@@ -55,7 +55,7 @@
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Fri May  2 11:46:08 CDT 2003
+Last modified: Wed May  7 22:17:32 CDT 2003
 <!-- hhmts end -->
 </%method>\
 
