@@ -25,7 +25,9 @@
     </address>
     <p><& SELF:time_stamp &></p>
     </div>
-
+    <div id="logo">
+      <img src="<& SELF:base &>scrod.jpg">
+    </div>
   </body>
 </html>
 
@@ -59,7 +61,7 @@ if ($ARGS{logout}) {
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Wed May  7 15:37:54 CDT 2003
+Last modified: Sat Apr 24 00:58:21 CDT 2004
 <!-- hhmts end -->
 </%method>
 

@@ -22,13 +22,12 @@
 <a href="https://listhost.uchicago.edu/mailman/listinfo/potato"> the
 listhost server</a> to subscribe to our mailing list.
 </p>
-<p><b>Tech Turnip Michael</b> sayeth:</p>
 
 <%method title>
 <& PARENT:title &> HQ
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sat Apr  3 20:10:46 CST 2004
+Last modified: Sat Apr 24 01:02:45 CDT 2004
 <!-- hhmts end -->
 </%method>
