@@ -18,7 +18,7 @@
     <form action="tips.mhtml" method="GET">
       <p>How many days worth of tips are you interested in?
 	<input type="text" name="age" value="<% $age ? $age : "" %>" size="3">
-	<input type="submit" value="Refresh">
+	<input class="formbutton" type="submit" value="Refresh">
       </p>
     </form>
 
@@ -51,7 +51,7 @@
 	<br>
 	<textarea name="tip" rows="5" cols="70"></textarea>
       </p>
-      <input type="submit" value="Announce Tip Now">
+      <input class="formbutton" type="submit" value="Announce Tip Now">
     </form>
 
 <%method time_stamp>

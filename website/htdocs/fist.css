@@ -16,12 +16,14 @@
 	float: right;
 	position: fixed;
 	right: 0;
+	color: #cccccc;
 }
 
 #nav p.title {
 	text-align: center;
 	font-weight: bold;
 	font-style: italic;
+	border: none;
 }
 
 #logo {
@@ -42,18 +44,20 @@ tt {
 }
 
 .tipintro {
-	border: thin white solid;
-	color: red;
+	color: #D00000;
 }
 
 table#contact tr, table#survey tr {
-	border: 1px solid;
-	background-color: maroon;
+	border: none;
+	background-color: #550000;
 }
-
+table#contact tr .field, table#survey tr .field{
+	border: none;
+	background-color: #880000;
+}
 table#list td {
-	border-top: thin solid white;
-	border-right: thin solid white;
+	border-top: 1px solid #666666;
+	border-right: 1px solid #666666;
 }
 
 a#num {
@@ -101,8 +105,50 @@ a:active {
 }
 h1 {
 	color: #CCCCCC;
-
+	font-family: Georgia, "Times New Roman", Times, serif;
 }
 h2 {
 	color: #666666;
+	font-weight:normal;
+}
+
+
+form {
+	color: #bbbbbb;
+}
+
+input, textarea, select {
+	margin-top: 3px;
+	border: 1px solid #666666;
+	background-color: #202020;
+	color: #aaaaaa;
+}
+
+input:focus, textarea:focus, select:focus {
+	margin-top: 3px;
+	border:1px solid #888888;
+  	background-color: #303030;
+  	color: #eeeeee;
+}
+
+
+.formbutton {
+	color:#220000;
+	border: 1px solid #555555;
+	background-color: #777777;
+}
+.formbutton:hover {
+	color:#440000;
+	border: 1px solid #777777;
+	background-color: #999999;
+}
+input[type=submit], input[type=reset] {
+	color:#220000;
+	border: 1px solid #555555;
+	background-color: #777777;
+}
+input[type=submit]:hover, input[type=reset]:hover {
+	color:#440000;
+	border: 1px solid #777777;
+	background-color: #999999;
 }

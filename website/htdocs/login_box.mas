@@ -9,6 +9,6 @@
 	<label for="password">Password:</label><br>
 	<input type="password" name="password" size="12">
 	<input type="hidden" name="attempt" value="1">
-	<input type="submit" value="OK">
+	<input class="formbutton" type="submit" value="OK">
       </p>
     </form>

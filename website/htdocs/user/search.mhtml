@@ -51,7 +51,7 @@
 	  <option selected value="number">Item Number</option>
 	  <option value="points">Possible Points</option>
 	</select>
-	<input type="submit" value="GO">
+	<input class="formbutton" type="submit" value="GO">
       </p>
     </form>
 	  
