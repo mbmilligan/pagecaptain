@@ -7,6 +7,12 @@
       </h2>
     </div>
 
+    <p>User accounts work now.  Note the login boxes to your right.  If you
+      fill out the <a href="<& SELF:base &>survey.mhtml">survey</a>, you can
+      get an account, too.  If you've already gotten your information (in your
+      email, maybe?), try logging in.
+    </p>
+
     <p>The ScavHunt 2003 website is up.  Highly recommended reading, if only
       to learn all about the judges.  <a href="http://scavhunt.uchicago.edu">
 	See it here </a>.
@@ -15,6 +21,14 @@
     <p>Email Jess if you want a "Negative Spousal Interaction" shirt purchased
       for you.  The cost will be a small number of dollars, and you'll get
       them probably at our Sunday meeting.
+    </p>
+
+    <p>Another reason to bring some money with you to Sunday's meeting: the
+      food fund.  Cate will be passing around a menu and the hat on Sunday to
+      figure out what food you people would like to have in HQ during the
+      Hunt.  Food at SaveALot is cheap, but it ain't free, so be prepared to
+      drop a few bucks if you think having a selection of ready-to-eat
+      mostly-homemade food in HQ would be a good thing.
     </p>
 
     <p>It looks like our <i>Prophet Elijah</i> and road trip team have been
@@ -68,6 +82,6 @@
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Thu May  1 12:14:48 CDT 2003
+Last modified: Fri May  2 18:46:54 CDT 2003
 <!-- hhmts end -->
 </%method>
