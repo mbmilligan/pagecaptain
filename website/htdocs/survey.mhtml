@@ -39,14 +39,19 @@
 
     <p>...Michael Milligan, Tech Turnip</p>
 
-% } 
-% if ( $send and not $User->isvalid ) {
+%   }
+%   if ( $send and not $login ) {
+    <p><b>You must provide a valid email address; the user creation process
+        will not work without one.</b>
+    </p>
+%   }
+%   elsif ( $send and not $User->isvalid ) {
     <p><b>Something went wrong.  The most likely explanation is that you have
 	already created a user account by submitting the survey, but you are
 	not logged in.  You can only change your information if you log in.
 	Contact Michael for help if you don't know what to do now.</b>
     </p>
-% }
+%   }
 
     <form action="survey.mhtml" method="GET">
 
@@ -223,33 +228,38 @@ my $yes_selected = "selected" if $ARGS{beta} eq "yes";
 my $no_selected = "selected" if $ARGS{beta} eq "no";
 
 my $created = undef;
+my $login = undef;
 my $user = blank PageCapt::User;
 
 if ( $send ) {
-  my ($login) = $User->isvalid ? $User->login : $ARGS{email} =~ /([^@]+)@/;
-  $user = byname PageCapt::User ($login);
-  foreach (@userfields) {
-    $user->$_ ($ARGS{$_}) if $ARGS{$_};
-  }
-  $user->password( PageCapt::Web::generate_password($ARGS{name}) );
-  $created = $user->create;
+  ($login) = $User->isvalid ? $User->login : $ARGS{email} =~ /([^@]+)@/;
 
-  my $surveystruct = { };
-  foreach (@fields) {
-    $surveystruct->{$_} = $ARGS{$_};
-  }
-
-  if ($created) {
-    PageCapt::Web::mail_password( $user->uid );
-    PageCapt::DB::new_survey( $user, $surveystruct ); }
-  elsif ( $User->isvalid ) {
-    PageCapt::DB::new_survey( $User, $surveystruct ); 
-    $user = $User->clone_validity;
+  if ($login) {
+    $user = byname PageCapt::User ($login);
     foreach (@userfields) {
       $user->$_ ($ARGS{$_}) if $ARGS{$_};
     }
-    $user->commit;
+    $user->password( PageCapt::Web::generate_password($ARGS{name}) );
+    $created = $user->create;
+
+    my $surveystruct = { };
+    foreach (@fields) {
+      $surveystruct->{$_} = $ARGS{$_};
+    }
+
+    if ($created) {
+      PageCapt::Web::mail_password( $user->uid );
+      PageCapt::DB::new_survey( $user, $surveystruct ); }
+    elsif ( $User->isvalid ) {
+      PageCapt::DB::new_survey( $User, $surveystruct ); 
+      $user = $User->clone_validity;
+      foreach (@userfields) {
+        $user->$_ ($ARGS{$_}) if $ARGS{$_};
+      }
+      $user->commit;
+    }
   }
+
 }
 
 </%init>
@@ -259,6 +269,6 @@ if ( $send ) {
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sat Apr 24 01:25:07 CDT 2004
+Last modified: Sun Apr 25 22:12:39 CDT 2004
 <!-- hhmts end -->
 </%method>
