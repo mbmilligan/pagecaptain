@@ -164,10 +164,17 @@ $watch => undef
     my $data = ( PageCapt::DB::load_list({ number=>$item }) )[0];
     my $form = ( $edit && ( ! $data->{owner} || $data->{owner} == $User->uid ) );
 
+    my @watchers = PageCapt::DB::get_watchers_byitem( $item );
+    my $watching = 0;
+    my $watchlink = "";
+    for (@watchers) {
+      if ( $_ == $User->uid ) { $watching = 1; last; }
+    }
+
     if ($form || $User->login eq "mbmillig") {
       $data = PageCapt::DB::update_list( $template ) || $data;
       if ( $owner && $owner ne "none" ) {
-	PageCapt::DB::add_watchitem( $User, $item );
+	PageCapt::DB::add_watchitem( $User, $item ) unless $watching;
       }
     }
 
@@ -175,23 +182,17 @@ $watch => undef
     my @tips = PageCapt::DB::get_item_notes( $item );
 
     if ($update && defined $watch) {
-      if ($watch) { PageCapt::DB::add_watchitem( $User, $item ); }
-      else { PageCapt::DB::drop_watchitem( $User, $item ); }
+      if ($watch) { PageCapt::DB::add_watchitem( $User, $item ); $watching = 1; }
+      else { PageCapt::DB::drop_watchitem( $User, $item ); $watching = 0; }
     }
 
-    my @watchers = PageCapt::DB::get_watchers_byitem( $item );
-    my $watching = 0;
-    my $watchlink = "";
-    for (@watchers) {
-      if ( $_ == $User->uid ) { $watching = 1;
-				$watchlink = PageCapt::Web::url('edititem.mhtml',
-								{ item => $item,
-								  watch => 0,
-								  update => 1 } );
-				last;
-			      }
-    };
-    unless ($watching) {
+    if ( $watching ) { 
+      $watchlink = PageCapt::Web::url('edititem.mhtml',
+				      { item => $item,
+				        watch => 0,
+				        update => 1 } );
+    }
+    else {
       $watchlink = PageCapt::Web::url('edititem.mhtml',
 				      { item => $item,
 					watch => 1,
