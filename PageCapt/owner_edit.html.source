@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Administrate a Record</title> 
+  </head> 
+
+  <body> 
+    <H1>Administrate this Item</H1> 
+    <P style="margin-left: 5em">Many functions on this page will not
+      work if you are not the database system administrator.</P> 
+
+<!-- <QUERY> -->
+
+    <form action="ClaimItem.pl" method="get">
+      <select name="unclaim"> 
+	<option value="" >Assign item</option> 
+	<option value="1">Free item</option> 
+      </select>
+      <!-- <MAGIC> -->
+      <input type="hidden" name="index" value="<IDX>"> 
+      <input type="submit" value="Do It"> 
+    </form> 
+    
+
+    <form action="update.pl" method="GET">
+      <input type="hidden" name="index" value="<IDX>">
+      <input type="hidden" name="source" value="response.html">
+      <P>Expected point value: <input type="text" size="10" name="score"></P>
+      <P>Categorize this item:
+	<SELECT name="cat">
+	  <option value="food">Food</option>
+	  <option value="project">Projects</option>
+	  <option value="event">Events</option>
+	  <option value="trip">Roadtrip!</option>
+	  <option value="perform">Performance</option>
+	  <option value="craft">Crafts</option>
+	  <option value="thing">Thing</option>
+	  <option value="trivia">Trivia</option>
+	  <option value="misc">Miscellaneous</option>
+	  <option value="olympics">ScavOlympics!</option>
+	  <option selected value="no change">Don't Change</option>
+	</SELECT>
+      </P>
+      <P>Item status:
+	<SELECT name="status">
+	  <option value="none">None</option>
+	  <option value="in progress">In Progress</option>
+	  <option value="done">Done</option>
+	  <option value="impossible">Impossible</option>
+	  <option selected value="no change">No Change</option>
+	</SELECT>
+      </P>
+
+      <P>Notes:<BR>
+	<input type="text" size="72" name="notes"></P>
+      <input type="submit">
+    </form>
+
+    <hr>
+    <address><a href="mailto:mbmillig@midway.uchicago.edu">Michael Milligan</a></address>
+<!-- Created: Sat May 13 22:16:04 CDT 2000 -->
+<!-- hhmts start -->
+Last modified: Tue May  7 10:42:00 CDT 2002
+<!-- hhmts end -->
+  </body>
+</html>

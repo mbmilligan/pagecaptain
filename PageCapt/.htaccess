@@ -1,0 +1,7 @@
+AuthName "Scav hunt"
+AuthType Basic
+AuthUserFile /usr/local/etc/httpd/htusers
+
+require valid-user
+
+Options ExecCGI

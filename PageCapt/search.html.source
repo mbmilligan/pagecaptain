@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Query the ScavHunt List</title>
+  </head>
+
+  <body>
+    <h1>The F.I.S.T. Database Search</h1>
+    <P>Here you have the opportunity to execute searches on the ScavHunt list. There are several options for doing this: you can search for a keyword, list items by category, see a given user's items, or view a particular item number.</P>
+    <HR>
+    <h2>Key Word Search</h2>
+    <form action="getquery.pl" method="get">
+      <input type="hidden" name="type" value="keyword">
+      <input type="hidden" name="source" value="query.html">
+      <P>Keyword or phrase (exact matches only):
+	<input type="text" size="40" name="key"></P>
+      <P>Sort By:
+      <SELECT name="sort">
+	<option selected value="index">Item Number</option>
+	<option value="points">Point Value</option>
+	<option value="status">Item Status</option>
+      </SELECT>
+      </P>
+      <input type="submit" value="Search">
+    </form>
+
+    <HR>
+    <h2>Category Listing</h2>
+    <form action="getquery.pl" method="get">
+      <input type="hidden" name="type" value="catsort">
+      <input type="hidden" name="source" value="query.html">
+      
+      <P>Category:
+	<SELECT name="cat">
+	  <option value="food">Food</option>
+	  <option value="project">Projects</option>
+	  <option value="event">Events</option>
+	  <option value="trip">Roadtrip!</option>
+	  <option value="perform">Performance</option>
+	  <option value="craft">Crafts</option>
+	  <option value="thing">Thing</option>
+	  <option value="trivia">Trivia</option>
+	  <option value="misc">Miscellaneous</option>
+	  <option value="olympics">ScavOlympics!</option>
+          <option value="av">Audio/Video</option>
+          <option value="winter">WinterSports</option>
+	  <option selected value="all">All</option>
+	</SELECT>
+      </P>
+      <P>Sort By:
+	<SELECT name="sort">
+	  <option selected value="index">Item Number</option>
+	  <option value="points">Point Value</option>
+	  <option value="status">Item Status</option>
+	</SELECT>
+      </P>
+      <input type="submit" value="Search"><P>
+    </form>
+
+    <HR>
+    <h2>User Search</h2>
+    <form action="User.pl" method="get">
+
+      <!--   <MAGIC>   -->
+
+      <input type="submit" value="Display User">
+    </form>
+
+    <HR>
+    <h2>View Item by Number</h2>
+    <form action="getquery.pl" method="get">
+      <input type="hidden" name="type" value="index">
+      <input type="hidden" name="source" value="query.html">
+      Item number to edit: 
+      <input type="text" size="10" name="index">&nbsp;
+      <input type="submit">
+    </form>
+
+    <hr>
+    <address><a href="mailto:mbmillig@midway.uchicago.edu">Michael Milligan</a></address>
+
+  </body>
+</html>

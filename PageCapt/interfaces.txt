@@ -1,0 +1,15 @@
+AddUser.pl: adduser.html (having <MESSAGE>)
+	$nick = nick
+	$name = name
+	$address = address
+	$phone = phone
+	$email = email
+	$contact = contact
+	$password = password
+	$backup = backup
+
+CookieLogin.pl: relogin.html (having <RELOGIN>)
+	$user = user
+	$pass = pass
+	$dest = dest	# URL in /scav
+	
