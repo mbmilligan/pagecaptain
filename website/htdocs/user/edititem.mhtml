@@ -11,6 +11,7 @@
 	<tr>
 	  <td class="field">Scoring Criteria</td><td><% $data->{score} %></td>
 	</tr>
+
 	<tr>
 	  <td class="field">Contact / Owner</td><td>\
 % if ( $data->{owner} ) { 
@@ -25,7 +26,6 @@
 % } elsif ( $edit ) {
 	    <& formhead, data=>$data &>
 %   if ( $User->login eq 'mbmillig' ) {
-    <form method="GET" action="userinfo.mhtml">
       <p><select name="uid">
 	  <option selected value="<% uid $User %>">Yourself</option>
 % foreach ( PageCapt::DB::list_user_ulns('name') ) {
@@ -156,7 +156,7 @@ foreach (qw/ points type status cost owner cost /) {
 my $data = ( PageCapt::DB::load_list({ number=>$item }) )[0];
 my $form = ( $edit && ( ! $data->{owner} || $data->{owner} == $User->uid ) );
 
-if ($form) {
+if ($form || $User->login eq "mbmillig") {
   $data = PageCapt::DB::update_list( $template ) || $data;
 }
 
