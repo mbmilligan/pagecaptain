@@ -5,7 +5,7 @@
       <br>
       Intel <a href="<& SELF:base &>user/intel.mhtml">Briefs</a>
       <br>
-      Last Year's <a href="<& SELF:base &>user/search.mhtml">List</a>
+      The <a href="<& SELF:base &>user/search.mhtml">List</a>
     </p>
 
     <p>
