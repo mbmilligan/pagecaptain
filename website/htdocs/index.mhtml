@@ -6,67 +6,43 @@
 	Deleuzean Potato
       </h2>
     </div>
+    <p><b>Cate</b> sayeth:</p>
+
+    <p>Not getting FIST emails? Hop over to
+	<a href="https://listhost.uchicago.edu/mailman/listinfo/potato"> the
+	  listhost server</a> to subscribe to our mailing list.
+    </p>
+
+    <p>Coming Soon: List Release Day (Wednesday)</p>
+    <ul>
+      <li>Meet outside the Burton-Judson dining hall at 6 pm for dinner as a
+	group. Some first-years have generously offered many meal points, so
+	we will all be able to get in. Thank you to those first-years!</li>
+      <li>After dinner, stick around if you can to help with load-in. We need
+	some folks with cars to pick up stuff like TVs and food from around
+	the neighborhood. We need people with an organizational sense to set
+	up Home Base in Upper Burton. And we need people with arms to get all
+	of the stuff out from underneath the floor in the black box.</li>
+      <li>Around 11 pm, with all of these annoying logistics finally out of the
+	way for good (until Sunday), we will begin partying in earnest. Bring
+	your CDs (we'll have a stereo), bring your wifebeaters (we'll have 
+	markers), bring yourselves (we'll have food). We'll be in Upper
+	Burton, where we will stay  for the duration of the Hunt.</li>
+      <li>At 11:59, the list is (theoretically) released, and there is no
+	planning what happens after that!</li>
+    </ul>
+    
+    <p><b>Tech Turnip Michael</b> sayeth:</p>
 
     <p>User accounts work now.  Note the login boxes to your right.  If you
       fill out the <a href="<& SELF:base &>survey.mhtml">survey</a>, you can
-      get an account, too.  If you've already gotten your information (in your
-      email, maybe?), try logging in and updating your information (again, on
+      get an account, too.  If you've already gotten your password (in your
+      email, maybe?), please log in and update your information (again, on
       the survey page). 
     </p>
 
     <p>Cooler still, now you can see the info for other users, as well.  Just
-      log in and you'll see how!  No, really.  Try it!
-    </p>
-
-    <p>The ScavHunt 2003 website is up.  Highly recommended reading, if only
-      to learn all about the judges.  <a href="http://scavhunt.uchicago.edu">
-	See it here </a>.
-    </p>
-
-    <p>Email Jess if you want a "Negative Spousal Interaction" shirt purchased
-      for you.  The cost will be a small number of dollars, and you'll get
-      them probably at our Sunday meeting.
-    </p>
-
-    <p>Another reason to bring some money with you to Sunday's meeting: the
-      food fund.  Cate will be passing around a menu and the hat on Sunday to
-      figure out what food you people would like to have in HQ during the
-      Hunt.  Food at SaveALot is cheap, but it ain't free, so be prepared to
-      drop a few bucks if you think having a selection of ready-to-eat
-      mostly-homemade food in HQ would be a good thing.
-    </p>
-
-    <p>It looks like our <i>Prophet Elijah</i> and road trip team have been
-      rounded up.  Details will be forthcoming.  If you're still looking for
-      something to do, ask around on the list, but keep in mind that we're not
-      that big on formal roles.
-    </p>
-
-    <p>From the Sunday meeting:</p>
-    <ol>
-      <li>The T-shirt order is has been placed.  You can see the final design
-	<a href="/tshirt.pdf">here</a> (black will be printed in gray on a
-	maroon background).  Email 
-	<a href="mailto:tbbuckle@cs.uchicago.edu">Ben</a> to sign up to sell
-	them.  Right now, they're saying we'll have them <b>Friday May 8</b>
-	(bummer), which is in the midst of the Hunt.  So, plan to sell shirts
-	afterwards to recoup the money various parties will therefore be
-	pouring into the Roadies and so on.
-      </li>
-      <li>The mailing list is up and running, as
-	<address>potato@listhost.uchicago.edu</address>.  You'll probaby get
-	an email about that when it happens.  If Jess doesn't have your email
-	address, you'll have to subscribe yourself.  Go to 
-	<a href="https://listhost.uchicago.edu/mailman/listinfo/potato"> the
-	  listhost server</a> to do that.
-      </li>
-    </ol>
-
-    <p><b>Tech Turnip Michael</b> sayeth:</p
-
-    <p>The survey is about to undergo major updates, because I'm fixing to
-      bring a new system online that will track team members and the items
-      they are working on.  Watch this space.</p>
+      log in and you'll see how!  No, really.  Try it!</p>
 
     <p>Check out the <a href="tips.mhtml"> Dumpster Dive Tip
 	Hotline </a> now.  Especially those of you with cars, grocery carts,
@@ -87,6 +63,6 @@
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sun May  4 04:38:26 CDT 2003
+Last modified: Tue May  6 00:55:13 CDT 2003
 <!-- hhmts end -->
 </%method>
