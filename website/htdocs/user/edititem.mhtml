@@ -116,13 +116,14 @@
     <h2>Notes for this item</h2>
 
     <form method="GET" action="edititem.mhtml">
+      <input type="hidden" name="item" value="<% $item %>">
       <p>
 	<textarea name="note" cols="50" rows="5"></textarea>
 	<input type="SUBMIT" value="Add new note">
       </p>
     </form>
 
-%foreach my $row (@tips) { $$row{content} =~ s/\n/<br>\n/gm;
+% foreach my $row (@tips) { $$row{content} =~ s/\n/<br>\n/gm;
     <p><span class="tipintro"><% $$row{age} %> ago \
 %   if ( $$row{uid} ) {
 	<% PageCapt::User->new($$row{uid})->name %> said:
