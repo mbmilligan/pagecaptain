@@ -37,6 +37,11 @@ tt {
 	font-weight: hold;
 }
 
+.tipintro {
+	border: thin white solid;
+	color: maroon;
+}
+
 table#contact tr, table#survey tr {
 	border: 1px solid;
 	background-color: maroon;

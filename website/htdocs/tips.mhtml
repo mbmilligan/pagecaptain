@@ -31,8 +31,9 @@
 % if ( $row->{uid} ) {
       <% PageCapt::User->new($row->{uid})->name %> said:
 % } else {
-      the following tip was entered: </span>
+      the following tip was entered: 
 % }
+	</span>
       <br> <% $row->{content} %>
     </p> 
 % }
@@ -55,7 +56,7 @@
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Wed May  7 22:17:32 CDT 2003
+Last modified: Wed May  7 22:25:29 CDT 2003
 <!-- hhmts end -->
 </%method>\
 
