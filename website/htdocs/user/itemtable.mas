@@ -8,7 +8,7 @@
 % foreach my $row (@list) {
 	<tr class="<& cssclass, row=>$row &>">
 	  <td>
-	    <a href="<% 
+	    <a id="num" href="<% 
 	    PageCapt::Web::url('edititem.mhtml', {item=>$row->{number}}) %>">
 	      <% $row->{number} %></a>
 	  </td>
