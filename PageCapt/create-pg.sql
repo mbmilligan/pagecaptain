@@ -5,7 +5,7 @@
 CREATE TABLE Users (
 	uid SERIAL,
 	login varchar(16) NOT NULL UNIQUE,
-	name varchar(32),
+	name text,
 	address text,
 	phone text,
 	email text,
