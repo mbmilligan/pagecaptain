@@ -3,7 +3,8 @@ package PageCapt::DB;
 my %tip_classes = (
 		   dump=>1,
 		   survey=>2,
-		   note=>3
+		   note=>3,
+		   watch=>4
 		  );
 
 my %schema =
@@ -316,6 +317,41 @@ sub new_survey {
     _runcmd($stmt);
   }
 }
+
+=head2 Item Watchlist
+
+Each user may define a list of items in which they have a declared
+interest, which is then available to the front-end to display as desired.
+These are implemented as a class of Tip entries having only a creator and
+a reference field.  
+
+=head3 C<add_watchitem( I<$user>, I<$item> )>
+
+I<$user> shall be the UID of the user, and I<$item> the number of the item,
+to be associated in a watchlist.  This function will attempt to not create 
+duplicate watch entries, but makes no guarantees as to rigorously enforcing
+such a policy.  It is left undefined, for now, whether or not it is an error
+to define a watch for a nonexistent user, or item.
+
+Returns undef on failure, 1 on success.
+
+=head3 C<get_watched_byuser( I<$user> )>
+
+I<$user> a UID as before.  Returns a list in ascending order of item numbers
+watched by that user, or undef on failure.  If the user is watching no items,
+no error occurs, but the list will be empty.
+
+=head3 C<get_watchers_byitem( I<$item> )>
+
+I<$item> an item number as before.  Returns a list in undefined order of UIDs
+corresponding to users watching the item, or undef on failure.  If no user is
+watching the given item, the list will be empty, but no error occurs.
+
+=head3 C<drop_watchitem( I<$user>, I<$item> )>
+
+The parameters are the same as for other watchlist functions; any watchlist
+entry for the given user and item is removed.  Returns 1 on success, undef
+on failure, or 0 if no such watch was defined.
 
 =head2 User Data
 
