@@ -2,7 +2,8 @@ package PageCapt::DB;
 
 my %tip_classes = (
 		   dump=>1,
-		   survey=>2
+		   survey=>2,
+		   note=>3
 		  );
 
 my %schema =
@@ -21,9 +22,11 @@ my %schema =
 
    ADD_TIP_ANON_STMT => "INSERT INTO Tip (class, data) VALUES ('%u','%s')",
    ADD_TIP_WUID_STMT => "INSERT INTO Tip (class, creator, data) VALUES ('%u','%u','%s')",
+   ADD_TIP_FULL_STMT => "INSERT INTO Tip (class, creator, reference, data) VALUES ('%u', '%u', '%u', '%s')",
 
    UPD_TIP_STMT => "UPDATE Tip SET",
    TIP_UID_SET => " creator = '%u'",
+   TIP_UID_NSET=> " creator = NULL ",
    TIP_DAT_SET => " data = '%s'",
    TIP_USE_SET => " used = '%u'",
    TIP_REF_SET => " reference = '%u'",
@@ -604,6 +607,29 @@ sub load_list {
 		    score  => $row->[5] };
   }
   return @return;
+}
+
+=head2 Notes Functions
+
+Notes are very similar to dumpster tips, except that they have an associated
+item in the database as well as a (optional) user.  The structure returned
+will be identical, in fact, to that returned by C<get_dumptips()>.  Since one
+only requests notes for a particular item at a time, there is no need to
+specify it in the returned object.
+
+=head3 C<get_item_notes( I<$item> )>
+
+Fetch the notes associated with a particular item.  The behavior and returned
+list is otherwise identical to that of C<get_dumptips()>, except that we do
+not specify an age cutoff.  I<$item> is just an item number.  It must exist.
+
+=cut
+
+sub get_item_notes {
+  my $item = _clean_num(shift) || return undef;
+  my $stmt = $schema{GET_TIP_STMT};
+  $stmt .= sprintf( $schema{TIP_CLASS_COND}, $tip_classes{note} );
+  
 }
 
 =head2 Internal Functions
