@@ -272,6 +272,7 @@ sub new_survey {
   my %old = load_survey_user( $user );
   foreach my $field (keys %new) {
     my $dbfield = _clean_word(lc($field));
+    next unless $dbfield;
     my $data = $dbfield . ":" . _clean($new{$field});
     if ($old{$dbfield}) {
       my @sets;
