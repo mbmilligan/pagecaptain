@@ -1,80 +1,82 @@
-    <h3>Welcome to the fledgling web home of the glorious</h3>
-    <h1>Deleuzean Potato</h1>
-    <h2>Or: Lush Puppies Mk. III:
-      The F.I.S.T. Deux:
-      Deleuzean Potato
-    </h2>
+    <div id="header">
+      <p>Welcome to the fledgling web home of the glorious</p>
+      <h1>Deleuzean Potato</h1>
+      <h2>Or: Lush Puppies Mk. III:
+	The F.I.S.T. Deux:
+	Deleuzean Potato
+      </h2>
+    </div>
 
-    <p>If you haven't already done so, <a href="survey.mhtml">go take the
-	survey</a>!!!</p>
+      <p>If you haven't already done so, <a href="survey.mhtml">go take the
+	  survey</a>!!!</p>
 
-    <p><b>Tech Turnip Michael</b> sayeth:</p>
+      <p><b>Tech Turnip Michael</b> sayeth:</p>
 
-    <p><b>NEW!</b> Check out the <a href="tips.mhtml"> Dumpster Dive Tip
-	Hotline </a> now.  Especially those of you with cars, grocery carts,
-      and other means of carting away street treasure.
-    </p>
+      <p><b>NEW!</b> Check out the <a href="tips.mhtml"> Dumpster Dive Tip
+	  Hotline </a> now.  Especially those of you with cars, grocery carts,
+	and other means of carting away street treasure.
+      </p>
 
-    <p>We had a meeting Sunday, and we therefore have some actual
-      useful information for this site. </p>
-    <ol>
-      <li>We're going to sell T-shirts for spare moolah.  Complain all
-	you want about fundraising, but I think we owe it to the road-trippers
-	to feed them.  Maybe we can take a vote resolving to spend none of the
-	money raised at Home Depot.  The shirt is "The Top Five Things to Say
-	When You Drop 'Critique of Pure Reason' into a Puddle"; email 
-	<a href="mailto:dclinton@uchicago.edu">Dan</a> to suggest answers to
-	this proposition.</li>
-      <li>We will be trying to sell these shirts 5th week.  Therefore
-	try to have some free time to man a table or something then.  Email 
-	<a href="mailto:tbbuckle@cs.uchicago.edu">Ben</a> to sign up.
-      </li>
-      <li>We also need to put together a road trip team.  To my knowledge,
-	there are two slots still open at this time.  Ben says he'll collect
-	names of people interested, so email him about that, too.</li>
-    </ol>
+      <p>We had a meeting Sunday, and we therefore have some actual
+	useful information for this site. </p>
+      <ol>
+	<li>We're going to sell T-shirts for spare moolah.  Complain all
+	  you want about fundraising, but I think we owe it to the road-trippers
+	  to feed them.  Maybe we can take a vote resolving to spend none of the
+	  money raised at Home Depot.  The shirt is "The Top Five Things to Say
+	  When You Drop 'Critique of Pure Reason' into a Puddle"; email 
+	  <a href="mailto:dclinton@uchicago.edu">Dan</a> to suggest answers to
+	  this proposition.</li>
+	<li>We will be trying to sell these shirts 5th week.  Therefore
+	  try to have some free time to man a table or something then.  Email 
+	  <a href="mailto:tbbuckle@cs.uchicago.edu">Ben</a> to sign up.
+	</li>
+	<li>We also need to put together a road trip team.  To my knowledge,
+	  there are two slots still open at this time.  Ben says he'll collect
+	  names of people interested, so email him about that, too.</li>
+      </ol>
 
-    <p>If there's anything else that should go on this site, please
-      email it to me and I'll try and get it posted ASAP.  
-    </p>
+      <p>If there's anything else that should go on this site, please
+	email it to me and I'll try and get it posted ASAP.  
+      </p>
 
-    <p>
-      Since I'm seeing the question come up from time to time in the survey
-      responses, here's the deal with the <b>"Beta Tester"</b> option.  The
-      website is going to be rapidly developing over the next week or so as I
-      get pieces of the database system working well enough to activate them
-      on the site.  Once that starts happening, I need a few people who will
-      regularly poke around in the site to report things that (most
-      importantly) are broken, or (also nice) could work better or be more
-      useful.  This is easier if you have used the database before, but it
-      isn't necessary.  Since the goal is for everyone to be able to use the
-      database by the time the Hunt starts, computer expertise is
-      <i>absolutely not</i> a requirement.
-    </p>
+      <p>
+	Since I'm seeing the question come up from time to time in the survey
+	responses, here's the deal with the <b>"Beta Tester"</b> option.  The
+	website is going to be rapidly developing over the next week or so as
+	I get pieces of the database system working well enough to activate
+	them on the site.  Once that starts happening, I need a few people who
+	will regularly poke around in the site to report things that (most
+	importantly) are broken, or (also nice) could work better or be more
+	useful.  This is easier if you have used the database before, but it
+	isn't necessary.  Since the goal is for everyone to be able to use the
+	database by the time the Hunt starts, computer expertise is
+	<i>absolutely not</i> a requirement.
+      </p>
 
-    <p>
-      To those of you complaining that the site is ugly: 
-    <ol>
-      <li>I'm writing code, and I have bad taste in colors anyway.  Check out
-	<a href="http://neutrino.webhop.org">some of my prettier work</a> to
-	see for yourself.</li> 
-      <li>Don't despair.  Sam (a.k.a. <em>His Majesty, Lord Sam Perkins-Harbin
-	  of the Elite Scavenging Squad</em>) has offered his elite web design
-	skills to beautify the site.  I'll get his changes online soon, but
-	the Dumpstering Tips system had priority.</li>
-    </ol>
-  </p>
+      <p>
+	To those of you complaining that the site is ugly: 
+      </p>
+      <ol>
+	<li>I'm writing code, and I have bad taste in colors anyway.  Check out
+	  <a href="http://neutrino.webhop.org">some of my prettier work</a> to
+	  see for yourself.</li> 
+	<li>Don't despair.  Sam (a.k.a. <em>His Majesty, Lord Sam Perkins-Harbin
+	    of the Elite Scavenging Squad</em>) has offered his elite web design
+	  skills to beautify the site.  I'll get his changes online soon, but
+	  the Dumpstering Tips system had priority.</li>
+      </ol>
+      
+      <p>
+	That's all for now; I'm going back to real work.
+	<br> <span style="margin-left: 1in">...Michael</span>
+      </p>
 
-    <p>
-      That's all for now; I'm going back to real work.
-      <br> <span style="margin-left: 1in">...Michael</span>
-    </p>
- 
 <%method title>
 <& PARENT:title &> HQ
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Mon Apr 21 18:21:53 CDT 2003
+Last modified: Tue Apr 22 14:56:01 CDT 2003
 <!-- hhmts end -->
 </%method>

@@ -1,0 +1,54 @@
+#header {
+	text-align: center;
+}
+
+#header p {
+	font-size: smaller;
+}
+
+#body {
+	margin-right: 10em;
+	padding: 3%;
+}
+
+#nav {
+	width: 10em;
+	float: right;
+	position: fixed;
+	right: 0;
+}
+
+#nav p.title {
+	text-align: center;
+	font-weight: bold;
+	font-style: italic;
+}
+
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #FFFFFF;
+	background-color: #000000;
+}
+a:link {
+	color: #FF0000;
+	text-decoration: none;
+}
+a:visited {
+	color: #990000;
+	text-decoration: none;
+}
+a:hover {
+	color: #00FF00;
+	text-decoration: underline;
+}
+a:active {
+	color: #0000FF;
+	text-decoration: none;
+}
+h1 {
+	color: #CCCCCC;
+
+}
+h2 {
+	color: #666666;
+}

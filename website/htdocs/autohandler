@@ -5,14 +5,19 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html">
     <title><& SELF:title, %ARGS &></title>
+    <link href="fist.css" rel="stylesheet" type="text/css">
   </head>
   <body>
+    <div id="nav">
+      <& nav.mas &>
+    </div>
+    <div id="body">
 % $m->call_next;
-    
+    </div>
     <hr>
-    <p><a href="/index.mhtml"> Return Home </a>
     <address>
-      <a href="mailto:mbmillig at uchicago dot edu">Michael Milligan</a>
+      <a href="mailto:mbmillig at uchicago dot edu">Michael Milligan</a><br>
+      <a href="mailto:sperkins@nmu.edu">Sam Perkins-Harbin</a> (1337 page redux designer)
     </address>
     <p><& SELF:time_stamp &></p>
   </body>
@@ -26,7 +31,7 @@ use PageCapt::DB;
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Wed Apr 16 13:44:56 CDT 2003
+Last modified: Tue Apr 22 15:07:00 CDT 2003
 <!-- hhmts end -->
 </%method>
 
@@ -34,3 +39,6 @@ Last modified: Wed Apr 16 13:44:56 CDT 2003
 FIST: Deleuzean Potato
 </%method>
 
+<%flags>
+inherit => undef
+</%flags>
