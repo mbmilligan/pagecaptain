@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PATH=/bin:/usr/bin
-INSTALL_LOC=/usr/local/share/perl/5.6.1/
+INSTALL_LOC=/home/mmilligan/perl5/
 
 if [ ! -d $INSTALL_LOC ]
     then echo Bad install location: $INSTALL_LOC
@@ -14,11 +14,11 @@ pushd $INSTALL_LOC
 
 perl -i -p -e \
   's{dbname=scavhunt user=user password=password}
-    {dbname=scavhunt user=milligan};
+    {dbname=scavhunt user=webserver password=foobar host=ruby};
    s{(secret = ")foo}{$1nalk827};' PageCapt.pm
 
 popd
 
-touch /usr/local/lib/cgi-bin/mason_handler.pl
+touch /home/mmilligan/public_html/cgi/mason_handler.pl
 
 exit 0
