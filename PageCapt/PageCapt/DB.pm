@@ -18,6 +18,7 @@ my %schema =
    TIP_REF_COND    => " AND reference = '%u'",
    TIP_TIME_COND   => " AND time = '%s'",
    GET_TIP_SUFX	   => " ORDER BY time DESC",
+   TIP_REF_ORD     => " ORDER by reference ASC",
 
    SRVY_FIELD_COND => " AND substring( data FROM '1' FOR position(':' IN data)-1 ) ILIKE '%s'",
 
@@ -31,6 +32,8 @@ my %schema =
    TIP_DAT_SET => " data = '%s'",
    TIP_USE_SET => " used = '%u'",
    TIP_REF_SET => " reference = '%u'",
+
+   DEL_TIP_STMT => "DELETE FROM Tip",
 
    GET_USER_STMT  => "SELECT uid, login, name, address, phone, email, contact, password from Users",
    USER_UID_COND  => " WHERE uid = '%u'",
@@ -173,8 +176,8 @@ sub get_dumptips {
 
 Identical to C<get_dumptips()> in return value.  If I<$user> is supplied, only
 tips created by that user will be returned.  I<$user> can be a UID or a
-PageCapt::User object (this is not implemented yet).  Specify I<$date> = 0 to
-get all tips, regardless of creation time.
+PageCapt::User object (this only works if PageCapt::User is loaded, of course).
+Specify I<$date> = 0 to get all tips, regardless of creation time.
 
 =cut
 
@@ -320,20 +323,36 @@ sub new_survey {
 
 =head2 Item Watchlist
 
-Each user may define a list of items in which they have a declared
-interest, which is then available to the front-end to display as desired.
-These are implemented as a class of Tip entries having only a creator and
-a reference field.  
+Each user may define a list of items in which they have a declared interest,
+which is then available to the front-end to display as desired.  These are
+implemented as a class of Tip entries having only a creator and a reference
+field.  Note that, while these functions will generally accept a
+PageCapt::User object in place of a UID, they make no attempt to enforce
+policy; it is the responsibility of the calling code to ensure that the
+operation is permitted.
 
 =head3 C<add_watchitem( I<$user>, I<$item> )>
 
-I<$user> shall be the UID of the user, and I<$item> the number of the item,
-to be associated in a watchlist.  This function will attempt to not create 
-duplicate watch entries, but makes no guarantees as to rigorously enforcing
-such a policy.  It is left undefined, for now, whether or not it is an error
-to define a watch for a nonexistent user, or item.
+I<$user> shall be the UID of the user (or a PageCapt::User object), and
+I<$item> the number of the item, to be associated in a watchlist.  This
+function will attempt to not create duplicate watch entries, but makes no
+guarantees as to rigorously enforcing such a policy.  It is left undefined,
+for now, whether or not it is an error to define a watch for a nonexistent
+user, or item.
 
-Returns undef on failure, 1 on success.
+Returns undef on failure, >0 on success.
+
+=cut
+
+sub add_watchitem {
+  my $u;
+  my $user = _clean_num( ref ($u = shift) ? $u->uid : $u ) || return undef;
+  my $item = _clean_num(shift) || return undef;
+  my $stmt = sprintf( $schema{ADD_TIP_FULL_STMT}, $tip_classes{watch},
+		      $user, $item, "" );
+  init();
+  return _runcmd($stmt);
+}
 
 =head3 C<get_watched_byuser( I<$user> )>
 
@@ -341,17 +360,64 @@ I<$user> a UID as before.  Returns a list in ascending order of item numbers
 watched by that user, or undef on failure.  If the user is watching no items,
 no error occurs, but the list will be empty.
 
+=cut
+
+sub get_watched_byuser {
+  my $u;
+  my $user = _clean_num( ref ($u = shift) ? $u->uid : $u ) || return undef;
+  my $stmt = $schema{GET_TIP_STMT} . 
+    sprintf( $schema{TIP_CLASS_COND}, $tip_classes{watch} ) .
+    sprintf( $schema{TIP_UID_COND}, $user ) .
+    $schema{TIP_REF_ORD};
+
+  init();
+  my @data = _runq($stmt);
+  my @items;
+  foreach $row (@data) { push @items, $row->[5]; }
+  return @items;
+}
+
 =head3 C<get_watchers_byitem( I<$item> )>
 
 I<$item> an item number as before.  Returns a list in undefined order of UIDs
 corresponding to users watching the item, or undef on failure.  If no user is
 watching the given item, the list will be empty, but no error occurs.
 
+=cut
+
+sub get_watchers_byitem {
+  my $item = _clean_num(shift) || undef;
+  my $stmt = $schema{GET_TIP_STMT} .
+    sprintf( $schema{TIP_CLASS_COND}, $tip_classes{watch} ) .
+    sprintf( $schema{TIP_REF_COND}, $item );
+  
+  init();
+  my @data = _runq($stmt);
+  my @watchers;
+  foreach $row (@data) { push @watchers, $row->[3]; }
+  return @watchers;
+}
+
 =head3 C<drop_watchitem( I<$user>, I<$item> )>
 
 The parameters are the same as for other watchlist functions; any watchlist
-entry for the given user and item is removed.  Returns 1 on success, undef
+entry for the given user and item is removed.  Returns >0 on success, undef
 on failure, or 0 if no such watch was defined.
+
+=cut
+
+sub drop_watchitem {
+  my $u;
+  my $user = _clean_num( ref ($u = shift) ? $u->uid : $u ) || return undef;
+  my $item = _clean_num(shift) || return undef;
+  my $stmt = $schema{DEL_TIP_STMT} .
+    sprintf( $schema{TIP_CLASS_COND}, $tip_classes{watch} ) .
+    sprintf( $schema{TIP_UID_COND}, $user ) .
+    sprintf( $schema{TIP_REF_COND}, $item );
+
+  init();
+  return _runcmd($stmt);
+}
 
 =head2 User Data
 
