@@ -23,6 +23,7 @@ components, not here.
 
 use PageCapt::User;
 use Digest::SHA1;
+use URI;
 use CGI;
 
 @ISA = qw(PageCapt);
@@ -69,6 +70,27 @@ sub extract_cookie {
   $user->assert_validity;
   return $user if $hash eq $cookie->{mac};
   return undef;
+}
+
+=head2 Other Functions
+
+=head3 C<url( I<$path> [, I<$query> [, ...] ] )>
+
+Construct a URL.  For now, we only handle relative URLs, but this
+could change.  The currently supported parameters are I<$path>, the
+(optionally relative) path to the desired resource, and I<$query>, a
+hash-ref containing the desired keyword-value pairs for any query.
+
+=cut
+
+sub url {
+  my $path = shift || return undef;
+  my %query = %{shift};
+
+  my $url = new URI;
+  $url->path($path);
+  $url->query_form(%query) if %query;
+  return $url->canonical;
 }
 
 =head2 Internal Routines
