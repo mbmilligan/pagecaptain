@@ -1,0 +1,9 @@
+% if ( $User->isvalid ) { $m->call_next; }
+% else {
+    <p><b>Error:</b><br>
+      You cannot access this component or resource unless you are logged in.
+      Please log in and try again.  If you do not have a login name, go to the
+      <a href="<& SELF:base &>survey.mhtml">survey</a> and one will be created
+      for you.
+    </p>
+% }
