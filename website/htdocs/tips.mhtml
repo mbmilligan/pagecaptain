@@ -27,7 +27,7 @@
       have been entered:</p>
 
 % foreach my $row (@tips) { $row->{content} =~ s/\n/<br>\n/gm;
-    <p>On <% scalar gmtime($row->{epoch}) %> the following tip was entered:
+    <p><% $row->{age} %> ago the following tip was entered:
       <br> <% $row->{content} %>
     </p> 
 % }
@@ -50,7 +50,7 @@
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Wed Apr 23 17:43:25 CDT 2003
+Last modified: Fri Apr 25 14:13:53 CDT 2003
 <!-- hhmts end -->
 </%method>\
 
