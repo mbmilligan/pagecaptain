@@ -164,6 +164,100 @@ sub add_dumptip {
   return;
 }
 
+=head2 User Data
+
+=head3 C<load_user_data( I<$user>, [ C<{'uid'|'nick'}> ])>
+
+Returns a structure containing the database record for the user specified by
+I<$user>.  If the second parameter is C<'uid'>, this should be the UID number
+for the user (this is the default), and if C<'nick'>, it should be the login
+name.  Any other value is an error.
+
+Note that in the following structure, the uid field corresponds to a primary
+key of the database.  Therefore, simply checking that the uid field is defined
+will establish whether or not the requested user record exists.
+
+This function returns a hash-ref (both uid and login name should always be
+unique) with the following structure:
+
+  uid	 => numeric UID
+  nick	 => login name
+  name	 => full name
+  addr	 => contact info: address
+  phone	 => contact info: phone number
+  email	 => contact info: email address
+  other	 => contact info: other information
+  pass	 => the password, doofus
+
+Probably better if front-end code calls wrapper functions instead of calling
+this directly.
+
+=cut
+
+sub load_user_data {
+  my $user = shift;
+  my $which = shift || 'uid';
+
+  my $sql = $schema{GET_USER_STMT};
+  if    ( $which eq 'nick' ) {
+    $sql .= sprintf( $schema{USER_NICK_COND}, _clean($user) ); }
+  elsif ( $which eq 'uid' ) {
+    $sql .= sprintf( $schema{USER_UID_COND}, _clean_num($user) ); }
+  else { return undef; }
+
+  my ( $row ) = _runq( $sql );
+  return
+    { uid => $row->[0],
+      nick => $row->[1],
+      name => $row->[2],
+      addr => $row->[3],
+      phone => $row->[4],
+      email => $row->[5],
+      other => $row->[6],
+      pass => $row->[7]
+    };
+}
+
+=head3 C<get_user_by_uid( I<$user> )>
+
+A wrapper function, equivalent to C<get_user_data( $user, 'uid' )>.
+
+=cut
+
+sub get_user_by_uid {
+  my $uid = shift;
+  return get_user_data( $uid, 'uid' );
+}
+
+=head3 C<get_user_by_login( I<$login> )>
+
+A wrapper function, equivalent to C<get_user_data( $user, 'nick' )>.
+
+=cut
+
+sub get_user_by_login {
+  my $login = shift;
+  return get_user_data( $login, 'nick' );
+}
+
+=head3 C<new_user( I<$login> )
+
+Insert a new user record into the database with the login name I<$login>.  As
+the database is currently constructed, this should be no longer than 16
+characters.  As a matter of policy, this should be a whitespace-free string of
+alphanumeric characters, which will be checked in a case-insensitive manner.
+
+Returns the UID number of the newly created user.  This record can then be
+filled in with the corresponding data.  C<undef> is returned on error; as a
+special case, the number 0 is returned if the insertion fails because the name
+is taken already.
+
+=cut
+
+sub new_user {
+  my $login = shift || return undef;
+}
+
 =head2 Internal Functions
 
 =head3 C<_runq( I<$sql> )>
