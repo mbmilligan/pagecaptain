@@ -5,11 +5,11 @@ $arg = shift;
 $connstr = shift || "dbname=scavhunt";
 $conn = Pg::connectdb($connstr);
 $error = $conn->errorMessage;
-print $error, "\n" if $error;
+print "Connection Error: $error \n" if $error;
 $q="select * from list where inum ~ \'$arg\'";
 $res =$conn->exec($q);
 $error = $conn->errorMessage;
-print $error, "\n" if $error;
+print "Query Error: $error \n" if $error;
 
 $n = $res->ntuples; print $n,"\n";
 
