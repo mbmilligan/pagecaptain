@@ -67,6 +67,21 @@ sub blank {
 
 =head2 Accessors
 
+=head3 C<uid( [I<$uid>] )>
+
+Return the UID for this object, if set.  With an argument, set the UID
+instead.
+
+=cut
+
+sub uid {
+  my $self = shift;
+  my $uid = shift;
+
+  $self->{uid} = $uid if defined $uid;
+  return $self->{uid};
+}
+
 =head2 Privilege
 
 =head3 C<assert_validity()>
@@ -80,5 +95,19 @@ full permission to modify the User table entry for this User in the database.
 
 sub assert_validity {
   my $self = shift;
-  $self->{ valid => 1 };
+  $self->{valid} = 1;
+}
+
+
+=head3 C<isvalid()>
+
+Return the validity status for this instance.  1 if valid, 0 for known
+invalid, and undef for an instance for which no validity checking has
+yet been done.
+
+=cut
+
+sub isvalid {
+  my $self = shift;
+  return $self->{valid};
 }
