@@ -17,7 +17,7 @@
 % if ( $data->{owner} ) { 
 <a href="<% PageCapt::Web::url('userinfo.mhtml', {uid=>$data->{owner}}) %>">
 <% PageCapt::User->new($data->{owner})->name %></a>\
-%   if ( $data->{owner} == $User->uid ) {
+%   if ( $data->{owner} == $User->uid || $User->login eq "mbmillig") {
 	    <& formhead, data=>$data &>
 	      <input type="hidden" name="owner" value="none">
 	      <input type="SUBMIT" value="Renounce Item!">
