@@ -72,6 +72,11 @@ my %fields =
   );
 
 my %survey = PageCapt::DB::load_survey_user( $uid );
+foreach (keys %survey) {
+  $survey{$_}{content} =~ s/</&lt;/g;
+  $survey{$_}{content} =~ s/>/&gt;/g;
+  $survey{$_}{content} =~ s/\n/<br>/g;
+}
 
 </%init>
 
