@@ -54,8 +54,23 @@ $template = "query.html";
 $magic_tag = "<QUERY>";
 $debug = 0;
 
-# Anyone can view user information; they only get the editing interface
-# if they have a cookie for the requested UID
+=head1 IMPLEMENTATION
+
+=head2 Main Body
+
+Anyone can view user information; they only get the editing interface
+if they have a cookie for the requested UID.
+
+Begin by recording the value of the I<uid> parameter and the
+I<ScavAuth> cookie.  If I<uid> is not defined, set it to the value
+from the cookie.  Set the authority flag if the I<uid> parameter and
+the cookie agree.
+
+Notice that we use the I<uid> value from here on out -- it overrides
+the cookie.  The exception is that the cookie is used by the row
+generator to select controls.
+
+=cut
 
 $auth = 0;
 
@@ -66,10 +81,23 @@ $owner = $uid unless $owner;
 if ( $uid == $owner )
   { $auth = 1; }
 
-# Notice that we use $owner from here on out -- it overrides the cookie.
-# Not actually true -- $uid is used by the row generator
+=pod
 
-# Get a connection to the database with permission to get users
+Get a connection to the database using a username with permission to
+read the users table.  This information is hardcoded in the script.
+
+If I<uid> is undefined (not specified and not logged in) abort by
+calling C<ReLogin()> with an informational message.
+
+Otherwise, continue by opening the template file (hardcoded as
+F<query.html>) and print it to the client, printing the output of
+C<user_page()> when a line containing the "magic string" is
+encountered. 
+
+Exit when done.
+
+=cut
+
 $conn = Pg::connectdb("dbname=scavlist user=postgres password=timelord");
 
 # Output HTML
@@ -86,19 +114,43 @@ while (<HTML>) {
 
 exit;
 
-# The following all assume $owner is non-null, since we should have 
-#   already checked for that condition and done ReLogin.
+=head2 C<user_page( I<$uid>, I<$user>, I<$connection> )>
 
-# Generate the user's page
+=over 4
+
+=Synopsis
+
+Generate a user information page and return the HTML in a string.
+This page will contain the outputs of C<user_info()>, C<user_items()>,
+and if authorized, C<user_edit()>, in that order; these functions
+produce elements of the page as their names suggest.
+
+As a special case, C<I<$uid> = 'nobody'> gives a list of un-claimed
+items.
+
+=Arguments
+
+I<$uid> is the numeric UID of the user whose page is to be generated,
+or the string "nobody".
+
+I<$user> is the numeric UID of the logged-in user making the request.
+
+I<$connection> is a C<Pg> object corresponding to an open database
+connection. 
+
+=back
+
+This function assumes I<$uid> is non-null, since we should have
+already checked for that condition and done C<ReLogin()>.
+
+=cut
+
 sub user_page {
 
   my $owner = shift;
   my $uid = shift;
   my $conn = shift;
   my $output;
-
-  # As a special case, $owner = 'nobody' gives a list of un-claimed
-  # items. 
 
   $output .= user_info( $owner, $conn ) unless $owner == 'nobody';
   $output .= "\n<HR>\n";
@@ -109,11 +161,36 @@ sub user_page {
   return $output;
 }
 
-# Get and display as HTML information for given user
+=head2 C<user_info( I<$uid>, I<$connection> )>
+
+=over 4
+
+=item Synopsis
+
+Get and return as HTML information for given user.
+
+=item Arguments
+
+I<$uid> is the UID of the user whose information is to be retrieved.
+
+I<$connection> is an open C<Pg> connection object.
+
+=back
+
+=cut
+
 sub user_info {
 
   my $owner = shift;
   my $conn = shift; 
+
+=pod
+
+C<select nick, name, address, phone, email, contact from users where
+owner = I<$uid>> Assume we only get one row back, and save it.  If no
+row is returned, return a "no such user" string instead of a table.
+
+=cut
 
   my $result = $conn->exec("select nick, name, address, phone, email, contact from users where owner = $owner");
   my @user = $result->fetchrow;
@@ -123,6 +200,14 @@ sub user_info {
   unless ( @user ) {
     $html = "<H3>No user has UID $owner</H3>"; 
     return $html; }
+
+=pod
+
+Write an HTML table into the output buffer, and return it.
+
+  Login | Name | Address | Phone # | E-mail | Other
+
+=cut
 
   $output = <<EOF;
 <Table Border="1" align="center">
@@ -148,8 +233,35 @@ EOF
   return $output;
 }
 
-# Get and display as HTML this user's claimed items
-# Closely adapted from gentable in getquery.pl
+=head2 C<user_items( I<$uid>, I<$connection>, I<$auth>, I<$user> )>
+
+=over 4
+
+=item Synopsis
+
+Get and return as an HTML table the items claimed by a user.  This
+function is closely adapted from C<gentable()> (see
+L<getquery.pl/"C<gentable()>">), and has essentially the same
+implementation, except that it searches on the I<owner> field.
+
+Follows the same "nobody" convention as L<"user_page()">.
+
+=item Arguments
+
+I<$uid> is the UID of the user whose items should be reported, or the
+string, "nobody", to retrieve a list of unclaimed items.
+
+I<$connection> is an open C<Pg> database connection.
+
+I<$auth> is the authority flag, indicating that the user is requesting
+his/her own page.
+
+I<$user> is the UID of the user invoking this request.
+
+=back
+
+=cut
+
 sub user_items {
 
   my $owner = shift;
@@ -157,6 +269,24 @@ sub user_items {
   my $auth = shift;
   my $uid = shift;
   my $output;
+
+=pod
+
+Select everything from list by owner, or C<owner is null> if I<$uid>
+is "nobody".  On error, append informational messages to the output
+buffer.  If no rows are returned, return a message "This user is
+responsible for no items" as HTML.
+
+Append the output of C<color_code()> to the output.  Append table
+headers conforming to:
+
+  <TH>Index<TH>Points<TH>Category<TH>Item<TH>Scoring<TH>Notes</TH>
+
+Loop over the returned rows, appending the output of
+C<gen_query_row()>.  Finally, append a table closing tag and return
+the output buffer.
+
+=cut
 
   my $query = "select * from list where owner = $owner order by index";
   $query = "select * from list where owner is null order by index" 
@@ -195,7 +325,25 @@ EOF
   return $output;
 }
 
-# Provide a form to edit user information, if authoritized to do so.
+=head2 C<user_edit( I<$uid>, I<$connection> )>
+
+=over 4
+
+=item Synopsis
+
+Return HTML code for a form to edit user information.
+
+=item Arguments
+
+I<$uid> is the user whose information should be modified by the HTML
+controls.
+
+I<$connection> is an open C<Pg> database connection.
+
+=back
+
+=cut
+
 sub user_edit {
 
   my $owner = shift;
@@ -211,6 +359,23 @@ sub user_edit {
     my $u_email,
     my $u_contact,
     my $u_password ) = $result->fetchrow;
+
+=pod
+
+Fetch all information for this user from the database.  Start the
+output buffer with an informational header.
+
+If the I<nick> field is the same as the UID, generate an input field
+for a new I<nick>.  Otherwise generate a hidden field containing the
+current login ID.
+
+Append to the buffer a form invoking L<AddUser.pl>, with the "nick"
+control described above, and inputs to accept new values for the
+I<name>, I<address>, I<phone>, I<email>, I<contact>, and I<password>
+fields.  SUBMIT and RESET buttons are emitted, and finally a hidden
+field setting the I<edit> CGI parameter.  Return this buffer.
+
+=cut
 
   my $output = <<EOF;
 <P><B>Below, you can edit your user information if desired. In particular, 
@@ -248,7 +413,26 @@ EOF
   return $output;
 }
 
-# Print a color code (requires tables.pl)
+=head2 C<color_code()>
+
+=over 4
+
+=item Synopsis
+
+Return a color code as an HTML table (requires tables.pl), describing
+the correspondance between row color and item status in item data
+tables.  Identical to the function described at
+L<genquery.pl/"C<color_code()>">, except that it returns, instead of
+prints to the client, its output.
+
+=item Arguments
+
+None.
+
+=back
+
+=cut
+
 sub color_code {
   my $output;
 
@@ -263,8 +447,30 @@ sub color_code {
   return $output;
 }
 
-# Return an HTML table row for our query
-# gen_query_row( $result );
+=head2 C<gen_query_row( I<$result>, I<$auth>, I<$uid> )>
+
+=over 4
+
+=item Synopsis
+
+Return an HTML table row for an item in the list.  Derived from the
+function described at L<gentable.pl/"C<gen_query_row()>">, with
+customizations to the output making it more appropriate for a user
+information page.  Mostly, less information is displayed.
+
+=item Arguments
+
+I<$result> is a C<Pg> query result object for this item.
+
+I<$auth> is the authority flag, indicating that the user is requesting
+his/her own information page.
+
+I<$uid> is the UID of the requesting user.
+
+=back
+
+=cut
+
 sub gen_query_row {
 
   my $result = shift;
@@ -350,7 +556,25 @@ EOF
   return $form_choice;
 }
 
-# This does not return.
+=head2 C<ReLogin( I<$message> )>
+
+=over 4
+
+=item Synopsis
+
+Open the template file F<relogin.html> and replace lines containing
+the magic string, C<E<lt>RELOGINE<gt>>, with the supplied message.
+
+Does not return.  On EOF, exit with code 0.
+
+=item Arguments
+
+I<$message> is the string to be output in the template.
+
+=back
+
+=cut
+
 sub ReLogin {
 
   my $magic_tag = "<RELOGIN>";

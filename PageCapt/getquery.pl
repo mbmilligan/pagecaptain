@@ -385,9 +385,9 @@ Retrieve a row of the result table, corresponding to one item.
 
 =pod
 
-If one exists, look up the item's owner (nick, name) in the DB (creating 
-a new connection).  Create a link to C<User.pl?uid=I<$uid>> with the name
-as link text.
+If one exists, look up the owner of this item (nick, name) in the DB
+(creating a new connection).  Create a link to C<User.pl?uid=I<$uid>>
+with the name as link text.
 
 =cut
 
