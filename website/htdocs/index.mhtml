@@ -3,7 +3,7 @@
 <h2>Welcome Back</h2>
 </div>
 
-<p>I think we'll use the <a href="<& SELF:base &>wiki.mhtml">"Wiki</a> for
+<p>I think we'll use the <a href="<& SELF:base &>wiki.mhtml">Wiki</a> for
     posting news and stuff, but this here is the Database.  Right now it has the
     Virginia Hunt list loaded.
 </p>
