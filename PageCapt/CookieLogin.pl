@@ -81,6 +81,8 @@ I<$user> is the desired user ID.
 
 I<$pass> is the corresponding password.
 
+=back
+
 =cut
 
 sub cookie_login {

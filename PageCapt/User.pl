@@ -1,6 +1,49 @@
 #!/usr/bin/perl
 
-# View/Edit information for users on the system
+=head1 NAME
+
+User.pl - a CGI program in the ScavCode PageCaptain App
+
+=head1 DESCRIPTION
+
+This CGI program generates an HTML interface providing the ability to view and
+edit information for users on the system, customized to the user calling the
+program.  It is called directly from the F<search.html> form, and provides a
+control in the F<relogin.html> template.  L<AddUser.pl> may redirect the
+client to this script, and L<Admin.pl> and L<getquery.pl> both emit HTML
+controls linking to this script.
+
+Upon execution, the F<query.html> template will be printed to the client, with
+returned data and HTML controls replacing the string, C<E<lt>QUERYE<gt>>.  In
+case of a fatal error condition, C<ReLogin> will be called instead, which
+returns the F<relogin.html> template and replaces the string
+C<E<lt>RELOGINE<gt>> with an informational message.
+
+This program uses C<CGI> and C<Pg>.
+
+This program loads F<tables.pl>.
+
+=head2 CGI Parameters
+
+=over 4
+
+=item I<uid>
+
+The UID number of the user whose information is being requested.  The controls
+available on the resulting page will depend upon the user performing the
+request.  If not provided, the information page for the requesting user will
+be retrieved by default.
+
+=back
+
+This program establishes the identity of the requesting user by checking the
+I<ScavAuth> cookie.  Since this program may only be used by logged-in users,
+the absence of this cookie is a fatal error.
+
+If the requesting user is different from the user whose information is
+requested, no editing controls will be provided.
+
+=cut
 
 use CGI qw/:standard/;
 use Pg;
