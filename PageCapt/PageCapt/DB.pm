@@ -23,7 +23,18 @@ my %schema =
 
    GET_USER_STMT  => "SELECT uid, login, name, address, phone, email, contact, password from Users",
    USER_UID_COND  => " WHERE uid = '%u'",
-   USER_NICK_COND => " WHERE login = '%s'"
+   USER_NICK_COND => " WHERE login = '%s'",
+
+   ADD_USER_STMT => "INSERT INTO Users ( login ) VALUES ( '%s' )",
+   UPD_USER_STMT => "UPDATE Users SET",
+   USER_NICK_SET => " login = '%s'",
+   USER_NAME_SET => " name = '%s'",
+   USER_ADDR_SET => " address = '%s'",
+   USER_PHON_SET => " phone = '%s'",
+   USER_MAIL_SET => " email = '%s'",
+   USER_OTHR_SET => " contact = '%s'",
+   USER_PASS_SET => " password = '%s'",
+   SET_DELIM     => ", "
   );
 
 =head1 NAME
@@ -170,6 +181,11 @@ sub add_dumptip {
 
 =head2 User Data
 
+These routines know nothing about authentication or the current request, since
+this module does not even import the PageCapt::User class.  Therefore you
+should really avoid calling these routines directly from front-end code, as
+invoking the appropriate User methods will be more likely to do what you want.
+
 =head3 C<load_user_data( I<$user>, [ C<{'uid'|'nick'}> ])>
 
 Returns a structure containing the database record for the user specified by
@@ -199,7 +215,7 @@ this directly.
 =cut
 
 sub load_user_data {
-  my $user = shift;
+  my $user = lc(shift);
   my $which = shift || 'uid';
 
   my $sql = $schema{GET_USER_STMT};
@@ -244,7 +260,7 @@ sub get_user_by_login {
   return get_user_data( $login, 'nick' );
 }
 
-=head3 C<new_user( I<$login> )
+=head3 C<new_user( I<$login> )>
 
 Insert a new user record into the database with the login name I<$login>.  As
 the database is currently constructed, this should be no longer than 16
@@ -259,7 +275,64 @@ is taken already.
 =cut
 
 sub new_user {
-  my $login = shift || return undef;
+  my $login = _clean_word(lc(shift)) || return undef;
+
+  my $sql = $schema{GET_USER_STMT} . sprintf($schema{USER_NICK_COND}, $login);
+  return 0 if _runq( $sql );
+
+  $sql = sprintf( $schema{ADD_USER_STMT}, $login );
+  _runq( $sql );
+  my $user = load_user_data( $login, 'nick' );
+  return $user->{uid};
+}
+
+=head3 C<update_user( I<$uid>, I<$user> )>
+
+Alter the user record in the database for the user with UID I<$uid> with the
+data in the I<$user> object (a hashref).  This object has the same structure
+as that returned by the C<load_user_data()> function (see L</load_user_data>).
+For each defined field (that corresponds to a field in the database) in the
+I<$user> structure, the database will be updated with the supplied value, even
+if that value is null.  Therefore, do not define fields that you wish to leave
+unaltered, or else set them equal to the value returned by
+C<load_user_data()>, if you are not worried about the possibility of
+simultaneous updates taking place.
+
+Returns the full user data structure for the altered user record, as returned
+by C<load_user_data()>, or undef on error.  If no such user exists, no rows
+will be modified.  In this case, 0 will be returned.
+
+=cut
+
+sub update_user {
+  my $uid = shift || return undef;
+  my $user = shift || return undef;
+  return undef unless $uid == $user->{uid};
+
+  my $stmt = $schema{UPD_USER_STMT};
+  my @sets;
+  if ( defined $user->{nick} )
+    { push @sets, sprintf( $schema{USER_NICK_SET},
+			   _clean_word($user->{nick}) ); }
+  if ( defined $user->{name} )
+    { push @sets, sprintf( $schema{USER_NAME_SET}, _clean($user->{name}) ); }
+  if ( defined $user->{addr} )
+    { push @sets, sprintf( $schema{USER_ADDR_SET}, _clean($user->{addr}) ); }
+  if ( defined $user->{phone} )
+    { push @sets, sprintf( $schema{USER_PHON_SET}, _clean($user->{phone}) ); }
+  if ( defined $user->{email} )
+    { push @sets, sprintf( $schema{USER_MAIL_SET}, _clean($user->{email}) ); }
+  if ( defined $user->{other} )
+    { push @sets, sprintf( $schema{USER_OTHR_SET}, _clean($user->{other}) ); }
+  if ( defined $user->{pass} )
+    { push @sets, sprintf( $schema{USER_PASS_SET},
+			   _clean_word($user->{pass}) ); }
+
+  $stmt .= join $schema{SET_DELIM}, @sets;
+  $stmt .= sprintf( $schema{USER_UID_COND}, $uid );
+  my $mods = _runcmd($stmt);
+  return 0 if $mods == 0;
+  return load_user_data( $uid, 'uid' );
 }
 
 =head2 Internal Functions
@@ -276,11 +349,27 @@ returned tuples.
 sub _runq {
   my $sql = shift;
   my @results;
+  init();
   my $result = $connection->exec($sql);
   while ( my @temp = $result->fetchrow ) {
     push @results, \@temp;
   }
   return @results;
+}
+
+=head3 C<_runcmd( I<$sql> )>
+
+Run the provided SQL string as in C<_runq()>.  This function is intended for
+commands instead of queries, and thus the return value consists of the number
+of rows affected by the command.
+
+=cut
+
+sub _runcmd {
+  my $sql = shift;
+  init();
+  my $result = $connection->exec($sql);
+  return $result->cmdTuples;
 }
 
 =head3 C<_dberror()>
@@ -326,6 +415,21 @@ sub _clean_num {
   my $num = shift;
   $num =~ s/[^-+.e0-9]//g;
   return $num;
+}
+
+=head3 C<_clean_word( I<$string> )>
+
+Strips the supplied string of non alphanumeric characters.  All
+punctuation is removed, although what we are really interested in is
+stripping '_' and '%' characters that would interfere with the C<LIKE>
+SQL operator.  We allow '-' characters to live, for now.
+
+=cut
+
+sub _clean_word {
+  my $string = shift;
+  $string =~ s/[^0-9a-zA-Z-]//g;
+  return $string;
 }
 
 1;
