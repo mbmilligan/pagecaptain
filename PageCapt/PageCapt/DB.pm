@@ -19,7 +19,11 @@ my %schema =
    GET_TIP_SUFX => " ORDER BY time DESC",
 
    ADD_TIP_ANON_STMT => "INSERT INTO Tip (class, data) VALUES ('%u','%s')",
-   ADD_TIP_WUID_STMT => "INSERT INTO Tip (class, creator, data) VALUES ('%u','%u','%s')"
+   ADD_TIP_WUID_STMT => "INSERT INTO Tip (class, creator, data) VALUES ('%u','%u','%s')",
+
+   GET_USER_STMT  => "SELECT uid, login, name, address, phone, email, contact, password from Users",
+   USER_UID_COND  => " WHERE uid = '%u'",
+   USER_NICK_COND => " WHERE login = '%s'"
   );
 
 =head1 NAME
