@@ -1,5 +1,6 @@
 #!/usr/bin/speedy
 use HTML::Mason::CGIHandler;
+use MIME::Base64;
 use PageCapt;
 
 my $h = new HTML::Mason::CGIHandler
