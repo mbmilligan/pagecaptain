@@ -18,7 +18,7 @@ my $output = join("", @lines);
 my ( $cookie ) = ( $output =~ m{Set-Cookie: (.*)$}mi );
 $r->header_out( 'Set-Cookie' => $cookie) if $cookie;
 
-$output =~ s{mason_handler.pl}{$m->base_comp->name()}eg;
+$output =~ s{mason_handler.pl}{wiki.mhtml}g;
 $output =~ s{^.*?<body[^>]*>}{}si;
 $output =~ s{</body.*$}{}si;
 
