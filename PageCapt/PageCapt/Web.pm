@@ -4,9 +4,6 @@ package PageCapt::Web;
 #  Administrator-configurable parameters follow
 #
 
-my $secret = "foo";
-my $cookiename = "PCauth";
-
 =head1 NAME
 
 PageCapt::Web - Utility functions for the PageCaptain web-app component
@@ -85,7 +82,7 @@ hash-ref containing the desired keyword-value pairs for any query.
 
 sub url {
   my $path = shift || return undef;
-  my %query = %{shift};
+  my %query = %{shift @_};
 
   my $url = new URI;
   $url->path($path);

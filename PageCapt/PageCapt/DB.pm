@@ -1,11 +1,5 @@
 package PageCapt::DB;
 
-#
-# Administrator-configurable parameters follow
-#
-
-my $db_string = "dbname=scavhunt user=user password=password";
-
 my %tip_classes = (
 		   dump=>1,
 		  );
