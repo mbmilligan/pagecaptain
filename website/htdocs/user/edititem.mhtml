@@ -43,6 +43,12 @@
 % } else {
 	    This item is not claimed by anybody
 % }
+
+% if ($watching) {
+	    <a href="<% $watchlink %>">Stop watching this item</a>
+% } else {
+	    <a href="<% $watchlink %>">Add this item to your watchlist</a>
+%}
 	</tr>
 
 	<tr>
@@ -145,24 +151,52 @@ $status => undef
 $cost => undef
 $owner => undef
 $note => undef
+$watch => undef
 </%args>
 
 <%init>
 
-my $template = { number => $item };
-foreach (qw/ points type status cost owner cost /) {
-  $template->{$_} = $ARGS{$_} if $ARGS{$_};
-}
+      my $template = { number => $item };
+    foreach (qw/ points type status cost owner cost /) {
+      $template->{$_} = $ARGS{$_} if $ARGS{$_};
+    }
 
-my $data = ( PageCapt::DB::load_list({ number=>$item }) )[0];
-my $form = ( $edit && ( ! $data->{owner} || $data->{owner} == $User->uid ) );
+    my $data = ( PageCapt::DB::load_list({ number=>$item }) )[0];
+    my $form = ( $edit && ( ! $data->{owner} || $data->{owner} == $User->uid ) );
 
-if ($form || $User->login eq "mbmillig") {
-  $data = PageCapt::DB::update_list( $template ) || $data;
-}
+    if ($form || $User->login eq "mbmillig") {
+      $data = PageCapt::DB::update_list( $template ) || $data;
+      if ( $owner && $owner ne "none" ) {
+	PageCapt::DB::add_watchitem( $User, $item );
+      }
+    }
 
-PageCapt::DB::add_note( $note, $item, $User ) if $note;
-my @tips = PageCapt::DB::get_item_notes( $item );
+    PageCapt::DB::add_note( $note, $item, $User ) if $note;
+    my @tips = PageCapt::DB::get_item_notes( $item );
+
+    if ($update && defined $watch) {
+      if ($watch) { PageCapt::DB::add_watchitem( $User, $item ); }
+      else { PageCapt::DB::drop_watchitem( $User, $item ); }
+    }
+
+    my @watchers = PageCapt::DB::get_watchers_byitem( $item );
+    my $watching = 0;
+    my $watchlink = "";
+    for (@watchers) {
+      if ( $_ == $User->uid ) { $watching = 1;
+				$watchlink = PageCapt::Web::url('edititem.mhtml',
+								{ item => $item,
+								  watch => 0,
+								  update => 1 } );
+				last;
+			      }
+    };
+    unless ($watching) {
+      $watchlink = PageCapt::Web::url('edititem.mhtml',
+				      { item => $item,
+					watch => 1,
+					update => 1 } );
+    }
 
 </%init>
 

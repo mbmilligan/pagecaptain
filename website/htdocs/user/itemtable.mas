@@ -8,13 +8,14 @@
 % foreach my $row (@list) {
 	<tr class="<& cssclass, row=>$row &>">
 	  <td>
-	    <a id="num" href="<% 
+	    <a id="num" href="<& SELF:base &>user/<% 
 	    PageCapt::Web::url('edititem.mhtml', {item=>$row->{number}}) %>">
 	      <% $row->{number} %></a>
 	  </td>
 	  <td><& trunc, str=>$row->{desc},len=>160 &></td>
 	  <td><& trunc, str=>$row->{score},len=>30 &></td>
-	  <td><a href="<& SELF:base &>user/<% PageCapt::Web::url('userinfo.mhtml',{uid=>$row->{owner}}) %>">
+	  <td><a href="<& SELF:base &>user/<% 
+	    PageCapt::Web::url('userinfo.mhtml',{uid=>$row->{owner}}) %>">
 	      <% $usermap{$row->{owner}} %></a></td>
 	</tr>
 % }
