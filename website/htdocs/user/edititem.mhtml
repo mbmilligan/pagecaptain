@@ -1,4 +1,4 @@
-    <h1>Examine</h1>
+    <h1>Examining Item <% $item %></h1>
 
     <table id="list">
       <tbody>
@@ -86,8 +86,40 @@
 	  </td>
 	</tr>
 
+	<tr>
+	  <td class="field">Estimated Cost</td><td>
+% if ($form) {
+	    <& formhead, data=>$data &>
+	      $<input type="text" name="cost" size="10"
+		      value="<% $data->{cost} %>">
+	      <input type="SUBMIT" value="Change Value">
+	    </form>
+% } else {
+	    <% $data->{cost} || 'Nothing entered' %>
+% }
       </tbody>
     </table>
+
+    <h2>Notes for this item</h2>
+
+    <form method="GET" action="edititem.mhtml">
+      <p>
+	<textarea name="note" cols="50" rows="5"></textarea>
+	<input type="SUBMIT" value="Add new note">
+      </p>
+    </form>
+
+%foreach my $row (@tips) { $$row{content} =~ s/\n/<br>\n/gm;
+    <p><span class="tipintro"><% $$row{age} %> ago \
+%   if ( $$row{uid} ) {
+	<% PageCapt::User->new($$row{uid})->name %> said:
+%   } else {
+	someone said:
+%   }
+      </span>
+      <br><% $$row{content} %>
+    </p>
+% }
 
 <%args>
 $item
@@ -98,12 +130,14 @@ $type => undef
 $status => undef
 $cost => undef
 $owner => undef
+$cost => undef
+$note => undef
 </%args>
 
 <%init>
 
 my $template = { number => $item };
-foreach (qw/ points type status cost owner /) {
+foreach (qw/ points type status cost owner cost /) {
   $template->{$_} = $ARGS{$_} if $ARGS{$_};
 }
 
@@ -113,6 +147,9 @@ my $form = ( $edit && ( ! $data->{owner} || $data->{owner} == $User->uid ) );
 if ($form) {
   $data = PageCapt::DB::update_list( $template ) || $data;
 }
+
+PageCapt::DB::add_note( $note, $item, $User ) if $note;
+my @tips = PageCapt::DB::get_item_notes( $item );
 
 </%init>
 
