@@ -6,17 +6,22 @@ package PageCapt::DB;
 
 my $db_string = "dbname=scavhunt user=user password=password";
 
-my %tip_classes = ( 
+my %tip_classes = (
 		   dump=>1,
 		  );
 
-my %schema = (
-  GET_TIP_STMT => sprintf(
-          "SELECT time, extract('epoch' from time), creator, data FROM Tip WHERE class = '%u'",
-          $tip_classes{'dump'}),
-  TIP_AGE_COND => " AND age(time) <= interval '%d day'",
-  TIP_UID_COND => " AND creator = '%u'"
-);
+my %schema =
+  (
+   GET_TIP_STMT =>
+     sprintf("SELECT time, extract('epoch' from time), creator, data FROM Tip" .
+	     " WHERE class = '%u' AND used = '0'", $tip_classes{dump} ),
+   TIP_AGE_COND => " AND age(time) <= interval '%d day'",
+   TIP_UID_COND => " AND creator = '%u'",
+   GET_TIP_SUFX => " ORDER BY time DESC",
+
+   ADD_TIP_ANON_STMT =>
+     sprintf("INSERT INTO Tip (class, data) VALUES ('%u','%%s')", $tip_classes{dump})
+  );
 
 =head1 NAME
 
@@ -121,12 +126,13 @@ get all tips, regardless of creation time.
 =cut
 
 sub get_user_dumptips {
-  my $days = shift;
-  my $user = shift;
+  my $days = _clean_num(shift);
+  my $user = _clean_num(shift);
   my $stmt = $schema{GET_TIP_STMT};
   $stmt .= sprintf( $schema{TIP_AGE_COND}, $days ) if $days;
   $stmt .= sprintf( $schema{TIP_UID_COND}, $user ) if $user;
-  
+  $stmt .= $schema{GET_TIP_SUFX};
+
   init();
   my @data = _runq($stmt);
   my @result;
@@ -137,6 +143,24 @@ sub get_user_dumptips {
 		    content    => $row->[3] };
   }
   return @result;
+}
+
+=head3 C<add_dumptip( I<$text>, [I<$user>] )>
+
+Create a new Tip, dated now, with I<$user> as its creator if provided.
+When implemented, I<$user> can be either a UID or a PageCapt::User
+object, but for now it does nothing.  Returns nothing.
+
+=cut
+
+sub add_dumptip {
+  my $tip = _clean(shift);
+  my $user = shift;  # ignored for now
+  my $stmt = sprintf( $schema{ADD_TIP_ANON_STMT}, $tip );
+
+  init();
+  _runq($stmt);
+  return;
 }
 
 =head2 Internal Functions
@@ -159,3 +183,50 @@ sub _runq {
   }
   return @results;
 }
+
+=head3 C<_dberror()>
+
+Check various status indicators for the db connection.  If all is
+well, returns C<undef>, otherwise the text of an error message or
+status code will be returned.
+
+=cut
+
+sub _dberror {
+  if ($connection->status == Pg::PGRES_CONNECTION_BAD) {
+    return $connection->errorMessage;
+  }
+}
+
+=head3 C<_clean( I<$sql> )
+
+Intelligently escape single quote characters (" ' ") so that
+user-supplied input cannot break out of quotes in SQL statements.  We
+also check for a final unescaped backslash and escape it.  Returns the
+sanitized statement.  I *think* this is idempotent, but I have not
+proved it to be so.
+
+=cut
+
+sub _clean {
+  my $sql = shift;
+  $sql =~ s/([^\\]|^)'/$1\\'/g;
+  $sql =~ s/([^\\]|^)\\$/\\\\/;
+  return $sql;
+}
+
+=head3 C<_clean_num( I<$number> )
+
+Strips the supplied statement of all non-numeric characters (0-9, +,
+-, e, .) but makes no attempt to syntactically assure that the
+returned value is a valid numeric expression.  Be warned.
+
+=cut
+
+sub _clean_num {
+  my $num = shift;
+  $num =~ s/[^-+.e0-9]//g;
+  return $num;
+}
+
+1;
