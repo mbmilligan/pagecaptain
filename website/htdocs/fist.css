@@ -52,19 +52,19 @@ a#num {
 	text-decoration: underline;
 }
 
-tr.status_HelpWanted a#num {
+tr.status_HelpWanted #num {
 	color: orange;
 }
 
-tr.status_Ongoing a#num {
+tr.status_Ongoing #num {
 	color: yellow;
 }
 
-tr.status_Done a#num {
+tr.status_Done #num {
 	color: green;
 }
 
-tr.status_Impossible a#num {
+tr.status_Impossible #num {
 	color: red;
 }
 
