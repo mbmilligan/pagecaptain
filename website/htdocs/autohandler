@@ -25,13 +25,19 @@
 
 <%once>
 
-use PageCapt::DB;
+use PageCapt;
 
 </%once>
 
+<%init>
+
+my $User = PageCapt::Web::extract_cookie( $m->cgi_object() );
+
+</%init>
+
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Tue Apr 22 15:07:00 CDT 2003
+Last modified: Wed Apr 30 18:24:18 CDT 2003
 <!-- hhmts end -->
 </%method>
 
