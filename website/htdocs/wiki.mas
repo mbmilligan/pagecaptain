@@ -1,0 +1,24 @@
+<%init>
+
+my @params = "";
+foreach my $arg (keys %ARGS) {
+  push @params, $arg . '="' . $ARGS{$arg} . '" ';
+}
+
+my $cmd = "perl wiki.pl " . join(" ", @params);
+
+my $output = `$cmd`;
+
+my ( $cookie ) = ( $output =~ m{Set-Cookie: (.*)$}mi );
+$r->header_out( 'Set-Cookie' => $cookie) if $cookie;
+
+$output =~ s{mason_handler.pl}{$m->base_comp->name()}eg;
+$output =~ s{^.*?<body[^>]*>}{}si;
+$output =~ s{</body.*$}{}si;
+
+</%init>
+<% $output %>
+
+<%method title>
+Deleuzean Wiki: Fist
+</%method>
