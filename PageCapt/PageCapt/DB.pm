@@ -49,17 +49,23 @@ my %schema =
    USER_PASS_SET => " password = '%s'",
 
    GET_ITEM_STMT => "SELECT inum, points, type, status, description, scoring, cost, owner from List WHERE",
+   UPD_ITEM_STMT => "UPDATE List SET %s WHERE",
    ITEM_NUM_COND  => " inum = '%u' ",
+   ITEM_NUM_SET_C => " WHERE inum = '%u' ",
+   ITEM_PNT_SET   => " points = '%f' ",
    ITEM_TYPE_COND => " type = '%u' ",
    ITEM_NTYP_COND => " type is null ",
    ITEM_STAT_COND => " status = '%u' ",
    ITEM_NSTA_COND => " status is null ",
+   ITEM_COST_SET  => " cost = '%f' ",
    ITEM_OWN_COND  => " owner = '%u' ",
    ITEM_NOWN_COND => " owner is null ",
    ITEM_SRCH_COND => " description || scoring ~* '%s' ",
    ITEM_PNT_ORD   => " ORDER BY points DESC, inum ",
    ITEM_COST_ORD  => " ORDER BY cost DESC, inum ",
    ITEM_NUM_ORD   => " ORDER BY inum ",
+
+   ITEM_OWN_SET_NULL => " owner = null ",
 
    LOGIC_AND => " AND ",
    LOGIC_OR  => " OR ",
@@ -569,6 +575,8 @@ sub load_list {
   my %sortmap = ( points=>'ITEM_PNT_ORD', cost=>'ITEM_COST_ORD', number=>'ITEM_NUM_ORD' );
   my @cond;
   my $sort;
+
+  $params{sort} = 'number' unless $params{sort};
   foreach (keys %params) {
     unless ( defined $params{$_} ) { next; }
     elsif ($_ eq 'number') { @cond = ( sprintf( $schema{ITEM_NUM_COND},
@@ -589,7 +597,7 @@ sub load_list {
     elsif ($_ eq 'desc')   { push @cond, sprintf $schema{ITEM_SRCH_COND},
 						 _clean($params{$_}); }
 
-    elsif ($_ eq 'sort') { $sort = $schema{$sortmap{$_}}; }
+    elsif ($_ eq 'sort') { $sort = $schema{$sortmap{$params{$_}}}; }
   }
 
   $stmt .= join( $schema{LOGIC_AND}, @cond ) || $schema{LOGIC_T};
@@ -607,6 +615,55 @@ sub load_list {
 		    score  => $row->[5] };
   }
   return @return;
+}
+
+=head2 C<update_list( I<$item> )>
+
+I<$item> is a hash-ref table like the ones returned by C<load_list()>.  Any
+defined parameters in this structure will be used as the new values for the
+corresponding attributes in the database List object.  While we could
+technically accept any set of constraints, we will avoid catastrophic errors
+and require that the C<number> field be set, and use that field to choose
+which item to update.  Thus, there is no way to change the number of an item
+through this interface.  I have no idea why you would ever want to do such a
+thing, anyway.  We also do not provide a way to change the C<desc> or C<score>
+fields, because these should be constant during the Hunt.  The administrator
+should change them manually if this is not the case.
+
+I<owner> can take the value, C<none>, to set that field to null.
+
+Returns the C<load_list()> structure for the modified item, or the number 0 if
+no rows were modified (SQL error or no item with that number), or C<undef> on
+error.
+
+=cut
+
+sub update_list {
+  my $i = shift || return undef;
+  my %item = %$i;
+  return undef unless _clean_num($item{number});
+  my @updates;
+
+  foreach (keys %item) {
+    if    ($_ eq 'number') { next; }
+    elsif ($_ eq 'points') { push @updates, sprintf( $schema{ITEM_PNT_SET},
+						     _clean_num($item{$_}) ); }
+    elsif ($_ eq 'type')   { push @updates, sprintf( $schema{ITEM_TYPE_COND},
+						     $ItemTypeMap{$item{$_}} ); }
+    elsif ($_ eq 'status') { push @updates, sprintf( $schema{ITEM_STAT_COND},
+						     $ItemStatMap{$item{$_}} ); }
+    elsif ($_ eq 'cost')   { push @updates, sprintf( $schema{ITEM_COST_SET},
+						     _clean_num($item{$_}) ); }
+    elsif ($_ eq 'owner')  { push @updates, ($item{$_} eq 'none') ?
+			       $schema{ITEM_OWN_SET_NULL} :
+			       sprintf( $schema{ITEM_OWN_COND}, _clean_num($item{$_}) ); }
+  }
+  $stmt = sprintf($schema{UPD_ITEM_STMT}, join( $schema{SET_DELIM}, @updates )) ||
+    return (load_list({number => $item{number}}))[0];
+  $stmt .= sprintf( $schema{ITEM_NUM_COND}, $item{number} );
+  my $mod = _runcmd($stmt);
+  return $mod unless $mod;
+  return ( load_list( {number => $item{number}} ) )[0];
 }
 
 =head2 Notes Functions
