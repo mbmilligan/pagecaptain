@@ -1,0 +1,35 @@
+    <h1>Search the List</h1>
+
+    <form method="GET" action="search.mhtml">
+      <input type="hidden" name="search" value="1">
+      <p>Retrieve item number (blank for everything)
+	<input name="number" size="3">
+	<br>
+	Search for the word 
+	<input name="keyword" size="20">
+	<br>
+	<input type="submit" value="GO">
+      </p>
+    </form>
+	  
+% if ($search) {
+    <& itemtable.mas, list => \@list &>
+% }
+
+<%args>
+$search => 0
+$number => undef
+$keyword => undef
+</%args>
+
+<%init>
+
+my @list;
+my %template;
+if ($search) {
+  $template{number} = $number if $number;
+  $template{desc} = $keyword if $keyword;
+  @list = PageCapt::DB::load_list( \%template );
+}
+
+</%init>
