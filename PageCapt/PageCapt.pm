@@ -8,6 +8,7 @@ use PageCapt::DB;
 
 $PageCapt::DB::db_string = "dbname=scavhunt user=user password=password";
 
+%PageCapt::Web::tubers = ( mbmillig=>1 );
 $PageCapt::Web::secret = "foo";
 $PageCapt::Web::cookiename = "PCauth";
 $PageCapt::Web::pass_length = 6;

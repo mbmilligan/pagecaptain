@@ -27,10 +27,12 @@ my %schema =
    TIP_USE_SET => " used = '%u'",
    TIP_REF_SET => " reference = '%u'",
 
-   GET_UIDS_STMT => "SELECT uid from Users",
    GET_USER_STMT  => "SELECT uid, login, name, address, phone, email, contact, password from Users",
    USER_UID_COND  => " WHERE uid = '%u'",
    USER_NICK_COND => " WHERE login = '%s'",
+   USER_UID_ORD   => " ORDER BY uid",
+   USER_NICK_ORD  => " ORDER BY login",
+   USER_NAME_ORD  => " ORDER BY name",
 
    ADD_USER_STMT => "INSERT INTO Users ( login ) VALUES ( '%s' )",
    UPD_USER_STMT => "UPDATE Users SET",
@@ -290,10 +292,13 @@ sub new_survey {
 
 =head2 User Data
 
-These routines know nothing about authentication or the current request, since
-this module does not even import the PageCapt::User class.  Therefore you
-should really avoid calling these routines directly from front-end code, as
-invoking the appropriate User methods will be more likely to do what you want.
+These routines know nothing about authentication or the current
+request, since this module does not even import the PageCapt::User
+class.  Therefore you should really avoid calling these routines
+directly from front-end code, as invoking the appropriate User methods
+will be more likely to do what you want.  However, using these may in
+some cases be much more efficient than letting the User class do
+certain tasks for you.
 
 =head3 C<list_user_ids()>
 
@@ -305,11 +310,31 @@ additional information about these users.
 
 sub list_user_ids {
   my @uids;
-  my $stmt = $schema{GET_UIDS_STMT};
+  my $stmt = $schema{GET_USER_STMT};
   my @results = _runq($stmt);
 
   foreach $row (@results) { push @uids, $row->[0]; }
   return @uids;
+}
+
+=head3 C<list_user_ulns( [C<{'uid'|'nick'|'name'}>] )>
+
+Same as above, but a list of list-refs; each is an array consisting of
+a uid-login name-real name triple.  If provided, the parameter
+specifies which field to sort by.  The default is whatever random
+order the database backend provides them in.
+
+=cut
+
+sub list_user_ulns {
+  my $order = shift;
+  my $stmt = $schema{GET_USER_STMT};
+  my %map = ( uid=>'USER_UID_ORD', nick=>'USER_NICK_ORD', name=>'USER_NAME_ORD' );
+  $stmt .= $schema{$map{$order}} if $order;
+  my @results;
+  foreach $row ( _runq($stmt) ) 
+    { push @results, [ @$row[0..2] ]; }
+  return @results;
 }
 
 =head3 C<load_user_data( I<$user>, [ C<{'uid'|'nick'}> ])>
