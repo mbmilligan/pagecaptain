@@ -33,7 +33,7 @@
 
       <P>
 	<B>Name:</B> 
-	<input type="TEXT" name="name" size="70" value="<% $ARGS{name} %>">
+	<input type="TEXT" name="name" size="50" value="<% $ARGS{name} %>">
       </P>
 
       <p><b>Email:</b>
@@ -91,7 +91,7 @@
       <p>If yes, please also enter your ISO number (the long number above the
 	barcode on your UC ID)
 	<br>
-	<input type="TEXT" name="points" size="70" value="<% $ARGS{points} %>">
+	<input type="TEXT" name="points" size="50" value="<% $ARGS{points} %>">
       </p>
 
       <p><B>Age:</B>
@@ -223,6 +223,6 @@ if ($send != 0) {
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Tue Apr 22 15:25:42 CDT 2003
+Last modified: Tue Apr 22 15:29:25 CDT 2003
 <!-- hhmts end -->
 </%method>
