@@ -17,7 +17,9 @@ $PageCapt::DB::db_string = "dbname=scavhunt user=user password=password";
 			       Thing        => 8,
 			       AllStars     => 9,
 			       FridayParty  => 10,
-			       Showcase     => 11
+			       Showcase     => 11,
+			       DryGames     => 12,
+			       WetGames     => 13
 			     );
 %PageCapt::DB::ItemStatMap = ( Ongoing	   => 1,
 			       Done	   => 2,
