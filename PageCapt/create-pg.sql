@@ -43,8 +43,9 @@ CREATE TABLE Tip (
 		ON UPDATE CASCADE,
 	reference integer REFERENCES List(inum)
 		ON DELETE CASCADE
-		ON UPDATE CASCADE
+		ON UPDATE CASCADE,
 	used smallint DEFAULT '0',
+	key  varchar(16),
 	data text
 	);
 
