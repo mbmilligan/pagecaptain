@@ -10,8 +10,11 @@
   <body>
     <div id="nav">
       <& nav.mas &>
-% unless $User {
-      <& login_box.mas &>
+% if ( $User->isvalid ) {
+      Logged In as <% $User->login %>!
+      <& user_nav.mas &>
+% } else {
+      <& login_box.mas, attempt => $User->isvalid &>
 % }
     </div>
     <div id="body">
@@ -34,13 +37,14 @@ use PageCapt;
 
 <%shared>
 
-my $User = PageCapt::Web::extract_cookie( $m->cgi_object() );
+$User = PageCapt::Web::extract_cookie( $m->cgi_object() ) ||
+  blank PageCapt::User;
 
 </%shared>
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Thu May  1 08:53:39 CDT 2003
+Last modified: Thu May  1 18:49:03 CDT 2003
 <!-- hhmts end -->
 </%method>
 
@@ -48,8 +52,7 @@ Last modified: Thu May  1 08:53:39 CDT 2003
 FIST: Deleuzean Potato
 </%method>
 
-<%method base>
-/\
+<%method base>/\
 </%method>
 
 <%flags>

@@ -1,9 +1,15 @@
-    <form action="<& REQUEST:base &>users/login.mhtml" method="get">
+    <form action="<& REQUEST:base &>login.mhtml" method="get">
       <p class="title">Login</p>
-      <p><label for="loginname">Login name:</label>
+      <p>
+% if ( defined $ARGS{attempt} && $ARGS{attempt} == 0 ) {
+	Last Attepmt Failed
+% }
+	<label for="loginname">Login name:</label>
 	<input type="text" name="loginname" size="12">
-      </p>
-      <p><label for="password">Password"</label>
+	<label for="password">Password:</label>
 	<input type="password" name="password" size="12">
+	<input type="hidden" name="dest" 
+	       value="<& SELF:base &>index.mhtml">
+	<input type="submit" value="OK">
       </p>
     </form>

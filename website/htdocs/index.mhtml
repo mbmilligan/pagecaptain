@@ -7,8 +7,23 @@
       </h2>
     </div>
 
-    <p>We had a meeting Sunday, and we therefore have some actual
-      useful information for this site. </p>
+    <p>The ScavHunt 2003 website is up.  Highly recommended reading, if only
+      to learn all about the judges.  <a href="http://scavhunt.uchicago.edu">
+	See it here </a>.
+    </p>
+
+    <p>Email Jess if you want a "Negative Spousal Interaction" shirt purchased
+      for you.  The cost will be a small number of dollars, and you'll get
+      them probably at our Sunday meeting.
+    </p>
+
+    <p>It looks like our <i>Prophet Elijah</i> and road trip team have been
+      rounded up.  Details will be forthcoming.  If you're still looking for
+      something to do, ask around on the list, but keep in mind that we're not
+      that big on formal roles.
+    </p>
+
+    <p>From the Sunday meeting:</p>
     <ol>
       <li>The T-shirt order is has been placed.  You can see the final design
 	<a href="/tshirt.pdf">here</a> (black will be printed in gray on a
@@ -26,11 +41,6 @@
 	<a href="https://listhost.uchicago.edu/mailman/listinfo/potato"> the
 	  listhost server</a> to do that.
       </li>
-      <li>We need a few "special people" -- this includes a <i>Prophet
-	  Elijah</i>, morning-shift people for the quads, and maybe others.
-	Ask an Uber-tater for more information.  Or maybe one of them will
-	give me more info to put here.  You never know.
-      </li>
     </ol>
 
     <p><b>Tech Turnip Michael</b> sayeth:</p
@@ -39,33 +49,13 @@
       bring a new system online that will track team members and the items
       they are working on.  Watch this space.</p>
 
-    <p>The T-shirt revote is over, and design #5 won by a landslide.  That's
-      the three grey boxes with an alma mater stanza.  If you have a pretty
-      recent web browser, I've made a sorta mock-up of the design 
-      <a href="/grayshirt.html">here</a>.
-    </p>
-
-    <p>Mad props to Sam for redesigning the website aesthetics.  Wednesday's
-      his birthday, so wish him a good one!
-    </p>
-
     <p>Check out the <a href="tips.mhtml"> Dumpster Dive Tip
 	Hotline </a> now.  Especially those of you with cars, grocery carts,
       and other means of carting away street treasure.
     </p>
 
-    <p>
-      Since I'm seeing the question come up from time to time in the survey
-      responses, here's the deal with the <b>"Beta Tester"</b> option.  The
-      website is going to be rapidly developing over the next week or so as
-      I get pieces of the database system working well enough to activate
-      them on the site.  Once that starts happening, I need a few people who
-      will regularly poke around in the site to report things that (most
-      importantly) are broken, or (also nice) could work better or be more
-      useful.  This is easier if you have used the database before, but it
-      isn't necessary.  Since the goal is for everyone to be able to use the
-      database by the time the Hunt starts, computer expertise is
-      <i>absolutely not</i> a requirement.
+    <p>Thanks to Steve -- he was the first beta tester to notice that I broke
+      the website and complain to me.  It's better now.
     </p>
 
     <p>
@@ -78,6 +68,6 @@
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Tue Apr 29 20:53:27 CDT 2003
+Last modified: Thu May  1 12:14:48 CDT 2003
 <!-- hhmts end -->
 </%method>
