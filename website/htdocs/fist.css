@@ -33,8 +33,9 @@ input {
 	font-weight: hold;
 }
 
-table {
-	border: 1pt;
+tr {
+	border: 1px solid;
+	background-color: maroon;
 }
 
 body {
