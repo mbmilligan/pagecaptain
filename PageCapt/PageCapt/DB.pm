@@ -7,16 +7,25 @@ my %tip_classes = (
 
 my %schema =
   (
-   GET_TIP_STMT => "SELECT time, age('now',time), extract('epoch' from time), creator, data " .
-      "FROM Tip WHERE class = '%u' AND used = '0'",
-   TIP_AGE_COND => " AND age('now',time) <= interval '%d day'",
-   TIP_UID_COND => " AND creator = '%u'",
-   GET_TIP_SUFX => " ORDER BY time DESC",
+   GET_TIP_STMT	   => "SELECT time, age('now',time), extract('epoch' from time), creator, data FROM Tip",
+   TIP_CLASS_COND  => " WHERE class = '%u'",
+   TIP_USED_COND   => " AND used = '%u'",
+   TIP_UNUSED	   => " AND used = '0'",
+   TIP_AGE_COND	   => " AND age('now',time) <= interval '%d day'",
+   TIP_UID_COND	   => " AND creator = '%u'",
+   TIP_TIME_COND   => " AND time = '%s'",
+   GET_TIP_SUFX	   => " ORDER BY time DESC",
 
    SRVY_FIELD_COND => " AND substring( data FROM '1' FOR position(':' IN data)-1 ) ILIKE '%s'",
 
    ADD_TIP_ANON_STMT => "INSERT INTO Tip (class, data) VALUES ('%u','%s')",
    ADD_TIP_WUID_STMT => "INSERT INTO Tip (class, creator, data) VALUES ('%u','%u','%s')",
+
+   UPD_TIP_STMT => "UPDATE Tip SET",
+   TIP_UID_SET => " creator = '%u'",
+   TIP_DAT_SET => " data = '%s'",
+   TIP_USE_SET => " used = '%u'",
+   TIP_REF_SET => " reference = '%u'",
 
    GET_UIDS_STMT => "SELECT uid from Users",
    GET_USER_STMT  => "SELECT uid, login, name, address, phone, email, contact, password from Users",
@@ -142,7 +151,9 @@ sub get_user_dumptips {
   my $u;
   my $days = _clean_num(shift);
   my $user = _clean_num( ref ($u = shift) ? $u->uid : $u );
-  my $stmt = sprintf( $schema{GET_TIP_STMT}, $tip_classes{dump} );
+  my $stmt = $schema{GET_TIP_STMT};
+  $stmt .= sprintf( $schema{TIP_CLASS_COND}, $tip_classes{dump} );
+  $stmt .= $schema{TIP_UNUSED};
   $stmt .= sprintf( $schema{TIP_AGE_COND}, $days ) if $days;
   $stmt .= sprintf( $schema{TIP_UID_COND}, $user ) if $user;
   $stmt .= $schema{GET_TIP_SUFX};
@@ -191,7 +202,7 @@ as "Field: content more content"; we will split on the first colon and
 split these objects into a per-user structure like this:
 
   %user_survey =
-  ( field1 => { timestamp => creation time
+  ( field1 => { time    => creation time (primary key)
                 content => "content more content" }
     field2 => { ... }
     ...
@@ -210,9 +221,71 @@ Note that in both cases, the onus falls upon the requesting code to
 keep track of what was requested, as the user or field name queried,
 respectively, is not stored in the resulting data structure.
 
+=head3 C<load_survey_user( I<$user> )>
+
+Retrieve any existing survey results for the specified user.  I<$user>
+can be either a C<PageCapt::User> object or a numeric UID.  The return
+value is a hash structured like the one described above.
+
+Note that all field names are lowercased, since the SQL query is
+case-insensitive, but hash lookups are not.
+
 =cut
 
+sub load_survey_user {
+  my $u;
+  my $user = _clean_num( ref ($u = shift) ? $u->uid : $u ) || return undef;
+  my $stmt = $schema{GET_TIP_STMT};
+  $stmt .= sprintf( $schema{TIP_CLASS_COND}, $tip_classes{survey} );
+  $stmt .= sprintf( $schema{TIP_UID_COND}, $user );
 
+  my %survey;
+  my @responses = _runq($stmt);
+  foreach $row (@responses) {
+    my ( $field, $data ) = split( /:/, $row->[4], 2 );
+    $survey{lc($field)} = { time    => $row->[0],
+			    content => $data };
+  }
+  return %survey;
+}
+
+=head3 C<new_survey( I<$user>, I<$survey> )>
+
+Input a new set of survey responses into the database.  I<$user> is
+defined as usual.  I<$survey> is a reference to a survey hash,
+consisting simply of field-value pairs.  Returns true on success,
+C<undef> on error.
+
+This function reads in any existing survey responses for this user,
+and if similarly named fields exist, it will attempt to update them.
+For fields not corresponding to an existing entry in the database, a
+new row is inserted instead.
+
+=cut
+
+sub new_survey {
+  my $u, $stmt;
+  my $user = _clean_num( ref ($u = shift) ? $u->uid : $u ) || return undef;
+  my $new = shift || return undef;
+  my %new = %$new;
+
+  my %old = load_survey_user( $user );
+  foreach my $field (keys %new) {
+    my $dbfield = _clean_word(lc($field));
+    my $data = $dbfield . ":" . _clean($new{$field});
+    if ($old{$dbfield}) {
+      my @sets;
+      $stmt = $schema{UPD_TIP_STMT};
+      push @sets, sprintf( $schema{TIP_DAT_SET}, $data );
+      $stmt .= join(", ", @sets); 
+      $stmt .= sprintf( $schema{TIP_CLASS_COND}, $tip_classes{survey} );
+      $stmt .= sprintf( $schema{TIP_TIME_COND}, $old{$dbfield}{time} ); }
+    else {
+      $stmt = sprintf( $schema{ADD_TIP_WUID_STMT},
+			  $tip_classes{survey}, $user, $data ); }
+    _runcmd($stmt);
+  }
+}
 
 =head2 User Data
 
