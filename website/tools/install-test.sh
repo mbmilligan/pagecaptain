@@ -1,7 +1,8 @@
 #!/bin/sh
 
-DOCROOT=/var/www
-TEST=testing
+DOCROOT=/home/mmilligan/public_html/
+TEST=fist
+BASE="~mmilligan/fist"
 
 pushd htdocs/
 cp *handler *css *mas *mhtml $DOCROOT/$TEST
@@ -16,7 +17,7 @@ popd
 
 pushd $DOCROOT/$TEST
 
-perl -i -p -e "\$loc = '$TEST';" -e '
+perl -i -p -e "\$loc = '$BASE';" -e '
    s{(<%method base>/)}{$1$loc/};
    ' autohandler
 

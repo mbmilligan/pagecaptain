@@ -1,6 +1,6 @@
     <p>Good <% $am %>, <% name $User %></p>
 
-    <p>Deleuzean <a href="/cgi-bin/wiki.pl">Wiki</a>
+    <p>Deleuzean <a href="<& SELF:base &>../cgi/wiki.pl">Wiki</a>
       <br>
       User
       <a href="<& SELF:base &>user/userinfo.mhtml">Information</a>
