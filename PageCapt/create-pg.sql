@@ -2,9 +2,9 @@
 -- Create ScavHunt Database for PostgreSQL
 -- 
 
-CREATE TABLE User (
+CREATE TABLE Users (
 	uid SERIAL,
-	login varchar(16) NOT NULL, UNIQUE,
+	login varchar(16) NOT NULL UNIQUE,
 	name varchar(32),
 	address text,
 	phone text,
@@ -15,7 +15,7 @@ CREATE TABLE User (
 	PRIMARY KEY (uid)
 	);
 
-CREATE INDEX user_login_idx ON User(login);
+CREATE INDEX user_login_idx ON Users(login);
 
 CREATE TABLE List (
 	inum smallint NOT NULL, UNIQUE,
@@ -25,7 +25,7 @@ CREATE TABLE List (
 	description text,
 	scoring text,
 	cost double,
-	owner integer REFERENCES User(uid)
+	owner integer REFERENCES Users(uid)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 
