@@ -7,12 +7,13 @@ my %tip_classes = (
 
 my %schema =
   (
-   GET_TIP_STMT	   => "SELECT time, age('now',time), extract('epoch' from time), creator, data FROM Tip",
+   GET_TIP_STMT	   => "SELECT time, age('now',time), extract('epoch' from time), creator, data, reference FROM Tip",
    TIP_CLASS_COND  => " WHERE class = '%u'",
    TIP_USED_COND   => " AND used = '%u'",
    TIP_UNUSED	   => " AND used = '0'",
    TIP_AGE_COND	   => " AND age('now',time) <= interval '%d day'",
    TIP_UID_COND	   => " AND creator = '%u'",
+   TIP_REF_COND    => " AND reference = '%u'",
    TIP_TIME_COND   => " AND time = '%s'",
    GET_TIP_SUFX	   => " ORDER BY time DESC",
 
@@ -43,7 +44,19 @@ my %schema =
    USER_MAIL_SET => " email = '%s'",
    USER_OTHR_SET => " contact = '%s'",
    USER_PASS_SET => " password = '%s'",
-   SET_DELIM     => ", "
+
+   GET_ITEM_STMT => "SELECT inum, points, type, status, description, scoring, cost, owner from List WHERE",
+   ITEM_NUM_COND  => " inum = '%u' ",
+   ITEM_TYPE_COND => " type = '%u' ",
+   ITEM_STAT_COND => " status = '%u' ",
+   ITEM_OWN_COND  => " owner = '%u' ",
+   ITEM_SRCH_COND => " description || scoring ~* '%s' ",
+   
+   LOGIC_AND => " AND ",
+   LOGIC_OR  => " OR ",
+   LOGIC_T   => " TRUE ",
+   LOGIC_GRP => " ( %s ) ",
+   SET_DELIM => ", "
   );
 
 =head1 NAME
@@ -280,7 +293,7 @@ sub new_survey {
       my @sets;
       $stmt = $schema{UPD_TIP_STMT};
       push @sets, sprintf( $schema{TIP_DAT_SET}, $data );
-      $stmt .= join(", ", @sets); 
+      $stmt .= join( $schema{SET_DELIM}, @sets ); 
       $stmt .= sprintf( $schema{TIP_CLASS_COND}, $tip_classes{survey} );
       $stmt .= sprintf( $schema{TIP_TIME_COND}, $old{$dbfield}{time} ); }
     else {
@@ -485,6 +498,42 @@ sub update_user {
   return 0 if $mods == 0;
   return load_user_data( $uid, 'uid' );
 }
+
+=head2 List Functions
+
+These functions deal with items in the List.  A single item is
+encapsulated in a hash with the following structure:
+
+  ( number => item number
+    points => a number, perhaps used for priority or expected score
+    type   => short string tag used for categorization
+    status => short string tag used for status coding
+    cost   => a number, perhaps used to estimate difficulty or cost
+    owner  => a number, the UID of claiming user, if any
+    desc   => description of the item as provided by the Judges
+    score  => how the item will be scored, according to the Judges
+  )
+
+Note that the various tags in this structure are represented
+numerically in the database; mapping hashes defined in F<PageCapt.pm>
+are used to translate between this internal representation and the
+externally-visible tags.
+
+The notes attached to items are treated like other Tip objects, except
+that they have a defined I<creator> and I<reference> field.
+Provisionally, they will be returned in the form used by
+C<get_dumptips> with an additional field, I<item>, containing the
+associated item number.  This will rarely be necessary, however, since
+a note is generally associated with a particular item by virtue of an
+explicit request parameter (i.e. get notes for item I<x>), or by
+inclusion in a larger data structure.
+
+=head3 C<load_list( [I<$parameters> ] )>
+
+Return a list of hash-refs of the structure described above.  By
+default, all items will be returned (this will be a large hunk of
+data).  I<$parameters> is a hash-ref containing constraints to place
+upon the search, defined below.
 
 =head2 Internal Functions
 
