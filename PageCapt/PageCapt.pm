@@ -13,11 +13,13 @@ $PageCapt::DB::db_string = "dbname=scavhunt user=user password=password";
 			       Performance  => 4,
 			       Trivia	    => 5,
 			       Olympics	    => 6,
-			       Event	    => 7
+			       Event	    => 7,
+			       Thing        => 8
 			     );
 %PageCapt::DB::ItemStatMap = ( Ongoing	   => 1,
 			       Done	   => 2,
-			       Impossible  => 3
+			       Impossible  => 3,
+			       HelpWanted  => 4
 			     );
 
 %PageCapt::Web::tubers = ( mbmillig=>1, jbjalbrz=>1, scavcat=>1 );

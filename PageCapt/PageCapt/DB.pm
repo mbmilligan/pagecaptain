@@ -204,8 +204,7 @@ sub get_user_dumptips {
 =head3 C<add_dumptip( I<$text>, [I<$user>] )>
 
 Create a new Tip, dated now, with I<$user> as its creator if provided.
-When implemented, I<$user> can be either a UID or a PageCapt::User
-object, but for now it does nothing.  Returns nothing.
+I<$user> can be either a UID or a PageCapt::User object.  Returns nothing.
 
 =cut
 
@@ -676,19 +675,86 @@ will be identical, in fact, to that returned by C<get_dumptips()>.  Since one
 only requests notes for a particular item at a time, there is no need to
 specify it in the returned object.
 
-=head3 C<get_item_notes( I<$item> )>
+=head3 C<get_item_notes( I<$item> [, I<$all> ] )>
 
 Fetch the notes associated with a particular item.  The behavior and returned
 list is otherwise identical to that of C<get_dumptips()>, except that we do
-not specify an age cutoff.  I<$item> is just an item number.  It must exist.
+not specify an age cutoff.  I<$item> is just an item number.  An empty list
+will be returned if this item does not exist.
+
+If present and true, I<$all> indicates that the I<used> flag should be
+disregarded when retrieving the item notes.  In this case, records with a true
+value of I<used> will have an additional field, called I<used>, which will be
+set to a true value as well.  Normally, no such field would be provided,
+because only records with a false or null I<used> field would be returned.
 
 =cut
 
 sub get_item_notes {
   my $item = _clean_num(shift) || return undef;
+  my $all = shift || undef;
   my $stmt = $schema{GET_TIP_STMT};
   $stmt .= sprintf( $schema{TIP_CLASS_COND}, $tip_classes{note} );
-  
+  $stmt .= $schema{TIP_UNUSED} unless $all;
+  $stmt .= sprintf( $schema{TIP_REF_COND}, $item );
+
+  my @result = _runq($stmt);
+  my @notes;
+  foreach $row (@result) {
+    my $note = { timestamp => $$row[0],
+		 age       => $$row[1],
+		 epoch     => $$row[2],
+		 uid       => $$row[3],
+		 content   => $$row[4],
+	       };
+    $$note{used} = 1 if $$row[5];
+    push @notes, $note;
+  }
+  return @notes;
+}
+
+=head3 C<add_note( I<$text>, I<$item>, [I<$user>] )>
+
+Attach a new note to an item.  I<$text> is a free-form string that will be
+stored verbatim, and I<$item> is the number of the item with which to
+associate the note.  If provided, I<$user> can be either a UID number or a
+PageCapt::User object, and will be recorded as the creator of this note.
+
+Returns true on success, C<undef> on failure.
+
+=cut
+
+sub add_note {
+  my $note = shift || return undef;
+  my $item = shift || return undef;
+  my $user = (ref $_[0]) ? $_[0]->uid : shift;
+  my $stmt = sprintf( $schema{ADD_TIP_FULL_STMT},
+		      $tip_classes{note},
+		      _clean_num($user),
+		      _clean_num($item),
+		      _clean($note) );
+  my $mod = _runq($stmt);
+  return $mod if $mod;
+  return 1;
+}
+
+=head3 C<expire_note( I<$timestamp> )>
+
+Set the I<used> flag in the note with the specified I<timestamp>, as
+returned by C<get_item_notes()>, causing it to not appear by default
+in the list of notes returned by C<get_item_notes()>.
+
+Return true on success, C<undef> on failure.
+
+=cut
+
+sub expire_note {
+  my $time = shift || return undef;
+  my $stmt = $schema{UPD_TIP_SET};
+  $stmt .= sprintf( $schema{TIP_USE_SET}, 1 );
+  $stmt .= sprintf( $schema{TIP_CLASS_COND}, $tip_classes{note} );
+  $stmt .= sprintf( $schema{TIP_TIME_COND}, _clean($time) );
+  return _runcmd($stmt);
 }
 
 =head2 Internal Functions
