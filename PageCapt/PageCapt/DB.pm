@@ -240,24 +240,24 @@ sub load_user_data {
 
 =head3 C<get_user_by_uid( I<$user> )>
 
-A wrapper function, equivalent to C<get_user_data( $user, 'uid' )>.
+A wrapper function, equivalent to C<load_user_data( $user, 'uid' )>.
 
 =cut
 
 sub get_user_by_uid {
   my $uid = shift;
-  return get_user_data( $uid, 'uid' );
+  return load_user_data( $uid, 'uid' );
 }
 
 =head3 C<get_user_by_login( I<$login> )>
 
-A wrapper function, equivalent to C<get_user_data( $user, 'nick' )>.
+A wrapper function, equivalent to C<load_user_data( $user, 'nick' )>.
 
 =cut
 
 sub get_user_by_login {
   my $login = shift;
-  return get_user_data( $login, 'nick' );
+  return load_user_data( $login, 'nick' );
 }
 
 =head3 C<new_user( I<$login> )>
