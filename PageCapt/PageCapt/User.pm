@@ -46,7 +46,7 @@ sub new {
     $class = __PACKAGE__;
   }
 
-  bless { uid => $uid }, $class;
+  bless { data => { uid => $uid } }, $class;
 }
 
 =head3 C<blank()>
@@ -79,11 +79,14 @@ sub uid {
   my $self = shift || return undef;
   my $uid = shift;
 
-  $self->{uid} = $uid if defined $uid;
-  if ( $self->{uid} != $self->{data}{uid} ) {
-    $self->{data} = undef;
-    $self->{fresh} = 0; }
-  return $self->{uid};
+  if ( defined $uid ) {
+    if ( $uid != $self->{data}{uid} ) {
+      $self->{data} = undef;
+      $self->{fresh} = 0; }
+    $self->{data}{uid} = $uid;
+  }
+
+  return $self->{data}{uid};
 }
 
 =head3 C<login( [I<$login>] )>
@@ -98,17 +101,31 @@ sub login {
   my $self = shift || return undef;
   my $login = shift;
 
-  $self->{data}{nick} = $login if defined $login;
-  if ( (not defined $self->{data}{nick}) && $self->{uid} )
+  if ( defined $login )
+    { $self->{data}{nick} = $login;
+      $self->{fresh} = 1; }
+  if ( (not defined $self->{data}{nick}) && $self->uid )
     { $self->reload; }
   return $self->{data}{nick};
 }
 
-=head3 C<name>, C<address>, C<phone>, C<email>, C<contact> C<( [I<$data>] )>
+=head3 C<name>, C<address>, C<phone>, C<email>, C<contact>, C<password> C<( [I<$data>] )>
 
 These accessor methods fetch (no parameter) or set (with parameter)
 the corresponding value in the object private data structure.  Once
-set, these data can later be committed to the Users database.
+set, these data can later be committed to the Users database.  If the
+object has not already received any fresh data, this method will
+attempt to load undefined values from the database.
+
+If one of these methods has already been used to alter a value, this
+object will be marked as containing "fresh" data, and will no longer
+update from the database.  This means that you should read any values
+you need from a user record, before altering values in the object.
+However, the truly correct idiom for updating a user record is to
+create a new object and fill in only those values you want to alter,
+without referencing any other fields.  This way, those fields will
+remain undefined, and will therefore not be touched by the database
+operation.
 
 Note that these functions are auto-generated from a table using
 C<sprintf>-substitution and C<eval> to dynamically execute function
@@ -121,7 +138,8 @@ my %accessors =
     address  => 'addr',
     phone    => 'phone',
     email    => 'email',
-    contact  => 'other'
+    contact  => 'other',
+    password => 'pass'
   );
 
 my $acc_func_string = <<'END_OF_FUNC';
@@ -129,8 +147,10 @@ sub %s {
   my $self = shift || return undef;
   my $data = shift;
 
-  $self->{data}{%s} = $data if defined $data;
-  if ( (not defined $self->{data}{%s}) && $self->{uid} )
+  if ( defined $data ) 
+    { $self->{data}{%s} = $data;
+      $self->{fresh} = 1; }
+  if ( (not defined $self->{data}{%s}) && $self->uid )
     { $self->reload; }
   return $self->{data}{%s};
 }
@@ -155,15 +175,68 @@ that it is missing requested data.  Nothing is returned.
 
 sub reload {
   my $self = shift || return undef;
-  return undef unless $self->{uid} || $self->{data}{login};
+  return undef unless $self->uid || $self->{data}{nick};
   return undef if $self->{fresh};
 
-  if    ( $self->{uid} ) {
-    $self->{data} = PageCapt::DB::get_user_by_uid( $self->{uid} ); }
-  elsif ( $self->{data}{login} ) {
-    $self->{data} = PageCapt::DB::get_user_by_login( $self->{data}{login} );
-    $self->{uid} = $self->{data}{uid}; }
+  if    ( $self->uid ) {
+    $self->{data} = PageCapt::DB::get_user_by_uid( $self->uid ); }
+  elsif ( $self->{data}{nick} ) {
+    $self->{data} = PageCapt::DB::get_user_by_login( $self->{data}{nick} );
+  }
   $self->{fresh} = 1;
+}
+
+=head3 C<commit()>
+
+Update the database record corresponding to this user with the current
+values of the data fields.  This operation is only successful for a
+valid object.  On success, the data fields for this object are filled
+in with all of the data for the updated user.  Returns C<undef> on
+failure, or 0 if no such user exists or the database refuses the
+updates (due to integrity constraints, for instance).
+
+=cut
+
+sub commit {
+  my $self = shift || return undef;
+  return undef unless $self->uid && $self->isvalid;
+  my $data = PageCapt::DB::update_user( $self->uid, $self->{data} );
+  if ( ref $data eq 'HASH' )
+    { $self->{data} = $data;
+      return 1; }
+  else { return $data; }
+}
+
+=head3 C<create()>
+
+Create a user with the login name specified by this object, and update
+that user record with the data fields of this object.  On success,
+returns true, and the object will be marked as valid and fresh.  It is
+an error for the UID to be set before calling this method, as that
+would imply that the corresponding user already exists in the
+database.  It is also an error for the login name or password to not
+be set.
+
+Returns C<undef> on error, or 0 if the record cannot be created
+(generally because the login name is taken).
+
+=cut
+
+sub create {
+  my $self = shift || return undef;
+  return undef if $self->uid;
+  $self->{fresh} = 1;
+  return undef unless $self->login && $self->password;
+
+  my $uid = PageCapt::DB::new_user( $self->login );
+  return $uid unless $uid;
+
+  $self->{data}{uid} = $uid; # $self->uid( $uid ) would erase our unsaved data
+  my $data = PageCapt::DB::update_user( $uid, $self->{data} );
+  return $data unless $data;
+
+  $self->{data} = $data;
+  return 1;
 }
 
 =head2 Privilege
@@ -182,6 +255,45 @@ sub assert_validity {
   $self->{valid} = 1;
 }
 
+=head3 C<validate_password( I<$password> )>
+
+Check that the provided password matches the one corresponding to this
+user.  The mechanism by which this takes place is left undefined.  If
+the password matches, the object is marked as valid.  A true value is
+returned on success, 0 on failure, C<undef> on error.
+
+The login name must already have been set via the C<login> method.
+
+=cut
+
+sub validate_password {
+  my $self = shift || return undef;
+  my $password = shift || return undef;
+  return undef unless $self->login;
+  my $data = PageCapt::DB::get_user_by_login( $self->login );
+  if ( $data->{pass} eq $password )
+    { $self->assert_validity; }
+  else { $self->invalidate }
+  return $self->isvalid;
+}
+
+=head3 C<clone_validity()>
+
+Return a new User object with the same UID and validity status of this
+one, but which has no data fields defined.  This is necessary to
+create an object which, when C<commit>-ed, will have permission to do
+a database commit (if this one does), but will not have predefined
+data that would otherwise be reentered into the database, overwriting
+any other changes that might have been made in the meanwhile.
+
+=cut
+
+sub clone_validity {
+  my $self = shift || return undef;
+  my $new = $self->new( $self->uid );
+  $new->assert_validity if $self->isvalid;
+  return $new;
+}
 
 =head3 C<isvalid()>
 
@@ -196,6 +308,18 @@ sub isvalid {
   return $self->{valid};
 }
 
+=head3 C<invalidate()>
+
+Remove validity status from this instance.
+
+=cut
+
+sub invalidate {
+  my $self = shift;
+  $self->{valid} = 0;
+  return $self->{valid};
+}
+
 =head1 PRIVATE DATA
 
 Like most Perl classes, the private instance data for this class is
@@ -206,11 +330,14 @@ following structure.
 See L<PageCapt::DB/load_user_data()> for details on the structure of
 the C<data> field.
 
-  { uid	   => primary UID value
-    fresh  => true if data has been loaded from the DB, and not changed
-    valid  => true if this object is certified as corresponding to the 
+  {
+    fresh  => true if data has been loaded from the DB, or if current
+              data supercedes the DB
+    valid  => true if this object is certified as corresponding to the
               user making the current request
     data   => the object returned by PageCapt::DB::load_user_data()
   }
 
 =cut
+
+1;
