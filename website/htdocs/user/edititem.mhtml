@@ -130,7 +130,6 @@ $type => undef
 $status => undef
 $cost => undef
 $owner => undef
-$cost => undef
 $note => undef
 </%args>
 
