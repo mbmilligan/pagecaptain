@@ -128,15 +128,9 @@
       <input type="hidden" name="beta_msg" value="<% $beta_message %>">
       <input type="hidden" name="name" value="<% $ARGS{name} |h %>">
       <input type="hidden" name="email" value="<% $ARGS{email} |h %>">
-      <input type="hidden" name="major" value="<% $ARGS{major} |h %>">
-      <input type="hidden" name="talents" value="<% $ARGS{talents} |h %>">
-      <input type="hidden" name="connections" value="<% $ARGS{connections} |h %>">
-      <input type="hidden" name="nudity" value="<% $ARGS{nudity} |h %>">
-      <input type="hidden" name="home" value="<% $ARGS{home} |h %>">
-      <input type="hidden" name="points" value="<% $ARGS{points} |h %>">
-      <input type="hidden" name="age" value="<% $ARGS{age} |h %>">
-      <input type="hidden" name="schedule" value="<% $ARGS{schedule} |h %>">
-      <input type="hidden" name="beta" value="<% $ARGS{beta} %>">
+% foreach (@fields) {
+      <input type="hidden" name="<% $_ %>" value="<% $ARGS{$_} |h %>">
+% }
       <input type="hidden" name="send" value="1">
       <input type="SUBMIT" value="Send Survey Emails">
     </form>
@@ -177,20 +171,16 @@ $send => 0;
 my $sendmail = $PageCapt::Web::sendmail;
 my $to = "Cate Tolzmann <scavcat\@myrealbox.com>";
 my $beta_to = "Michael Milligan <mbmillig\@uchicago.edu>";
+my @fields = qw( major talents connections nudity home points age
+	schedule beta );
 
 if ( $User->isvalid ) {
-  my %oldsurvey	     = PageCapt::DB::load_survey_user( $User );
-  $ARGS{name}	     = $User->name unless $ARGS{name};
-  $ARGS{email}	     = $User->email unless $ARGS{email};
-  $ARGS{major}	     = $oldsurvey{major}{content} unless $ARGS{major};
-  $ARGS{talents}     = $oldsurvey{talents}{content} unless $ARGS{talents};
-  $ARGS{connections} = $oldsurvey{connections}{content} unless $ARGS{connections};
-  $ARGS{nudity}	     = $oldsurvey{nudity}{content} unless $ARGS{nudity};
-  $ARGS{home}	     = $oldsurvey{home}{content} unless $ARGS{home};
-  $ARGS{points}	     = $oldsurvey{points}{content} unless $ARGS{points};
-  $ARGS{age}	     = $oldsurvey{age}{content} unless $ARGS{age};
-  $ARGS{schedule}    = $oldsurvey{schedule}{content} unless $ARGS{schedule};
-  $ARGS{beta}	     = $oldsurvey{beta}{content} unless $ARGS{beta};
+  my %oldsurvey	= PageCapt::DB::load_survey_user( $User );
+  $ARGS{name}	= $User->name unless $ARGS{name};
+  $ARGS{email}	= $User->email unless $ARGS{email};
+  foreach (@fields) {
+    $ARGS{$_}	= $oldsurvey{$_}{content} unless $ARGS{$_};
+  }
 }
 
 my $beta_headers = <<EOF;
@@ -263,17 +253,10 @@ if ($send != 0) {
   $user->password( PageCapt::Web::generate_password($ARGS{name}) );
   $created = $user->create;
 
-  my $surveystruct = {
-    major        => $ARGS{major},
-    talents	 => $ARGS{talents},
-    connections	 => $ARGS{connections},
-    nudity	 => $ARGS{nudity},
-    home	 => $ARGS{home},
-    points	 => $ARGS{points},
-    age		 => $ARGS{age},
-    schedule	 => $ARGS{schedule},
-    beta	 => $ARGS{beta}
-  };
+  my $surveystruct = { };
+  foreach (@fields) {
+    $surveystruct->{$_} = $ARGS{$_};
+  }
 
   if ($created) {
     PageCapt::Web::mail_password( $user->uid );
@@ -289,6 +272,6 @@ if ($send != 0) {
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sat May  3 13:51:53 CDT 2003
+Last modified: Sat May  3 18:03:43 CDT 2003
 <!-- hhmts end -->
 </%method>
