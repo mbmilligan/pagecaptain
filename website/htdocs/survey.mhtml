@@ -10,20 +10,22 @@
 
     <P>Thank you,</P>
 
-    <UL>   Cate Tolzmann, Spring 2001<BR>
-	scavcat@myrealbox.com</UL>
+    <p style="margin-left: 5em">
+      Cate Tolzmann, Spring 2001<BR>
+      scavcat@myrealbox.com</p>
 
     <p>Yeah, you've all probably seen this survey at one time or
       another, since we've been using it in one form or another for a
-      few years now.  I've changed it very little, although be happy
-      if it works, since it is the first evidence of my new backend
-      system working.
+      few years now.
     </p>
-    <p>Two new things: first, when you hit submit, the page will reload, and at the
-      bottom you will be shown the email that will be sent to someone or other.  When
-      you are happy with your answers, hit the <b>Send Survey</b> button.  Second,
-      please notice the addition of the "Beta Tester" option.  I'm going to need
-      testers soon.
+    <p>Two new things: first, when you hit submit, the page will
+      reload, and at the bottom you will be shown the email that will
+      be sent to someone or other.  When you are happy with your
+      answers, hit the <b>Send Survey</b> button.  If you don't see
+      your answers in the sample emails at the bottom, <b>don't hit
+      "Send" yet</b>, hit the <b>update</b> button first.  Second,
+      please notice the addition of the "Beta Tester" option.  see the
+      home page for details about that.
     </p>
     <p>...Michael Milligan, Tech Turnip</p>
 
@@ -221,6 +223,6 @@ if ($send != 0) {
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Thu Apr 17 17:09:16 CDT 2003
+Last modified: Tue Apr 22 15:25:42 CDT 2003
 <!-- hhmts end -->
 </%method>
