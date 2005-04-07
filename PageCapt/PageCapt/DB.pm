@@ -4,7 +4,9 @@ my %tip_classes = (
 		   dump=>1,
 		   survey=>2,
 		   note=>3,
-		   watch=>4
+		   watch=>4,
+		   config=>5,
+		   pref=>6
 		  );
 
 my %schema =
@@ -17,6 +19,7 @@ my %schema =
    TIP_UID_COND	   => " AND creator = '%u'",
    TIP_REF_COND    => " AND reference = '%u'",
    TIP_TIME_COND   => " AND time = '%s'",
+   TIP_KEY_COND	   => " AND key = '%s'",
    GET_TIP_SUFX	   => " ORDER BY time DESC",
    TIP_REF_ORD     => " ORDER by reference ASC",
 
@@ -25,6 +28,8 @@ my %schema =
    ADD_TIP_ANON_STMT => "INSERT INTO Tip (class, data) VALUES ('%u','%s')",
    ADD_TIP_WUID_STMT => "INSERT INTO Tip (class, creator, data) VALUES ('%u','%u','%s')",
    ADD_TIP_FULL_STMT => "INSERT INTO Tip (class, creator, reference, data) VALUES ('%u', '%u', '%u', '%s')",
+   ADD_TIP_PAIR_STMT => "INSERT INTO Tip (class, creator, reference, key, data) " .
+   	"VALUES (%s, %s, %s, '%s', '%s')",
 
    UPD_TIP_STMT => "UPDATE Tip SET",
    TIP_UID_SET => " creator = '%u'",
@@ -885,6 +890,145 @@ sub expire_note {
   $stmt .= sprintf( $schema{TIP_CLASS_COND}, $tip_classes{note} );
   $stmt .= sprintf( $schema{TIP_TIME_COND}, _clean($time) );
   return _runcmd($stmt);
+}
+
+=head2 Parameter Storage
+
+The Tip table has the ability to store generic key-value data pairs; this fact
+is used here to store configuration parameters which make it possible to manage
+some aspects of the system through an interactive interface.
+
+Keys are stored in a C<varchar(16)>, which implies a length limitation.  By policy,
+they should match C<[A-Za-z0-9]>; that is, they should be usable as Perl symbols,
+for instance.  (Not that they ever are, at this point.  But it ensures we can make
+a simple mapping between parameter keys and variable names.)
+
+Global parameters are assigned a different class than per-user parameters.  By
+convention, the first are referred to as "configurations," and the latter as
+"preferences."  It follows that configuration values should never have an associated
+UID, but preferences must always have one.
+
+Parameters are multivalued (imagine an access control list, for instance).
+The representation in the Tip table will be as multiple items with the same key
+and, for preferences, the same UID.  An advantage is that we need not fuss
+around with updating records by their timestamp; we simply add and delete
+records.  Therefore, functions that fetch parameter values will return lists.
+It is possible to store parameter data either by supplying a list, or by
+providing specific values to be added or removed from the collection of values
+for the corresponding key.
+
+=head3 C<get_parameter( I<$key>, [ I<$uid>, I<$scalar>, I<$class> ] )>
+
+Read a configuration value from the database.  Returns a list of all values
+found.  There is no natural ordering.
+
+By default, fetech the global configuration I<$key>.  If I<$uid> is set, fetch
+the preference value I<$key> for that user.  If I<$scalar> is set and the
+returned list would have zero or one element, the result is given as undefined
+or a scalar, respectively.
+
+If I<$class> is set, search the specified class instead of C<config> or C<pref>.
+For instance, this will be applicable when we reimplement surveys as a key-value
+structure analogous to preferences.
+
+=cut
+
+sub get_parameter {
+  my $key = _clean_word(shift);
+  my $uid = _clean_num(shift);
+  my $scalar = shift;
+  my $class = shift;
+
+  return undef unless $key;
+  my $stmt = $schema{GET_TIP_STMT};
+  unless ($tip_classes{$class}) {
+    $class = $uid ? $tip_classes{pref} : $tip_classes{config}; }
+  $stmt .= sprintf( $schema{TIP_CLASS_COND}, $class );
+  $stmt .= sprintf( $schema{TIP_UID_COND}, $uid ) if $uid;
+  $stmt .= sprintf( $schema{TIP_KEY_COND}, $key );
+  my @results = map { $_->[4] } _runq($stmt);
+  if ( $scalar and $#results < 1 ) { $#results ? return $results[0] : return undef; }
+  else { return @results; }
+}
+
+=head3 C<add_parameter( I<$key>, I<$values>, [ I<$uid>, I<$class> ] )>
+
+Add new key-value pairs to the database.  Returns the number of rows inserted,
+or undef on error.
+
+By default, the global configuration I<$key> will be altered, but if I<$uid> is
+supplied, a preference corresponding to the user with that numeric ID will be
+inserted instead.  No check is made to see if such a user exists, but the default
+database schema includes a constraint that requires existence.  Thus specifying
+a nonexistent I<$uid> will normally return as an error.
+
+I<$values> is a list-ref containing the values to be stored.  Each value in the
+referenced list will become half of a new key-value pair, and will thus be among
+the values populating the list returned by C<get_parameter()>.  If I<$values>
+points to the empty list, this function is a noop.
+
+If I<$class> is provided, it will override the standard class selection logic
+(global configuration, or preference is a I<$uid> is provided).  This might be
+useful to the survey functions if they are reimplemented as preference-like
+objects, but top-level code probably shouldn't do this.
+
+=cut
+
+sub add_parameter {
+  my $key = _clean_word(shift) || return undef;
+  my $vals = shift; return undef unless ref($vals) eq 'ARRAY';
+  my $uid = _clean_num(shift);
+  my $class = shift;
+
+  unless ($tip_classes{$class}) {
+    $class = $uid ? $tip_classes{pref} : $tip_classes{config}; }
+
+  my $rows = 0;
+  for (@$vals) {
+    my $stmt = sprintf( $schema{ADD_TIP_PAIR_STMT}, $class,
+		        $uid ? $uid : 'NULL', 'NULL', $key, $_ );
+    my $tuples = _runcmd($stmt) or return undef;
+    $rows += $tuples;
+  }
+  return $rows;
+}
+
+=head3 C<set_parameter( I<$key>, I<$values>, [ I<$uid>, I<$class> ] )>
+
+Replace a configuration value with the supplied values.  Returns identically to
+C<add_parameter()>.
+
+I<$values> is a list-ref containing the values to be stored.  Any
+preexisting values will be discarded, and each element in I<$values> will become
+a key-value pair.  (If I<$values> points to an empty list, all values will be
+discarded, and no further action taken.)
+
+After performing the deletion, this function calls C<add_parameter()>, and thus
+the functionality is identical.  This function wraps the operation in a
+transaction to ensure that the previous values are preserved in the event of an
+error, which is assumed to be the condition where C<add_parameter()> returns a
+different number than the number of values passed to it.
+
+=cut
+
+sub set_parameter {
+  my @args = @_;
+  my $key = _clean_word($args[0]) || return undef;
+  my $values = $args[1];
+  my $uid = _clean_num($args[2]);
+  my $class = $args[3];
+
+  unless ($tip_classes{$class}) {
+    $class = $uid ? $tip_classes{pref} : $tip_classes{config}; }
+  _runcmd('BEGIN');
+  my $stmt = $schema{DEL_TIP_STMT};
+  $stmt .= sprintf( $schema{TIP_CLASS_COND}, $class );
+  $stmt .= sprintf( $schema{TIP_UID_COND}, $uid ) if $uid;
+  $stmt .= sprintf( $schema{TIP_KEY_COND}, $key );
+  _runcmd($stmt);
+  if ((my $ret = add_parameter(@args)) == ($#{$values} + 1)) {
+    _runcmd('COMMIT'); return $ret;
+  } else { _runcmd('ABORT'); return undef; }
 }
 
 =head2 Internal Functions
