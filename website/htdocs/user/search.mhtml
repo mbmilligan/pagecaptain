@@ -54,7 +54,8 @@
 	<input class="formbutton" type="submit" value="GO">
       </p>
     </form>
-	  
+
+    <& itemgrid.mas, list => \@list &>
 % if ($search) {
     <& itemtable.mas, list => \@list &>
 % }
