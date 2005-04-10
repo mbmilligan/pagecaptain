@@ -27,7 +27,8 @@ $num => undef
 <%init>
   @list = PageCapt::DB::load_list() unless @list;
   $num = $num || $list[$#list]->{number};
-  $width = $num < 50 ? 10 : int(sqrt($num))*1.7;
+  $num = $#list + 1 if $#list + 1 > $num;
+  $width = $width || $num < 50 ? 10 : int(sqrt($num))*1.7;
   my @mask = ( );
   for (@list) {
     $mask[$_->{number}] = $_;
