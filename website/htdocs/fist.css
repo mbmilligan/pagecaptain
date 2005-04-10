@@ -30,6 +30,10 @@
 	text-align: center
 }
 
+#itemgrid {
+	font-size: 6pt;
+}
+
 input {
 	font-size: smaller;
 }
@@ -59,34 +63,6 @@ table#list td {
 	border-top: 1px solid #666666;
 	border-right: 1px solid #666666;
 }
-
-a#num {
-	color: white;
-	text-decoration: underline;
-}
-
-tr.status_HelpWanted #num {
-	color: orange;
-}
-
-tr.status_Ongoing #num {
-	color: yellow;
-}
-
-tr.status_Done #num {
-	color: green;
-}
-
-tr.status_Impossible #num {
-	color: red;
-}
-
-body {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: smaller;
-	color: #FFFFFF;
-	background-color: #000000;
-}
 a:link {
 	color: #FF0000;
 	text-decoration: none;
@@ -102,6 +78,42 @@ a:hover {
 a:active {
 	color: #0000FF;
 	text-decoration: none;
+}
+
+a#num, a.num {
+	color: white;
+	text-decoration: underline;
+}
+
+table#itemgrid tr td a.num { color: black; }
+
+tr.status_HelpWanted #num , td.status_HelpWanted {
+	background-color: orange;
+	color: black;
+}
+
+tr.status_Ongoing #num, td.status_Ongoing {
+	background-color: yellow;
+	color: black;
+}
+
+tr.status_Done #num, td.status_Done {
+	background-color: green;
+	color: black;
+}
+
+tr.status_Impossible #num, td.status_Impossible {
+	background-color: red;
+	color: black;
+}
+
+table#itemgrid tr td.status_none a.num { color: white; }
+
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: smaller;
+	color: #FFFFFF;
+	background-color: #000000;
 }
 h1 {
 	color: #CCCCCC;
