@@ -1,4 +1,4 @@
-<table border="1px" id="itemgrid">
+<table id="itemgrid">
 % foreach my $i ( map {$_*$width} (0 .. int($num / $width) ) ) {
   <tr>
 %   foreach my $j ($i+1 .. $i+$width) {
@@ -20,19 +20,21 @@
 
 <%args>
 $width => undef
-$num => undef
+$expand => 1
 @list => ( )
 </%args>
 
 <%init>
   @list = PageCapt::DB::load_list() unless @list;
-  $num = $num || $list[$#list]->{number};
-  $num = $#list + 1 if $#list + 1 > $num;
-  $width = $width || $num < 50 ? 10 : int(sqrt($num))*1.7;
   my @mask = ( );
-  for (@list) {
-    $mask[$_->{number}] = $_;
+  my $num;
+  if ($expand) {
+    for (@list) { $mask[$_->{number}] = $_; }
+  } else {
+    @mask = (undef, @list);
   }
+  $num = $#mask;
+  $width = $width || ( $num < 50 ? ( $num < 15 ? $num : 10 ) : int(sqrt($num))*1.7 );
 </%init>
 
 <%def editlink>\

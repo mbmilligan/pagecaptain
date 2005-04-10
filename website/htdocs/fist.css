@@ -30,8 +30,9 @@
 	text-align: center
 }
 
-#itemgrid {
+table#itemgrid {
 	font-size: 6pt;
+	border: 1px solid white;
 }
 
 input {

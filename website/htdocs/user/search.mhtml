@@ -55,7 +55,7 @@
       </p>
     </form>
 
-    <& itemgrid.mas, list => \@list &>
+    <& itemgrid.mas, list => \@list, expand => ! $search &>
 % if ($search) {
     <& itemtable.mas, list => \@list &>
 % }
