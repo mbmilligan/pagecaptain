@@ -174,7 +174,7 @@ sub _compose_hash {
   my $hash = new Digest::SHA1;
 
   $hash->add($user->uid);
-  $hash->add($ENV{REMOTE_ADDR});
+  $hash->add($ENV{HTTP_X_FORWARDED_FOR} || $ENV{REMOTE_ADDR});
   $hash->add($secret);
   return $hash->b64digest;
 }
