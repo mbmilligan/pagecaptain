@@ -947,7 +947,7 @@ sub get_parameter {
   $stmt .= sprintf( $schema{TIP_UID_COND}, $uid ) if $uid;
   $stmt .= sprintf( $schema{TIP_KEY_COND}, $key );
   my @results = map { $_->[4] } _runq($stmt);
-  if ( $scalar and $#results < 1 ) { $#results ? return $results[0] : return undef; }
+  if ( $scalar and $#results < 1 ) { $#results + 1 ? return $results[0] : return undef; }
   else { return @results; }
 }
 
