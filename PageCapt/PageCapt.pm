@@ -27,8 +27,13 @@ $PageCapt::DB::db_string = "dbname=scavhunt user=user password=password";
 			       HelpWanted  => 4
 			     );
 
-%PageCapt::Web::tubers = ( mmilligan=>1, scavcat=>1, arsinoe=>1, cmcfaul=>1, gtg590s=>1,
+%PageCapt::Web::tubers = ( mmilligan=>1, scavcat=>1, 
 			   sasmith=>1, sperkins=>1, igor47=>1, onansolo=>1 ); 
+
+for my $u (PageCapt::DB::get_parameter('tubers')) {
+  $PageCapt::Web::tubers{$u} = 1;
+}
+
 $PageCapt::Web::secret = "foo";
 $PageCapt::Web::cookiename = "PCauth";
 $PageCapt::Web::pass_length = 6;
