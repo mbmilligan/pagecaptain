@@ -7,7 +7,7 @@
   if ( window.opener ) { parent = window.opener; } 
   if ( parent.document ) { 
     msg = parent.document.getElementById('msg').firstChild;
-    if ( success ) {
+    if ( success == 1 ) {
   	target = parent.document.getElementById('itemgrid');
 	if ( target ) { items = target.getElementsByTagName('td');
 	  if ( items[inum-1] ) {
@@ -18,7 +18,9 @@
 	msg.nodeValue = 'Success entering item #' + inum;
 	}
     } else {
-       msg.nodeValue = 'Failed to enter item #' + inum;
+       if ( success == -1 ) {
+         msg.nodeValue = 'You do not have permission to input items right now.'; }
+       else { msg.nodeValue = 'Failed to enter item #' + inum; }
     }
   }
 </script>
@@ -45,9 +47,14 @@
 
 <%init>
 my $success = 0;
-if ( PageCapt::DB::create_item( $inum ) ) {
-  PageCapt::DB::update_list( { number=>$inum, desc=>$desc, score=>$score,
-  			       input=>1 } ) and $success = 1;
+if ( $PageCapt::Web::tubers{$User->login} || 
+     PageCapt::DB::get_parameter('entrymode',undef,1) eq "free" ) {
+  if ( PageCapt::DB::create_item( $inum ) ) {
+    PageCapt::DB::update_list( { number=>$inum, desc=>$desc, score=>$score,
+  			         input=>1 } ) and $success = 1;
+  }
+} else {
+  $success = -1;
 }
 
 </%init>
