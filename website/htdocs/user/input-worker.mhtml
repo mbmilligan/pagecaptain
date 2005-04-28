@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>Input Worker</title>
+<script type="application/x-javascript">
+  var success = <% $success %>;
+  var inum = <% $inum || 0 %>;
+  if ( window.opener ) { parent = window.opener; } 
+  if ( parent.document ) { 
+    msg = parent.document.getElementById('msg').firstChild;
+    if ( success ) {
+  	target = parent.document.getElementById('itemgrid');
+	if ( target ) { items = target.getElementsByTagName('td');
+	  if ( items[inum-1] ) {
+			items[inum-1].bgColor = 'red';
+	  } else { dbg = parent.document.getElementById('dbg').firstChild;
+		   dbg.nodeValue = 'Overran table end; suggest reloading.';
+	  }
+	msg.nodeValue = 'Success entering item #' + inum;
+	}
+    } else {
+       msg.nodeValue = 'Failed to enter item #' + inum;
+    }
+  }
+</script>
+</head>
+<body>
+% if ($success) {
+<p>Insert succeeded.</p>
+% } else {
+<p>Failure!</p>
+<dl>
+<dt>Number:</dt><dd><% $inum %></dd>
+<dt>Desc:</dt><dd><% $desc %></dd>
+<dt>Score:</dt><dd><% $score %></dd>
+</dl>
+% }
+<script type="application/x-javascript">
+  // if ( ! parent.document ) { alert('No parent window!'); }
+  // parent.focus();
+  //window.close();
+</script>
+
+</body>
+</html>
+
+<%init>
+my $success = 0;
+if ( PageCapt::DB::create_item( $inum ) ) {
+  PageCapt::DB::update_list( { number=>$inum, desc=>$desc, score=>$score,
+  			       input=>1 } ) and $success = 1;
+}
+
+</%init>
+
+<%args>
+$inum
+$desc
+$score
+</%args>
+
+<%flags>
+inherit => undef
+</%flags>
