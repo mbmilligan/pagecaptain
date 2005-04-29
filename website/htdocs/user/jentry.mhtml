@@ -63,6 +63,7 @@ function setupForm () {
   count += 1; count %= 5;
   
   document.forms[0].elements['tinum'].focus();
+  return true;
 }
 
 </script>
