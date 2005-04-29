@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html">
     <title><& SELF:title, %ARGS &></title>
     <link href="<& SELF:base &>fist.css" rel="stylesheet" type="text/css">
+    <& SELF:headers, %ARGS &>
   </head>
   <body>
     <div id="nav">
@@ -71,6 +72,8 @@ FIST: Deleuzean Potato
 
 <%method base>/\
 </%method>
+
+<%method headers></%method>
 
 <%flags>
 inherit => undef
