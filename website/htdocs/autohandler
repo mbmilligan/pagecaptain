@@ -6,6 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html">
     <title><& SELF:title, %ARGS &></title>
     <link href="<& SELF:base &>fist.css" rel="stylesheet" type="text/css">
+    <link title="SPH Experimental Style" rel="alternate stylesheet"
+      type="text/css" href="http://www.forge22.com/css/fist/fist.css">
     <& SELF:headers, %ARGS &>
   </head>
   <body>
