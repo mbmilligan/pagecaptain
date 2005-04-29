@@ -1,4 +1,4 @@
-    <form action="<& REQUEST:base &>index.mhtml" method="get">
+    <form action="<& REQUEST:base &>index.mhtml" method="POST">
       <p class="title">Login</p>
       <p>
 % if ( defined $ARGS{attempt} && $ARGS{attempt} == 1 ) {
