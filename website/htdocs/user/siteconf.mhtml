@@ -1,0 +1,61 @@
+<h1>PageCaptain Runtime Configuration</h1>
+
+% unless ($PageCapt::Web::tubers{$User->login}) {
+<h2>Not Authorized</h2>
+
+<p>Sorry, you don't have permission to reconfigure the PageCaptain
+   right now.  We hope you understand.  If you think this is all a 
+   big mistake, please contact the PageCaptain operator.
+</p>
+
+% } else {
+<h2>Reconfigure with Care</h2>
+
+<& siteconf_entrymode, mode=>$entrymode &>
+
+% }
+
+<%method title>\
+PageCaptain Runtime Configuration\
+</%method>
+
+<%def siteconf_entrymode>
+<%args>
+$mode => 0
+</%args>
+
+  <h3>Item Input Mode</h3>
+  <form action="siteconf.mhtml" method="GET">
+  <p>
+  <input type="radio" name="set_entrymode" value="0" \
+    <% $mode == 0 ? "checked" : "" %> >
+  <b>Restricted</b>: Only Captains can input list items
+  </p>
+  <p>
+  <input type="radio" name="set_entrymode" value="1" \
+    <% $mode == 1 ? "checked" : "" %> >
+  <b>Free-For-All</b>: Any logged-in user can input items
+  </p>
+  <input type="submit" value="Set Input Mode">
+  </form>
+
+</%def>
+
+<%args>
+$set_entrymode => undef
+</%args>
+
+<%init>
+
+my $auths = 0;
+if ($PageCapt::Web::tubers{$User->login}) { $auths++; }
+
+if (defined $set_entrymode and $auths >= 1) {
+  if ($set_entrymode == 1) { PageCapt::DB::set_parameter('entrymode',['free']); }
+  else { PageCapt::DB::set_parameter('entrymode',['default']); }
+}
+
+my $entrymode = PageCapt::DB::get_parameter('entrymode',undef,1);
+if ($entrymode eq 'free') { $entrymode = 1; } else { $entrymode = 0; }
+
+</%init>
