@@ -3,10 +3,16 @@
 
     <p>User
       <a href="<& SELF:base &>user/userinfo.mhtml">Information</a>
-      <br>
-      Intel <a href="<& SELF:base &>user/intel.mhtml">Briefs</a>
-      <br>
+      <br />
       The <a href="<& SELF:base &>user/search.mhtml">List</a>
+% if ($input) {
+      <br />
+      <a href="<& SELF:base &>user/jentry.mhtml">Input</a> Items
+% }
+% if ($capt) {
+      <br />
+      <a href="<& SELF:base &>user/siteconf.mhtml">Site Settings</a>
+% }
     </p>
 
     <p>
@@ -22,5 +28,8 @@
 
  my $am = ($hour < 12) ? "Morning" :
     ( ($hour < 19) ? "Afternoon" : "Evening" );
+
+ my $capt = $PageCapt::Web::tubers{$User->login};
+ my $input = ($capt or PageCapt::DB::get_parameter('entrymode',undef,1) eq 'free');
 
 </%init>
