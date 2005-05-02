@@ -44,6 +44,10 @@ tt {
 	margin-right: 5em;
 }
 
+code {
+	font-family: monospace;
+}
+
 .field {
 	font-weight: hold;
 }
