@@ -49,8 +49,26 @@ Contact Michael to be put on the list of people who can see this field. \
 % }
     </table>
 
+% if ($PageCapt::Web::tubers{$user->login}) {
+<p>This user has uber-tuber powers.</p>
+% } elsif ($PageCapt::Web::tubers{$User->login}) {
+%   unless ($promote) {
+<p><a href="<% PageCapt::Web::url('userinfo.mhtml', {uid=>$uid,promote=>1}) %>">\
+User promotion</a></p>
+%   } else {
+<p>Some users are designated <b>Uber-Tubers</b>, <b>Site Captains</b>, or whatever
+   you want to call them.  These users have extra powers on the PageCaptain system,
+   and should be trusted to behave responsibly with team members' data and with the
+   management of the List.
+</p>
+<p><a href="<% PageCapt::Web::url('userinfo.mhtml', {uid=>$user->uid,promote=>$user->login}) %>">\
+Grant this user <b>Uber-Tuber</b> powers</a></p>
+%   }
+% }
+
 <%args>
 $uid => $User->uid
+$promote => undef
 </%args>
 
 <%init>
@@ -79,6 +97,11 @@ foreach (keys %survey) {
   $survey{$_}{content} =~ s/</&lt;/g;
   $survey{$_}{content} =~ s/>/&gt;/g;
   $survey{$_}{content} =~ s/\n/<br>/g;
+}
+
+if ($PageCapt::Web::tubers{$User->login} and $promote eq $user->login) {
+  PageCapt::DB::add_parameter('tubers',[$user->login]);
+  $PageCapt::Web::tubers{$user->login} = 1;
 }
 
 </%init>
