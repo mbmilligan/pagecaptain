@@ -4,11 +4,13 @@
 % if ( defined $ARGS{attempt} && $ARGS{attempt} == 1 ) {
 	Last Attepmt Failed
 % }
-	<label for="loginname">Login name:</label><br>
+	<label for="loginname">Login name:</label><br />
 	<input type="text" name="loginname" size="12">
-	<label for="password">Password:</label><br>
+	<label for="password">Password:</label><br />
 	<input type="password" name="password" size="12">
+       <a href="<& SELF:base &>password.mhtml">Forgot your password?</a><br />
 	<input type="hidden" name="attempt" value="1">
 	<input class="formbutton" type="submit" value="OK">
       </p>
     </form>
+

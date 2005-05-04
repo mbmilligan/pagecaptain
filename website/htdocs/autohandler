@@ -5,9 +5,10 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html">
     <title><& SELF:title, %ARGS &></title>
-    <link href="<& SELF:base &>fist.css" rel="stylesheet" type="text/css">
-    <link title="SPH Experimental Style" rel="alternate stylesheet"
+    <link title="SPH Style" rel="stylesheet"
       type="text/css" href="http://www.forge22.com/css/fist/fist.css">
+    <link href="<& SELF:base &>fist.css" rel="alternate stylesheet" 
+      title="Old Default Style" type="text/css">
     <& SELF:headers, %ARGS &>
   </head>
   <body>
@@ -24,7 +25,6 @@
       <hr>
     <address>
       <a href="mailto:mmilligan AT astro.umn.edu">Michael Milligan</a><br>
-      <a href="mailto:sperkins@nmu.edu">Sam Perkins-Harbin</a> (1337 page redux designer)
     </address>
     <p><& SELF:time_stamp &></p>
     </div>
@@ -64,7 +64,7 @@ if ($ARGS{logout}) {
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sat Apr 24 00:58:21 CDT 2004
+Last modified: Wed May  4 01:57:43 CDT 2005
 <!-- hhmts end -->
 </%method>
 
