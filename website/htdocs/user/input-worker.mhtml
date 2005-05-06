@@ -49,12 +49,19 @@
 my $User = PageCapt::Web::extract_cookie( $m->cgi_object() ) ||
   blank PageCapt::User;
 
+my $points = "";
+if ( $score =~ m{([0-9.+*\/ -]+) point} ) {
+  my $tp = $1;
+  $points = $tp if (($tp + 1 - 1) eq $tp);
+  $points = eval $tp;
+}
+
 my $success = 0;
 if ( $PageCapt::Web::tubers{$User->login} or $User->isvalid &&
      PageCapt::DB::get_parameter('entrymode',undef,1) eq "free" ) {
   if ( PageCapt::DB::create_item( $inum ) ) {
-    PageCapt::DB::update_list( { number=>$inum, desc=>$desc, score=>$score,
-  			         input=>1 } ) and $success = 1;
+    PageCapt::DB::update_list( { number=>$inum, desc=>$desc, score=>$score, 
+    				points=>$points, input=>1 } ) and $success = 1;
   }
 } else {
   $success = -1;
