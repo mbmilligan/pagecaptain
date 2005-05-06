@@ -86,7 +86,7 @@
 	    <input type="SUBMIT" value="Set Status">
 	  </form>
 % } else {
-	    <% $data->{type} || 'Unknown' %>
+	    <% $data->{status} || 'Unknown' %>
 % }
 	  </td>
 	</tr>
