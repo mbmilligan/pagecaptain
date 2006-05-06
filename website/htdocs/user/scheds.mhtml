@@ -1,0 +1,44 @@
+    <h1>User Information</h1>
+    <h2>Viewing Schedules for Active FISTies</h2>
+
+    <p>The table below displays the schedule responses from 
+	the user surveys <b>for only those people who have 
+	updated their passwords</b> and thus should only show
+	active users.  In the approximate order in which they 
+	changed their passwords last, if you were wondering.
+    </p>
+
+    <h3>Results (<% $#res + 1 %> people so far)</h3>
+    <table id="survey" title="Survey Responses">
+	<tr><th>FISTie</th><th>Schedule during the Hunt</th></tr>
+% foreach my $row (@res) {
+	<tr><td><% $row->[0] %></td><td><% $row->[1] %></td></tr>
+% }
+    </table>
+
+<%args>
+</%args>
+
+<%init>
+
+my $query = "select u.name,s.data,u.uid from users u, tip s  where u.password not like 'deleteme' and u.uid = s.creator and s.data like 'sched%'";
+my @res = PageCapt::DB::_runq($query);
+foreach my $row (@res) {
+  my $s = '<a href="'.$m->scomp('SELF:base').'user/'.
+	PageCapt::Web::url('userinfo.mhtml',{uid=>$row->[2]}) .
+	'">'.$row->[0] . '</a>';
+  $row->[0] = $s;
+  $row->[1] =~ s{\n}{<br />}gs; $row->[1] =~ s/^schedule://;
+}
+ 
+</%init>
+
+<%method title>
+<& PARENT:title &> - Active Members
+</%method>
+
+<%method time_stamp>
+<!-- hhmts start -->
+Last modified: Tue May  6 16:50:19 CDT 2003
+<!-- hhmts end -->
+</%method>

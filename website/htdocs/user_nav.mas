@@ -11,7 +11,9 @@
 % }
 % if ($capt) {
       <br />
-      <a href="<& SELF:base &>user/siteconf.mhtml">Site Settings</a>
+      <a href="<& SELF:base &>user/siteconf.mhtml">Site Settings</a><br />
+      <a href="<& SELF:base &>user/scheds.mhtml">User Schedules</a><br />
+      <a href="<& SELF:base &>user/phones.mhtml">User Contact Info</a>
 % }
     </p>
 

@@ -3,16 +3,9 @@
 <h2>Welcome Back</h2>
 </div>
 
-<p>I think we'll use the <a href="<& SELF:base &>wiki.mhtml">Wiki</a> for
-    posting news and stuff, but this here is the Database.  Right now it has the
-    Virginia Hunt list loaded.
-</p>
-
-<p>If you have an account from last year, please log in to update your
-    information (I've reset all the passwords to "scavhunt", because I know
-    better than to think anyone remembers theirs from a year ago).  If you've
-    forgotten your old username, just ask me.
-</p>
+<p>This is your interface to the Automated PageCaptain system, your gateway to
+the List.  Check out our <a href="<& SELF:base &>wiki.mhtml">Wiki Homepage</a>
+for the latest news.  </p>
 
 <p>If you <b>don't</b> have an account, take the 
     <a href="<& SELF:base&>survey.mhtml">SURVEY</a> to get one.
