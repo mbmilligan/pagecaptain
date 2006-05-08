@@ -14,7 +14,7 @@
 
 <%init>
 
-my $query = "select u.name,u.phone,u.email,u.uid from users u";
+my $query = "select u.name,u.phone,u.email,u.uid from users u order by u.name";
 my @res = PageCapt::DB::_runq($query);
 foreach my $row (@res) {
   my $s = '<a href="'.$m->scomp('SELF:base').'user/'.

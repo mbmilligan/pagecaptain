@@ -21,7 +21,7 @@
 
 <%init>
 
-my $query = "select u.name,s.data,u.uid from users u, tip s  where u.password not like 'deleteme' and u.uid = s.creator and s.data like 'sched%'";
+my $query = "select u.name,s.data,u.uid from users u, tip s  where u.password not like 'deleteme' and u.uid = s.creator and s.data like 'sched%' order by u.name";
 my @res = PageCapt::DB::_runq($query);
 foreach my $row (@res) {
   my $s = '<a href="'.$m->scomp('SELF:base').'user/'.
