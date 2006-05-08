@@ -160,6 +160,70 @@ sub generate_password {
   return substr( $hash->b64digest, 1, $length );
 }
 
+=head2 Spam Filter System
+
+PageCaptain includes a basic spam-filtering system appropriate for scanning
+many types of text stream.  It is configured via two variables:
+
+I<$PageCapt::Web::spamwords> sets the location of a text file containing
+one string per line.  The text string will be scanning against each string,
+and the spam score incremented for each one found.  
+
+I<$PageCapt::Web::hamwords> sets the location of a similar file containing
+strings that decrement the spam score.
+
+=head3 C<ratespam( I<$text> )>
+
+Returns a numeric rating equal to the number of spam-associated tokens
+found in I<$text>, less the number of non-spam tokens.  
+
+Set I<$PageCapt::Web::spamstrings> to the empty list to force reloading
+of the spamwords file.
+
+=cut
+
+our @spamstrings;
+our @hamstrings;
+
+sub ratespam {
+  my $text = shift;
+  my $score = 0;
+  return 0 unless $spamwords;
+
+  load_spamstrings() unless @spamstrings;
+  study $text;
+
+  for my $str (@spamstrings) {
+      while ($text =~ m/$str/gi) { $score++; }
+  }
+  for my $str (@hamstrings) {
+      while ($text =~ m/$str/gi) { $score--; }
+  }
+
+  return $score;
+}
+
+sub load_spamstrings {
+  if ($PageCapt::Web::spamwords) {
+    open SPAM, "<", $PageCapt::Web::spamwords ||
+	do { $PageCapt::Web::spamwords = undef; return; };
+    @spamstrings = <SPAM>; chomp @spamstrings;
+    close SPAM;
+    unless (@spamstrings) {
+	do { $PageCapt::Web::spamwords = undef; return; }
+    }
+  }
+  if ($PageCapt::Web::hamwords) {
+    open SPAM, "<", $PageCapt::Web::hamwords || 
+	do { $PageCapt::Web::hamwords = undef; return; };
+    @hamstrings = <SPAM>; chomp @hamstrings;
+    close SPAM;
+    unless (@hamstrings) {
+	do { $PageCapt::Web::hamwords = undef; return; }
+    }
+  }
+}
+
 =head2 Internal Routines
 
 =head3 C<_compose_hash( I<$user> )>
@@ -178,3 +242,5 @@ sub _compose_hash {
   $hash->add($secret);
   return $hash->b64digest;
 }
+
+1;

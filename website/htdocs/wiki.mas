@@ -1,14 +1,24 @@
 <%init>
 
-# "Safe-pipe" method
-
 delete $ENV{REQUEST_METHOD};
 my @params = ( );
+
+# Spam filtering on page save request
+
+if ($ARGS{Save} eq 'Save') {
+    if (PageCapt::Web::ratespam($ARGS{text}) > 5) {
+	%ARGS = ();
+	$ARGS{action} = 'browse';
+	$ARGS{id} = 'SpamScold';
+    }
+}
 
 foreach my $arg (keys %ARGS) {
   push @params, $arg . "=" . 
     $m->interp->apply_escapes( $ARGS{$arg}, 'u' );
 }
+
+# "Safe-pipe" method
 
 my $pid = open(WIKI, "-|");
 unless ($pid) { exec("perl", "wiki.pl", @params); }

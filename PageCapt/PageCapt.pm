@@ -36,6 +36,8 @@ for my $u (PageCapt::DB::get_parameter('tubers')) {
 $PageCapt::Web::secret = "foo";
 $PageCapt::Web::cookiename = "PCauth";
 $PageCapt::Web::pass_length = 6;
+$PageCapt::Web::spamwords = "spamwords.dat";
+$PageCapt::Web::hamwords = "hamwords.dat";
 $PageCapt::Web::sendmail = "/usr/lib/sendmail -t";
 $PageCapt::Web::fromaddr = 'ScavHunt Website <mmilligan@astro.umn.edu>';
 $PageCapt::Web::reminder_message = <<'END';
