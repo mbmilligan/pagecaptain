@@ -680,8 +680,6 @@ sub load_list {
   my %params = %$p;
   my $stmt = $schema{GET_ITEM_STMT};
   my %sortmap = ( points=>'ITEM_PNT_ORD', cost=>'ITEM_COST_ORD', number=>'ITEM_NUM_ORD' );
-  my %types = _invert_hash( %ItemTypeMap );
-  my %status = _invert_hash( %ItemStatMap );
   my @cond;
   my $sort;
 
@@ -711,8 +709,15 @@ sub load_list {
 
   $stmt .= join( $schema{LOGIC_AND}, @cond ) || $schema{LOGIC_T};
   $stmt .= $sort if $sort;
-  my @list = _runq($stmt);
+  return _items_to_hash( _runq($stmt) );
+}
+
+sub _items_to_hash {
+  my @list = @_;
   my @return;
+  my %types = _invert_hash( %ItemTypeMap );
+  my %status = _invert_hash( %ItemStatMap );
+
   foreach $row (@list) {
     push @return, { number => $row->[0],
 		    points => $row->[1],
@@ -724,6 +729,22 @@ sub load_list {
 		    score  => $row->[5] };
   }
   return @return;
+}
+
+=head3 C<load_list_inums( I<@inums> )>
+
+Returns identically to C<load_list()>.  I<@inums> is a list of item numbers
+that will be returned as a list of hash-refs, sorted by item number.
+
+=cut
+
+sub load_list_inums {
+  my @inums = @_ or return ();
+  my @return;
+  my $stmt = $schema{GET_ITEM_STMT};
+  my @conds = map { sprintf($schema{ITEM_NUM_COND}, _clean_num($_)) } @inums;
+  $stmt .= join( $schema{LOGIC_OR}, @conds ) . $schema{ITEM_NUM_ORD};
+  return _items_to_hash( _runq($stmt) );
 }
 
 =head3 C<create_item( I<$inum> )>

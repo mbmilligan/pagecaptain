@@ -31,7 +31,7 @@ listhost server</a> to subscribe to our mailing list.
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Sat Apr 24 03:28:04 CDT 2004
+Last modified: Wed May 10 17:00:22 CDT 2006
 <!-- hhmts end -->
 </%method>
 
@@ -42,11 +42,7 @@ Last modified: Sat Apr 24 03:28:04 CDT 2004
 my @watchlist = ( );
 if ($User->isvalid) {
   my @items = PageCapt::DB::get_watched_byuser( $User );
-
-  foreach my $id (@items) {
-    my ( $item ) = PageCapt::DB::load_list( { number => $id } );
-    push @watchlist, $item;
-  }
+  @watchlist = PageCapt::DB::load_list_inums( @items );
 }
 
 </%init>
