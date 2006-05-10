@@ -23,6 +23,13 @@ my %schema =
    GET_TIP_SUFX	   => " ORDER BY time DESC",
    TIP_REF_ORD     => " ORDER by reference ASC",
 
+   GET_NOTE_ITEMS  => "SELECT DISTINCT T.reference FROM Tip T",
+   NOTE_WHO_SRC    => ", Tip W",
+   NOTE_NOTE_CLASS => " WHERE T.class = '%u'",
+   NOTE_WHO_CLASS  => " AND W.class = '%u'",
+   NOTE_AGE_COND   => " AND T.time >= '%s'",
+   NOTE_WHO_COND   => " AND W.creator = '%u' AND W.reference = T.reference",
+
    SRVY_FIELD_COND => " AND substring( data FROM '1' FOR position(':' IN data)-1 ) ILIKE '%s'",
 
    ADD_TIP_ANON_STMT => "INSERT INTO Tip (class, data) VALUES ('%u','%s')",
@@ -837,6 +844,35 @@ sub get_item_notes {
     push @notes, $note;
   }
   return @notes;
+}
+
+=head3 C<get_new_noted_items( I<$time>, [ I<$uid> ] )>
+
+Returns a list of item numbers to which notes have been added since I<$time>.
+It should be noted that this is intended to be a timestamp from another
+database operation.  While the underlying Postgres backend will accept other
+string time specifiers, no guarantees are made about the backend timezone or
+accepted formats.  In case of error, no results will be returned.
+
+However, if I<$time> is defined and evaluates to false, the age test is
+skipped.
+
+If I<$uid> is specified and nonzero, restricts results to items watched by
+I<$uid>.
+
+=cut
+
+sub get_new_noted_items {
+  my $time = _clean(shift);
+  my $uid = _clean_num(shift);
+
+  my $stmt = $schema{GET_NOTE_ITEMS};
+  $stmt .= sprintf( $schema{NOTE_WHO_SRC}, $uid ) if $uid;
+  $stmt .= sprintf( $schema{NOTE_NOTE_CLASS}, $tip_classes{note} );
+  $stmt .= sprintf( $schema{NOTE_WHO_CLASS}, $tip_classes{watch} ) if $uid;
+  $stmt .= sprintf( $schema{NOTE_AGE_COND}, $time ) if $time;
+  $stmt .= sprintf( $schema{NOTE_WHO_COND}, $uid ) if $uid;
+  return map { $_->[0] } _runq($stmt);
 }
 
 =head3 C<add_note( I<$text>, I<$item>, [I<$user>] )>

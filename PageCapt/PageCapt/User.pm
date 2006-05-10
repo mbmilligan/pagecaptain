@@ -258,6 +258,36 @@ sub create {
   return 1;
 }
 
+=head2 Preferences
+
+=head3 C<reset_notes_time()>
+
+Calling this method creates a new user preference called "LastNoteTime" which
+has an associated creation time corresponding to the time of this call.  This
+timestamp can be retrieved by C<notes_time()>.
+
+=cut
+
+sub reset_notes_time {
+  my $self = shift || return undef;
+  return undef unless $self->uid && $self->isvalid;
+  PageCapt::DB::set_parameter( 'LastNoteTime', [1], $self->uid );
+}
+
+=head3 C<notes_time()>
+
+Returns the timestamp saved by C<reset_notes_time()>, suitable for passing
+to C<PageCapt::DB::get_new_noted_items()>.
+
+=cut
+
+sub notes_time {
+  my $self = shift || return undef;
+  return undef unless $self->uid && $self->isvalid;
+  my @data = PageCapt::DB::get_parameter_raw( 'LastNoteTime', $self->uid );
+  return $data[0]->{timestamp};
+}
+
 =head2 Privilege
 
 =head3 C<assert_validity()>
