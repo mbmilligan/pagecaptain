@@ -201,16 +201,7 @@ sub get_user_dumptips {
   $stmt .= $schema{GET_TIP_SUFX};
 
   init();
-  my @data = _runq($stmt);
-  my @result;
-  foreach $row (@data) {
-    push @result, { timestamp	=> $row->[0],
-		    age		=> $row->[1],
-		    epoch	=> $row->[2],
-		    uid		=> $row->[3],
-		    content	=> $row->[4] };
-  }
-  return @result;
+  return _tip_to_hash( _runq($stmt) );
 }
 
 =head3 C<add_dumptip( I<$text>, [I<$user>] )>
@@ -931,12 +922,31 @@ If I<$class> is set, search the specified class instead of C<config> or C<pref>.
 For instance, this will be applicable when we reimplement surveys as a key-value
 structure analogous to preferences.
 
+This is essentially a wrapper around C<get_parameter_raw()>.
+
 =cut
 
 sub get_parameter {
   my $key = _clean_word(shift);
   my $uid = _clean_num(shift);
   my $scalar = shift;
+  my $class = shift;
+
+  my @results = map { $_->{content} } get_parameter_raw($key, $uid, $class);
+  if ( $scalar and $#results < 1 ) { $#results + 1 ? return $results[0] : return undef; }
+  else { return @results; }
+}
+
+=head3 C<get_parameter_raw( I<$key>, [ I<$uid>, I<$class> ] )>
+
+Does the work of C<get_parameter()> documented above.  Returns a list of
+hash-refs as documented in C<get_dumptips()> as produced by C<_tip_to_hash()>.
+
+=cut
+
+sub get_parameter_raw {
+  my $key = _clean_word(shift);
+  my $uid = _clean_num(shift);
   my $class = shift;
 
   return undef unless $key;
@@ -946,9 +956,7 @@ sub get_parameter {
   $stmt .= sprintf( $schema{TIP_CLASS_COND}, $class );
   $stmt .= sprintf( $schema{TIP_UID_COND}, $uid ) if $uid;
   $stmt .= sprintf( $schema{TIP_KEY_COND}, $key );
-  my @results = map { $_->[4] } _runq($stmt);
-  if ( $scalar and $#results < 1 ) { $#results + 1 ? return $results[0] : return undef; }
-  else { return @results; }
+  return _tip_to_hash( _runq($stmt) );
 }
 
 =head3 C<add_parameter( I<$key>, I<$values>, [ I<$uid>, I<$class> ] )>
@@ -1148,6 +1156,27 @@ sub _invert_hash {
   my %return;
   foreach (keys %hash) { $return{$hash{$_}} = $_; }
   return %return;
+}
+
+=head3 C<_tip_to_hash( I<@data> )>
+
+C<@data> is the raw result list returned by C<_runq> in response to a
+request for Tip data.  Returns a list of hash-refs in the format described
+for C<get_dumptips()>.
+
+=cut
+
+sub _tip_to_hash {
+  my @data = @_;
+  my @result;
+  foreach my $row (@data) {
+    push @result, { timestamp	=> $row->[0],
+		    age		=> $row->[1],
+		    epoch	=> $row->[2],
+		    uid		=> $row->[3],
+		    content	=> $row->[4] };
+  }
+  return @result;
 }
 
 1;
