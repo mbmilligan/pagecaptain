@@ -29,11 +29,24 @@ listhost server</a> to subscribe to our mailing list.
 <& user/itemgrid.mas, list => \@noted, expand => 0 &>
 <p>Click <a href="<& SELF:base &>index.mhtml?visit=1">Record This Visit</a> to 
 clear the above list.</p>
-
 %     }
 %   } else {
 <p>You are not watching any items at this time.</p>
 %   }
+
+<h3>Recent Notes</h3>
+<p class="RecentCommentStepLinks">Show per page: 
+  <a href="index.mhtml?step=5&skip=<% $skip %>"> 5 comments </a>
+  <a href="index.mhtml?step=10&skip=<% $skip %>"> 10 comments </a>
+  <a href="index.mhtml?step=25&skip=<% $skip %>"> 25 comments </a>
+  <a href="index.mhtml?step=50&skip=<% $skip %>"> 50 comments </a>
+</p>
+<div class="RecentComments">
+<& user/recentcomments.mas, notes => \@recent &>
+</div>
+<p class="RecentCommentsSkipLinks">
+  <a href="index.mhtml?step=<% $step %>&skip=<% $skip-$step %>"> Previous <% $step %> </a>
+  <a href="index.mhtml?step=<% $step %>&skip=<% $skip+$step %>"> Next <% $step %> </a>
 % }
 
 <%method title>
@@ -41,12 +54,14 @@ clear the above list.</p>
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Thu May 11 19:01:35 CDT 2006
+Last modified: Fri May 12 01:51:19 CDT 2006
 <!-- hhmts end -->
 </%method>
 
 <%args>
 $visit => undef;
+$step => 5;
+$skip => 0;
 </%args>
 <%init>
 
@@ -54,6 +69,7 @@ $visit => undef;
 
 my @watchlist = ( );
 my @noted = ( );
+my @recent = ( );
 if ($User->isvalid) {
   if ($visit) { $User->reset_notes_time; }
   my @items = PageCapt::DB::get_watched_byuser( $User );
@@ -61,6 +77,7 @@ if ($User->isvalid) {
   @items = 
     PageCapt::DB::get_new_noted_items( $User->notes_time, $User->uid );
   @noted = PageCapt::DB::load_list_inums( @items );
+  @recent = PageCapt::DB::get_site_recent_notes( $step, $skip );
 }
 
 </%init>

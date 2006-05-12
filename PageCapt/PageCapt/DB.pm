@@ -84,6 +84,8 @@ my %schema =
    ITEM_NUM_ORD   => " ORDER BY inum ",
    ADD_ITEM_STMT  => "INSERT INTO List ( inum ) VALUES ( '%u' )",
 
+   RCNT_NOTE_STMT => "SELECT date_trunc('minute',age('now',T.time)), T.reference, T.creator, U.name, T.data FROM Tip T, Users U WHERE T.creator = U.uid AND T.class = '%u' ORDER BY time DESC LIMIT '%u' OFFSET '%u'",
+
    ITEM_OWN_SET_NULL => " owner = null ",
 
    LOGIC_AND => " AND ",
@@ -895,6 +897,46 @@ sub get_new_noted_items {
   $stmt .= sprintf( $schema{NOTE_AGE_COND}, $time ) if $time;
   $stmt .= sprintf( $schema{NOTE_WHO_COND}, $uid ) if $uid;
   return map { $_->[0] } _runq($stmt);
+}
+
+=head3 C<get_site_recent_notes( I<$count>, [ I<$skip>, I<$class> ] )>
+
+Returns comments recently posted on the site to all items.
+
+I<$count> is the number of items to return.  I<$skip> is the number of items
+to skip, allowing one to increment through the chronological list of notes.
+
+I<$class> is the Tip class to search.  It defaults to C<note>.
+
+Return format is a list of hash-refs containing:
+
+  ( age  => string representation of elapsed time since note was posted
+    item => number of the item to which the note was posted
+    uid  => UID of the posting user
+    name => Full name of the posting user
+    text => text of the posted noted
+  )
+
+=cut
+
+sub get_site_recent_notes {
+  my $count = _clean_num(shift) || return ();
+  my $skip = _clean_num(shift) || 0;
+  my $class = shift;
+
+  $class = $tip_classes{$class} || $tip_classes{note};
+  my $stmt = sprintf( $schema{RCNT_NOTE_STMT},
+		      $class, $count, $skip );
+  my @row = _runq($stmt);
+  my @return;
+  for (@row) {
+    push @return, { age  => $$_[0],
+		    item => $$_[1],
+		    uid  => $$_[2],
+		    name => $$_[3],
+		    text => $$_[4] };
+  }
+  return @return;
 }
 
 =head3 C<add_note( I<$text>, I<$item>, [I<$user>] )>
