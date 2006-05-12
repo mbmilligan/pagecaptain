@@ -3,7 +3,12 @@
     <table id="list">
       <tbody>
 	<tr>
-	  <td class="field">Item Number</td><td><% $data->{number} %></td>
+	  <td class="field">Item Number</td><td><% $data->{number} %>
+            <span id="PrevItemLink"><a href="edititem.mhtml?item=<% 
+              $item - 1 %>">Previous Item</a></span>
+            <span id="NextItemLink"><a href="edititem.mhtml?item=<% 
+              $item + 1 %>">Next Item</a></span>
+          </td>
 	</tr>
 	<tr>
 	  <td class="field">Description</td><td><% $data->{desc} %></td>
