@@ -21,6 +21,16 @@ listhost server</a> to subscribe to our mailing list.
 
 %   if ($#watchlist > -1) {
 <& user/itemtable.mas, list => \@watchlist &>
+%     if ($#noted > -1) {
+<h3>New Comments Alert</h3>
+<p>Of these items, the following have new comments since your last recorded
+   visit:</p>
+
+<& user/itemgrid.mas, list => \@noted, expand => 0 &>
+<p>Click <a href="<& SELF:base &>index.mhtml?visit=1">Record This Visit</a> to 
+clear the above list.</p>
+
+%     }
 %   } else {
 <p>You are not watching any items at this time.</p>
 %   }
@@ -31,18 +41,26 @@ listhost server</a> to subscribe to our mailing list.
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Wed May 10 17:00:22 CDT 2006
+Last modified: Thu May 11 19:01:35 CDT 2006
 <!-- hhmts end -->
 </%method>
 
+<%args>
+$visit => undef;
+</%args>
 <%init>
 
 # If we are a validated user, generate a watchlist
 
 my @watchlist = ( );
+my @noted = ( );
 if ($User->isvalid) {
+  if ($visit) { $User->reset_notes_time; }
   my @items = PageCapt::DB::get_watched_byuser( $User );
   @watchlist = PageCapt::DB::load_list_inums( @items );
+  @items = 
+    PageCapt::DB::get_new_noted_items( $User->notes_time, $User->uid );
+  @noted = PageCapt::DB::load_list_inums( @items );
 }
 
 </%init>
