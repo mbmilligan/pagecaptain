@@ -851,6 +851,7 @@ sub get_item_notes {
   $stmt .= sprintf( $schema{TIP_CLASS_COND}, $tip_classes{note} );
   $stmt .= $schema{TIP_UNUSED} unless $all;
   $stmt .= sprintf( $schema{TIP_REF_COND}, $item );
+  $stmt .= $schema{GET_TIP_SUFX};
 
   my @result = _runq($stmt);
   my @notes;
