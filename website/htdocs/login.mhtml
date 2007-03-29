@@ -1,0 +1,7 @@
+<%args>
+$loginname => undef;
+$password => undef;
+$logout => undef;
+</%args>
+
+<& index.mhtml &>

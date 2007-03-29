@@ -1,0 +1,37 @@
+    <p>Good <% $am %>, <% name $User %></p>
+
+
+    <p>User
+      <a href="<& SELF:base &>user/userinfo.mhtml">Information</a>
+      <br />
+      The <a href="<& SELF:base &>user/search.mhtml">List</a>
+% if ($input) {
+      <br />
+      <a href="<& SELF:base &>user/jentry.mhtml">Input</a> Items
+% }
+% if ($capt) {
+      <br />
+      <a href="<& SELF:base &>user/siteconf.mhtml">Site Settings</a><br />
+      <a href="<& SELF:base &>user/scheds.mhtml">User Schedules</a><br />
+      <a href="<& SELF:base &>user/phones.mhtml">User Contact Info</a>
+% }
+    </p>
+
+    <p>
+      <a href="<& SELF:base &><% 
+	 PageCapt::Web::url( 'login.mhtml', { logout=>1 } ) 
+	 %>">
+	LOG OUT</a>
+    </p>
+
+<%init>
+ my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+    localtime(time);
+
+ my $am = ($hour < 12) ? "Morning" :
+    ( ($hour < 19) ? "Afternoon" : "Evening" );
+
+ my $capt = $PageCapt::Web::tubers{$User->login};
+ my $input = ($capt or PageCapt::DB::get_parameter('entrymode',undef,1) eq 'free');
+
+</%init>

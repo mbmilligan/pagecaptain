@@ -1,0 +1,117 @@
+    <h1>User Information</h1>
+    <h2>Viewing <% name $user %></h2>
+
+    <p>View someone else's information instead:</p>
+    <form method="GET" action="userinfo.mhtml">
+      <p><select name="uid">
+	  <option selected value="<% uid $User %>">Yourself</option>
+% foreach ( PageCapt::DB::list_user_ulns('name') ) {
+	  <option value="<% @$_[0] %>">
+% my $n = @$_[2];
+% print length($n) > 30 ? substr($n,0,30) . "..." : $n;
+	  </option>
+% }
+	</select>
+	<input type="SUBMIT" value="GO">
+      </p>
+    </form>
+
+    <p>Recall that you can update your own information on the
+      <a href="<& SELF:base &>survey.mhtml">survey page</a>.
+    </p>
+
+    <table id="contact" title="Contact Information">
+	<tr>
+% foreach (qw/ email phone address contact /) { next unless $user->$_;
+	  <th class="field"><% $fields{$_} %></th>\
+% }
+	</tr>
+	<tr>
+% foreach (qw/ email phone address contact /) { next unless $user->$_;
+%   if ( $_ eq 'email' ) {
+	  <td><a href="mailto:<% $user->$_ %>"><% $user->$_ %></a></td>\
+%   } else {
+	  <td><% $user->$_ %></td>\
+% } }
+	</tr>
+    </table>
+
+    <h3>Survey Responses</h3>
+    <table id="survey" title="Survey Responses">
+	<tr><th colspan="2">Survey Responses</th></tr>
+% foreach (qw/ major talents connections nudity home points age schedule beta /) {
+	<tr><td class="field"><% $fields{$_} %></td>
+	  <td>\
+%   if ( $_ eq 'points' and not $PageCapt::Web::tubers{$User->login} ) {
+Contact Michael to be put on the list of people who can see this field. \
+%   } else { print $survey{$_}{content}; }
+</td>
+% }
+    </table>
+
+% if ($PageCapt::Web::tubers{$user->login}) {
+<p>This user has uber-tuber powers.</p>
+% } elsif ($PageCapt::Web::tubers{$User->login}) {
+%   unless ($promote) {
+<p><a href="<% PageCapt::Web::url('userinfo.mhtml', {uid=>$uid,promote=>1}) %>">\
+User promotion</a></p>
+%   } else {
+<p>Some users are designated <b>Uber-Tubers</b>, <b>Site Captains</b>, or whatever
+   you want to call them.  These users have extra powers on the PageCaptain system,
+   and should be trusted to behave responsibly with team members' data and with the
+   management of the List.
+</p>
+<p><a href="<% PageCapt::Web::url('userinfo.mhtml', {uid=>$user->uid,promote=>$user->login}) %>">\
+Grant this user <b>Uber-Tuber</b> powers</a></p>
+%   }
+% }
+
+<%args>
+$uid => $User->uid
+$promote => undef
+</%args>
+
+<%init>
+my $user = PageCapt::User->new($uid);
+
+my %fields = 
+  ( name=>'Name',
+    email=>'Email address',
+    phone=>'Phone number',
+    address=>'Physical location',
+    contact=>'Other contact info',
+
+    major=>'Major',
+    talents=>'Talents',
+    connections=>'Connections',
+    nudity=>'Nudity willingness',
+    home=>'Home access',
+    points=>'Meal points number',
+    age=>'Age',
+    schedule=>'Schedule',
+    beta=>'Beta tester'
+  );
+
+my %survey = PageCapt::DB::load_survey_user( $uid );
+foreach (keys %survey) {
+  $survey{$_}{content} =~ s/</&lt;/g;
+  $survey{$_}{content} =~ s/>/&gt;/g;
+  $survey{$_}{content} =~ s/\n/<br>/g;
+}
+
+if ($PageCapt::Web::tubers{$User->login} and $promote eq $user->login) {
+  PageCapt::DB::add_parameter('tubers',[$user->login]);
+  $PageCapt::Web::tubers{$user->login} = 1;
+}
+
+</%init>
+
+<%method title>
+<& PARENT:title &> - User Info
+</%method>
+
+<%method time_stamp>
+<!-- hhmts start -->
+Last modified: Tue May  6 16:50:19 CDT 2003
+<!-- hhmts end -->
+</%method>

@@ -1,0 +1,68 @@
+OVERVIEW
+
+* Begin a branch for modularized codebase
+* Begin cleanups for this year's Hunt
+* Upgrades for this year's hunt:
+  -- Minor: add a Helpwanted status tag
+  -- Major: revamp categories as below
+	    move presentation system to Mason
+	    add email notifications
+
+UPGRADES
+
+* Cleanups to ease installation, portability
+  -- Remove hardcoded paths in favor of cgi->url, etc.
+  -- Import configuration from a conf module
+  -- Add POD documentation
+* Item status should include "Help Wanted" or similar flag
+
+NEW FEATURES
+
+* Loose categorization
+  -- Controllable: users may associate category tags with items;
+       enable easy tag creation and assignment by the admin
+  -- Non-exclusive: associate many tags to each item up to a limit
+       Cate suggests that 2 is enough.
+  -- Best as a new table (index, tagname)
+     + Get tags by SELECT DISTINCT tagname FROM tags
+     + Get item's tags by SELECT tagname FROM list JOIN tags WHERE ...
+
+* Modular, DB-Centric Configuration
+  -- Push stuff from tables.pl into DB for functions where we are 
+       already connecting to the backend
+  -- Access config via modular backend-agnostic interface
+  -- Enable reconfig of app via web interface
+
+* Email notification system
+  -- Periodic emails (each 8 hours, e.g.) summarizing a user's claimed
+       items status, comments, and notices about list in general (such
+       as newly completed items, outstanding helpwanted items, etc).
+  -- Calendaring system emails sent as reminders of upcoming appointments;
+       probably part of the calendaring system, really.
+
+* Move presentation to Mason
+  -- The entire web-app portion of this system should be rewritten as
+       Mason components using the CGI handler (probably with 
+       speedy-cgi-perl).
+  -- This allows the DB code to be isolated in a resuable module (e.g.
+       for the email interface).
+  -- This gets me out of the business of composing HTML in Perl: Cate
+       can do the pages for me, with minimal intervention.
+
+WISHLIST AND CRAZY IDEAS
+
+* List Grid (Cate is doubtful, but a summary display is needed)
+  -- Navigating the list is troublesome because of its length, so display
+     data 2-D color coded for easy navigation
+  -- Color code generally used for status, but data can be filtered first
+     by keyword, sorted
+  -- Since we have 2 dimensions, consider sorting by different properties
+     on each axis, e.g. by status and point value, or others
+  -- Output as a table; each cell contains just an index number linked
+     to the item data page
+  -- As always, the defaults will determine how much use this gets
+
+DONE
+
+* Import ScavCode-current into CVS on neutrino
+

@@ -1,0 +1,101 @@
+<h1>List Item Input</h1>
+
+% if ($PageCapt::Web::tubers{$User->login}) {
+<h2>Proceed, Captain</h2>
+% } elsif ( PageCapt::DB::get_parameter('entrymode',undef,1) eq "free" ) {
+<h2>Free-For-All Mode is On -- Dive In!</h2>
+% } else {
+<h2>You Can't Use This Right Now</h2>
+% }
+
+<& itemgrid.mas, width=>32 &>
+
+<p id="msg"> </p>
+<p id="dbg"> </p>
+
+<p>Here you can input items into the List database.  Please be careful; items can often
+   depend on the exact spelling or punctuation used in the list.
+</p>
+
+<form method="PUT" action="input-worker.mhtml" target="_new" onSubmit="this.tinum.focus();">
+  #<input type="text" name="tinum" size="5">
+  <div>Description:<br /><textarea name="tdesc" cols="50" rows="3"></textarea></div>
+  <div>Scoring:<br /><textarea name="tscore" cols="50" rows="3"></textarea></div>
+  <input type="hidden" name="inum" value="" />
+  <input type="hidden" name="desc" value="" />
+  <input type="hidden" name="score" value="" />
+  <input type="submit" onClick="setupForm(); ">
+</form>
+
+<h3>Helpful Hints</h3>
+<ul>
+  <li><b>Type continuously.</b>  You don't need to use the mouse here.  Hit 
+      TAB to advance to the next field, ENTER or SPACE when you get to the 
+      submission button.</li>
+  <li><b>Type naturally.</b>  This page has a buffer system, so even if the 
+      network is slow, keep typing.  Items you've already typed will get 
+      entered on their own eventually .</li>
+  <li><b>Approximate the formatting</b>.
+    <ul>
+    <li>Write &trade; as (TM)</li>
+    <li>Write Greek letters by name.</li>
+    <li>Unless you're feeling ambitious.  Then write &gamma; as 
+        <code><% "&gamma;" |h %></code> and so on.</li>
+    <li>For short super- and sub-scripts, use ^ and _.  Write X<sup>Y</sup> 
+        as X^Y and A<sub>1</sub> as A_1.</li>
+    <li>For longer sections, use HTML.  Write Scav<sup>H.O.T.T.</sup> as
+        <code><% "Scav<sup>H.O.T.T.</sup>" |h %></code> and Item<sub>funny</sub>
+	as <code><% "Item<sub>funny</sub>" |h %></code>.</li>
+    </ul>
+  </li>
+</ul>
+
+<script type="application/x-javascript">
+//  setupForm();
+</script>
+
+<style type="text/css">
+div#frames { color: white; }
+iframe { visibility: collapse; }
+</style> 
+
+<div id="frames">
+<iframe name="work0" height="16" width="240" src="">work window 0</iframe><br />
+<iframe name="work1" height="16" width="240" src="">work window 1</iframe><br />
+<iframe name="work2" height="16" width="240" src="">work window 2</iframe><br />
+<iframe name="work3" height="16" width="240" src="">work window 3</iframe><br />
+<iframe name="work4" height="16" width="240" src="">work window 4</iframe><br />
+</div>
+
+<%method title>
+List Input Form
+</%method>
+
+<%method headers>
+<script type="application/x-javascript">
+
+var count = 0;
+function setupForm () {
+  document.forms[0].elements['inum'].value = 
+  	document.forms[0].elements['tinum'].value;
+  inumber = document.forms[0].inum.value;
+  document.forms[0].elements['desc'].value =
+  	document.forms[0].elements['tdesc'].value;
+  document.forms[0].elements['score'].value =
+  	document.forms[0].elements['tscore'].value;
+  document.forms[0].reset();
+  if ( parseInt(inumber) > 0 ) { document.forms[0].elements[0].value = 
+  	( parseInt(inumber) + 1 ).toString(); }
+  document.forms[0].target = 'work'+count.toString();
+  count += 1; count %= 5;
+  
+  document.forms[0].elements['tinum'].focus();
+  return true;
+}
+
+</script>
+
+<style type="text/css">
+    td { font-size: 6pt; }
+</style>
+</%method>

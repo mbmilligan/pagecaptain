@@ -1,73 +1,83 @@
-    <h3>Welcome to the fledgling web home of the glorious</h3>
-    <h1>Deleuzean Potato</h1>
-    <h2>Or: Lush Puppies Mk. III:
-      The F.I.S.T. Deux:
-      Deleuzean Potato
-    </h2>
+<div id="header">
+<h1>The Database</h1>
+<h2>Welcome Back</h2>
+</div>
 
+<p>This is your interface to the Automated PageCaptain system, your gateway to
+the List.  Check out our <a href="<& SELF:base &>wiki.mhtml">Wiki Homepage</a>
+for the latest news.  </p>
 
-    <p>If you haven't already done so, <a href="survey.mhtml">go take the
-	survey</a>!!!</p>
+<p>If you <b>don't</b> have an account, take the 
+    <a href="<& SELF:base&>survey.mhtml">SURVEY</a> to get one.
+</p>
 
-    <p><b>Tech Turnip Michael</b> sez:</p>
+<p>Not getting FIST emails? Hop over to
+<a href="https://listhost.uchicago.edu/mailman/listinfo/potato"> the
+listhost server</a> to subscribe to our mailing list.
+</p>
 
-    <p>First things first, if you don't like how I've spelled our Team Name,
-      tell me (I've fixed it twice already).  This actually applies to
-      anything you don't like about this site.  Second, yeah, this is ugly.
-      Post content I've promised people first, make site purty later.  Oh, and
-      you guys <i>can</i> email me, you know.  My address is at the bottom of
-      the page.  Posting comments about the site in your survey responses just
-      means that I don't see it for a day or more.  Email, I read every
-      fifteen minutes or so.
-    </p>
+% if ($User->isvalid) {
+<h3>Watched Items</h3>
 
-    <p>
-      Since I'm seeing the question come up from time to time in the survey
-      responses, here's the deal with the <b>"Beta Tester"</b> option.  The
-      website is going to be rapidly developing over the next week or so as I
-      get pieces of the database system working well enough to activate them
-      on the site.  Once that starts happening, I need a few people who will
-      regularly poke around in the site to report things that (most
-      importantly) are broken, or (also nice) could work better or be more
-      useful.  This is easier if you have used the database before, but it
-      isn't necessary.  Since the goal is for everyone to be able to use the
-      database by the time the Hunt starts, computer expertise is
-      <i>absolutely not</i> a requirement.
-    </p>
+%   if ($#watchlist > -1) {
+<& user/itemtable.mas, list => \@watchlist &>
+%     if ($#noted > -1) {
+<h3>New Comments Alert</h3>
+<p>Of these items, the following have new comments since your last recorded
+   visit:</p>
 
-    <p>
-      To those of you complaining that the site is ugly: 
-    <ol>
-      <li>I'm writing code, and I have bad taste in colors anyway.  Check out
-	<a href="http://neutrino.webhop.org">some of my prettier work</a> to
-	see for yourself.</li> 
-      <li>If you want to help, why don't you copy this page out of your
-	browser and pretty it up.  Post the result somewhere or send it to me,
-	and I'll take a look at incorporating your ideas.</li>
-      <li>If you do the above, try to avoid fancy hacks.  They don't work in
-	all browsers; I don't want to have to work around them when
-	(frequently) updating pages; I'm not writing HTML, I'm writing
-	programs that spit out HTML, and programs don't cope with fancy hacks
-	all that well, especially if the guy writing them doesn't really
-	understand the hacks himself.  In short, I probably won't use your
-	uber-neato Javascript dynamic rewrite fancification engine.</li>
-      <li>Stuff I can use once everywhere, on the other hand, is really
-	nifty.  Give me a CSS file that you think looks good, and it's easy
-	for me to make all the pages use it.  I'll be happy to give that a
-	whirl. </li>
-    </ol>
-  </p>
+<& user/itemgrid.mas, list => \@noted, expand => 0 &>
+<p>Click <a href="<& SELF:base &>index.mhtml?visit=1">Record This Visit</a> to 
+clear the above list.</p>
+%     }
+%   } else {
+<p>You are not watching any items at this time.</p>
+%   }
 
-    <p>
-      That's all for now; I'm going back to real work.
-      <br> <span style="margin-left: 1in">...Michael</span>
-    </p>
- 
+<h3>Recent Notes</h3>
+<p class="RecentCommentStepLinks">Show per page: 
+  <a href="index.mhtml?step=5&skip=<% $skip %>"> 5 comments </a>
+  <a href="index.mhtml?step=10&skip=<% $skip %>"> 10 comments </a>
+  <a href="index.mhtml?step=25&skip=<% $skip %>"> 25 comments </a>
+  <a href="index.mhtml?step=50&skip=<% $skip %>"> 50 comments </a>
+</p>
+<div class="RecentComments">
+<& user/recentcomments.mas, notes => \@recent &>
+</div>
+<p class="RecentCommentsSkipLinks">
+  <a href="index.mhtml?step=<% $step %>&skip=<% $skip-$step %>"> Previous <% $step %> </a>
+  <a href="index.mhtml?step=<% $step %>&skip=<% $skip+$step %>"> Next <% $step %> </a>
+% }
+
 <%method title>
 <& PARENT:title &> HQ
 </%method>
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Wed Apr 16 14:28:56 CDT 2003
+Last modified: Fri May 12 01:51:19 CDT 2006
 <!-- hhmts end -->
 </%method>
+
+<%args>
+$visit => undef;
+$step => 5;
+$skip => 0;
+</%args>
+<%init>
+
+# If we are a validated user, generate a watchlist
+
+my @watchlist = ( );
+my @noted = ( );
+my @recent = ( );
+if ($User->isvalid) {
+  if ($visit) { $User->reset_notes_time; }
+  my @items = PageCapt::DB::get_watched_byuser( $User );
+  @watchlist = PageCapt::DB::load_list_inums( @items );
+  @items = 
+    PageCapt::DB::get_new_noted_items( $User->notes_time, $User->uid );
+  @noted = PageCapt::DB::load_list_inums( @items );
+  @recent = PageCapt::DB::get_site_recent_notes( $step, $skip );
+}
+
+</%init>

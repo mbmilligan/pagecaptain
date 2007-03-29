@@ -4,8 +4,9 @@
       a way to record and share hot tips on the state of the neighborhood
       trash heaps and other goldmines.  It should be dead-easy to use.  Up
       top, we've got the tips that have been submitted so far.  If you want to
-      see a shorter list, type in a smaller number of days to view.  Typing 0
-      (zero) or leaving the box blank will show you all of them.
+      see a shorter list, type in a smaller number of days to view (decimals
+      work the way you'd expect).  Typing 0 (zero) or leaving the box blank
+      will show you all of them. 
     </p>
 
     <p>Below the list of tips, is a box.  It does what you think it does.
@@ -17,7 +18,7 @@
     <form action="tips.mhtml" method="GET">
       <p>How many days worth of tips are you interested in?
 	<input type="text" name="age" value="<% $age ? $age : "" %>" size="3">
-	<input type="submit" value="Refresh">
+	<input class="formbutton" type="submit" value="Refresh">
       </p>
     </form>
 
@@ -26,7 +27,13 @@
       have been entered:</p>
 
 % foreach my $row (@tips) { $row->{content} =~ s/\n/<br>\n/gm;
-    <p>On <% scalar gmtime($row->{epoch}) %> the following tip was entered:
+    <p><span class="tipintro"><% $row->{age} %> ago 
+% if ( $row->{uid} ) {
+      <% PageCapt::User->new($row->{uid})->name %> said:
+% } else {
+      the following tip was entered: 
+% }
+	</span>
       <br> <% $row->{content} %>
     </p> 
 % }
@@ -44,12 +51,12 @@
 	<br>
 	<textarea name="tip" rows="5" cols="70"></textarea>
       </p>
-      <input type="submit" value="Announce Tip Now">
+      <input class="formbutton" type="submit" value="Announce Tip Now">
     </form>
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Mon Apr 21 16:36:37 CDT 2003
+Last modified: Wed May  7 22:25:29 CDT 2003
 <!-- hhmts end -->
 </%method>\
 
@@ -66,7 +73,8 @@ $tip => undef
 
 $tip =~ s/^\s*(.*?)\s*$/$1/;
 if ($tip) {
-    PageCapt::DB::add_dumptip( $tip );
+    PageCapt::DB::add_dumptip( $tip, 
+       ($User->isvalid ? $User : undef) );
 }
 
 my @tips = PageCapt::DB::get_dumptips($age);

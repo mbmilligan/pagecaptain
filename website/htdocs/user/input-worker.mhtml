@@ -1,0 +1,81 @@
+<html>
+<head>
+<title>Input Worker</title>
+<script type="application/x-javascript">
+  var success = <% $success %>;
+  var inum = <% $inum || 0 %>;
+  if ( window.opener ) { parent = window.opener; } 
+  if ( parent.document ) { 
+    msg = parent.document.getElementById('msg').firstChild;
+    if ( success == 1 ) {
+  	target = parent.document.getElementById('itemgrid');
+	if ( target ) { items = target.getElementsByTagName('td');
+	  if ( items[inum-1] ) {
+			items[inum-1].bgColor = 'red';
+	  } else { dbg = parent.document.getElementById('dbg').firstChild;
+		   dbg.nodeValue = 'Overran table end; suggest reloading.';
+	  }
+	msg.nodeValue = 'Success entering item #' + inum;
+	}
+    } else {
+       if ( success == -1 ) {
+         msg.nodeValue = 'You do not have permission to input items right now.'; }
+       else { msg.nodeValue = 'Failed to enter item #' + inum; }
+    }
+  }
+</script>
+</head>
+<body>
+% if ($success == 1) {
+<p>Insert succeeded by <% $User->name %>.</p>
+% } else {
+<p>Failure!</p>
+<dl>
+<dt>Number:</dt><dd><% $inum %></dd>
+<dt>Desc:</dt><dd><% $desc %></dd>
+<dt>Score:</dt><dd><% $score %></dd>
+</dl>
+% }
+<script type="application/x-javascript">
+  // if ( ! parent.document ) { alert('No parent window!'); }
+  // parent.focus();
+  //window.close();
+</script>
+
+</body>
+</html>
+
+<%init>
+my $User = PageCapt::Web::extract_cookie( $m->cgi_object() ) ||
+  blank PageCapt::User;
+
+my $points = "";
+if ( $score =~ m{([0-9.+*\/ -]+) point} ) {
+  my $tp = $1;
+  $points = $tp if (($tp + 1 - 1) eq $tp);
+  $points = eval $tp;
+}
+
+my $success = 0;
+if ( $PageCapt::Web::tubers{$User->login} or $User->isvalid &&
+     PageCapt::DB::get_parameter('entrymode',undef,1) eq "free" ) {
+  if ( PageCapt::DB::create_item( $inum ) ) {
+    PageCapt::DB::update_list( { number=>$inum, desc=>$desc, score=>$score, 
+    				points=>$points, input=>1 } ) and $success = 1;
+  }
+} else {
+  $success = -1;
+}
+
+</%init>
+
+<%args>
+$inum
+$desc
+$score
+</%args>
+
+<%flags>
+inherit => undef
+</%flags>
+

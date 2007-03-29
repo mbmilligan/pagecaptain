@@ -1,0 +1,60 @@
+<table id="itemgrid">
+% foreach my $i ( map {$_*$width} (0 .. int($num / $width) ) ) {
+  <tr>
+%   foreach my $j ($i+1 .. $i+$width) {
+    <td class="<& cssclass, row=>$mask[$j] &>">\
+% if ($mask[$j]) {
+    <a class="num" href="<& editlink, row=>$mask[$j] 
+       &>" alt="<% $mask[$j]->{number} %>" title="<& itemtitle, row=>$mask[$j]
+       &>"><% $mask[$j]->{number} %></a>
+% }
+    </td>
+%   }
+  </tr>
+% }
+</table>
+
+% if ( my $err = PageCapt::DB::_dberror() ) {
+<p><% $err %></p>
+% }
+
+<%args>
+$width => undef
+$expand => 1
+@list => ( )
+</%args>
+
+<%init>
+  @list = PageCapt::DB::load_list() unless @list;
+  my @mask = ( );
+  my $num;
+  if ($expand) {
+    for (@list) { $mask[$_->{number}] = $_; }
+  } else {
+    @mask = (undef, @list);
+  }
+  $num = $#mask;
+  $width = $width || ( $num < 50 ? ( $num < 15 ? $num : 10 ) : int(sqrt($num))*1.7 );
+</%init>
+
+<%def editlink>\
+<& SELF:base &>user/<%
+PageCapt::Web::url('edititem.mhtml', {item=>$row->{number}}) %>\
+<%args>
+$row
+</%args>
+</%def>
+
+<%def cssclass>\
+status_<% $row->{status} ? $row->{status} : "none" %>\
+<%args>
+$row
+</%args>
+</%def>
+
+<%def itemtitle>\
+<% substr($row->{desc},0,15) %>...<% substr($row->{score},0,8) %>\
+<%args>
+$row
+</%args>
+</%def>

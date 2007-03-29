@@ -1,0 +1,17 @@
+% foreach my $row (@notes) { $$row{text} =~ s/\n/<br>\n/gm;
+    <p><span class="tipintro">
+      <a href="<& SELF:base &>user/edititem.mhtml?item=<% $$row{item} %>">
+         <% $$row{age} %> ago on Item <% $$row{item} %></a>\
+%   if ( $$row{uid} ) {
+	<% $$row{name} %> said:
+%   } else {
+	someone said:
+%   }
+      </span>
+      <br><% $$row{text} %>
+    </p>
+% }
+
+<%args>
+@notes
+</%args>

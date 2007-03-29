@@ -1,0 +1,55 @@
+    <table id="list">
+      <thead>
+	<tr>
+	  <th>Item</th><th>Description</th><th>Scoring</th><th>Owner</th>
+	</tr>
+      </thead>
+      <tbody>
+% foreach my $row (@list) {
+	<tr class="<& cssclass, row=>$row &>">
+	  <td>
+	    <a id="num" href="<& SELF:base &>user/<% 
+	    PageCapt::Web::url('edititem.mhtml', {item=>$row->{number}}) %>">
+	      <% $row->{number} %></a>
+	  </td>
+	  <td><& trunc, str=>$row->{desc},len=>160 &></td>
+	  <td><& trunc, str=>$row->{score},len=>30 &></td>
+	  <td><a href="<& SELF:base &>user/<% 
+	    PageCapt::Web::url('userinfo.mhtml',{uid=>$row->{owner}}) %>">
+	      <% $usermap{$row->{owner}} %></a></td>
+	</tr>
+% }
+      </tbody>
+    </table>
+
+
+<%args>
+@list
+$full => 0
+</%args>
+
+<%init>
+
+my %usermap;
+foreach my $row (PageCapt::DB::list_user_ulns) {
+  $usermap{$row->[0]} = $row->[1]; }
+
+</%init>
+
+<%def cssclass>\
+status_<% $row->{status} ? $row->{status} : "none" %>\
+<%args>
+$row
+</%args>
+</%def>
+
+<%def trunc>\
+% print length($str)>$len && $full == 0 ? 
+%   substr($str,0,$len) . "..." : 
+%   $str;
+<%args>
+$full => 0
+$str
+$len
+</%args>
+</%def>

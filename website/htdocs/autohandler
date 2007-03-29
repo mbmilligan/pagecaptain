@@ -5,28 +5,66 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html">
     <title><& SELF:title, %ARGS &></title>
+    <link title="SPH Style" rel="stylesheet"
+      type="text/css" href="http://www.forge22.com/css/fist/fist.css">
+    <link href="<& SELF:base &>fist.css" rel="alternate stylesheet" 
+      title="Old Default Style" type="text/css">
+    <& SELF:headers, %ARGS &>
   </head>
   <body>
+    <div id="nav">
+      <& nav.mas &>
+% if ( $User->isvalid ) {
+      <& user_nav.mas &>
+% } else {
+      <& login_box.mas, %ARGS &>
+% }
+    </div>
+    <div id="body">
 % $m->call_next;
-    
-    <hr>
-    <p><a href="/index.mhtml"> Return Home </a>
+      <hr>
     <address>
-      <a href="mailto:mbmillig at uchicago dot edu">Michael Milligan</a>
+      <a href="mailto:mmilligan AT astro.umn.edu">Michael Milligan</a><br>
     </address>
     <p><& SELF:time_stamp &></p>
+    </div>
+    <div id="logo">
+      <img src="<& SELF:base &>scrod.jpg">
+    </div>
   </body>
 </html>
 
-<%once>
+<%shared>
 
-use PageCapt::DB;
+$User = PageCapt::Web::extract_cookie( $m->cgi_object() ) ||
+  blank PageCapt::User;
 
-</%once>
+</%shared>
+
+<%init>
+
+if ($ARGS{logout}) {
+  $r->header_out( 'Set-cookie' =>
+		  PageCapt::Web::logout_cookie() );
+  $User->invalidate;
+} else {
+  $User->login($ARGS{loginname});
+  $User->validate_password($ARGS{password});
+  $ARGS{attempt} = undef if $User->isvalid;
+
+  my $cookie = PageCapt::Web::new_cookie( $User );
+  if ($cookie) {
+    $r->header_out( 'Set-Cookie' => $cookie );
+  }
+
+}
+
+</%init>
+
 
 <%method time_stamp>
 <!-- hhmts start -->
-Last modified: Wed Apr 16 13:44:56 CDT 2003
+Last modified: Wed May  4 01:57:43 CDT 2005
 <!-- hhmts end -->
 </%method>
 
@@ -34,3 +72,11 @@ Last modified: Wed Apr 16 13:44:56 CDT 2003
 FIST: Deleuzean Potato
 </%method>
 
+<%method base>/\
+</%method>
+
+<%method headers></%method>
+
+<%flags>
+inherit => undef
+</%flags>

@@ -2,9 +2,15 @@
 
 use Pg;
 $arg = shift;
-$conn = Pg::connectdb("dbname=scavlist user=dummy");
-$q="select * from list where index ~ \'$arg\'";
+$connstr = shift || "dbname=scavhunt";
+$conn = Pg::connectdb($connstr);
+$error = $conn->errorMessage;
+print "Connection Error: $error \n" if $error;
+$q="select * from list where inum ~ \'$arg\'";
 $res =$conn->exec($q);
+$error = $conn->errorMessage;
+print "Query Error: $error \n" if $error;
+
 $n = $res->ntuples; print $n,"\n";
 
  for ( $i = 0; $i < $n; $i++ )

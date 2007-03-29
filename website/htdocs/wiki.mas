@@ -1,0 +1,41 @@
+<%init>
+
+delete $ENV{REQUEST_METHOD};
+my @params = ( );
+
+# Spam filtering on page save request
+
+if ($ARGS{Save} eq 'Save') {
+    if (PageCapt::Web::ratespam($ARGS{text}) > 5) {
+	%ARGS = ();
+	$ARGS{action} = 'browse';
+	$ARGS{id} = 'SpamScold';
+    }
+}
+
+foreach my $arg (keys %ARGS) {
+  push @params, $arg . "=" . 
+    $m->interp->apply_escapes( $ARGS{$arg}, 'u' );
+}
+
+# "Safe-pipe" method
+
+my $pid = open(WIKI, "-|");
+unless ($pid) { exec("perl", "wiki.pl", @params); }
+
+my @lines = <WIKI>;
+my $output = join("", @lines);
+
+my ( $cookie ) = ( $output =~ m{Set-Cookie: (.*)$}mi );
+$r->header_out( 'Set-Cookie' => $cookie) if $cookie;
+
+$output =~ s{mason_handler.pl}{wiki.mhtml}g;
+$output =~ s{^.*?<body[^>]*>}{}si;
+$output =~ s{</body.*$}{}si;
+
+</%init>
+<% $output %>
+
+<%method title>
+Deleuzean Wiki: Fist
+</%method>

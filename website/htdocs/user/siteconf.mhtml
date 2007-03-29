@@ -1,0 +1,142 @@
+<h1>PageCaptain Runtime Configuration</h1>
+
+% unless ($capt) {
+<h2>Not Authorized</h2>
+
+<p>Sorry, you don't have permission to reconfigure the PageCaptain
+   right now.  We hope you understand.  If you think this is all a 
+   big mistake, please contact the PageCaptain operator.
+</p>
+
+% } else {
+<h2>Reconfigure with Care</h2>
+
+  <h3>Item Input Mode</h3>
+<& siteconf_entrymode, mode=>$entrymode &>
+
+%   unless ($danger) {
+<p><a href="<% PageCapt::Web::url('siteconf.mhtml', {danger=>1}) %>">\
+Show dangerous operations</a></p>
+%   } else {
+<p><a href="<% PageCapt::Web::url('siteconf.mhtml', {danger=>0}) %>">\
+Hide dangerous operations</a></p>
+
+<h2>Delete the List</h2>
+
+<p>Before the Hunt begins for real, we need to dump any items in the database
+   left over from testing (or previous Hunts).  To prevent accidents, you 
+   must get two other captains to sign off on this action (provided there are
+   at least three of you).
+</p>
+
+<& dumplist, status=>$dumplist_result &>
+
+%   }
+
+% }
+
+
+<%method title>\
+PageCaptain Runtime Configuration\
+</%method>
+
+<%def siteconf_entrymode>
+<%args>
+$mode => 0
+</%args>
+
+  <form id="siteconf_entrymode" action="siteconf.mhtml" method="GET">
+  <p>
+  <input type="radio" name="set_entrymode" value="0" \
+    <% $mode == 0 ? "checked" : "" %> >
+  <b>Restricted</b>: Only Captains can input list items
+  </p>
+  <p>
+  <input type="radio" name="set_entrymode" value="1" \
+    <% $mode == 1 ? "checked" : "" %> >
+  <b>Free-For-All</b>: Any logged-in user can input items
+  </p>
+  <input type="submit" value="Set Input Mode">
+  </form>
+
+</%def>
+
+<%def dumplist>
+% if ($status) {
+  <p><% $status %></p>
+% }
+  <form id="dumplist" action="siteconf.mhtml" method="POST">
+  <input type="hidden" name="danger" value="1">
+  <input type="hidden" name="dumplist" value="1">
+  <table border="1">
+    <tr><th>First Confirmer</th><th>Second Confirmer</th></tr>
+    <tr><td>
+      <div><label for="auth1">Login name:</label><br />
+           <input type="text" name="auth1" size="12"><br />
+	   <label for="pass1">Password:</label><br />
+           <input type="password" name="pass1" size="12">
+      </div>
+    </td><td>
+      <div><label for="auth2">Login name:</label><br />
+           <input type="text" name="auth2" size="12"><br />
+           <label for="pass2">Password:</label><br />
+           <input type="password" name="pass2" size="12">
+      </div>
+    </tr>
+  </table>
+  <input type="submit" value="Delete All List Items!">
+  </form>
+<%args>
+$status => undef
+</%args>
+</%def>
+
+<%args>
+$danger => 0
+$set_entrymode => undef
+$dumplist => undef
+$auth1 => undef
+$pass1 => undef
+$auth2 => undef
+$pass2 => undef
+</%args>
+
+<%init>
+
+my $capt = $PageCapt::Web::tubers{$User->login};
+my $auths = 0;
+my ($cpt1, $cpt2);
+if ($PageCapt::Web::tubers{$User->login}) { $auths++; }
+if ($auth1) { 
+  $cpt1 = PageCapt::User->byname($auth1);
+  $cpt1->validate_password($pass1);
+  $auths++ if ($PageCapt::Web::tubers{$cpt1->login} and $cpt1->login ne $User->login);
+}
+if ($auth2) {
+  $cpt2 = PageCapt::User->byname($auth2);
+  $cpt2->validate_password($pass2);
+  $auths++ if ($PageCapt::Web::tubers{$cpt2->login} and $cpt2->login ne $cpt1->login and
+  		$cpt2->login ne $User->login);
+}
+
+
+if (defined $set_entrymode and $auths >= 1) {
+  if ($set_entrymode == 1) { PageCapt::DB::set_parameter('entrymode',['free']); }
+  else { PageCapt::DB::set_parameter('entrymode',['default']); }
+}
+
+my $dumplist_result = "";
+if ($dumplist and $danger) { 
+  if ($auths >= 3 or $auths == scalar keys %PageCapt::Web::tubers) {
+    $dumplist_result = PageCapt::DB::_runcmd('DELETE FROM list') ?
+      "Operation succeeded.  List deleted." : 
+      "Database error.  List could not be deleted.";
+  } else { 
+    $dumplist_result = "Permission denied.  Only got $auths authorizations."; 
+  }
+}
+
+my $entrymode = PageCapt::DB::get_parameter('entrymode',undef,1);
+if ($entrymode eq 'free') { $entrymode = 1; } else { $entrymode = 0; }
+
+</%init>
