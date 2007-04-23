@@ -1,0 +1,36 @@
+SMS-based cell phone interface
+
+I. SMS is a misnomer
+
+We are not actually going to make much use of the SMS network,
+because renting a number capable of receiving SMS messages is
+extremely expensive.  However, most every carrier provides an 
+email address corresponding to each phone, that will translate
+short emails into a text message.  The drawback is that we have 
+to tablulate these and need to ask our users who provides their
+cell phone service.
+
+From http://www.accutracking.com/sms-email.html
+
+What's my SMS Email address?
+Former AT&T Wireless 	10DigitPhoneNumber@mmode.com
+			Example: 9055556543@mmode.com
+Cingular 	10DigitPhoneNumber@mobile.mycingular.com
+Metrocall 	10DigitPhoneNumber@page.metrocall.com
+Nextel 		10DigitPhoneNumber@messaging.nextel.com
+Sprint PCS 	10DigitPhoneNumber@messaging.sprintpcs.com
+T-Mobile 	10DigitPhoneNumber@tmomail.net
+Verizon 	10DigitPhoneNumber@vtext.com
+ALLTEL 		10DigitPhoneNumber@message.alltel.com
+
+II. Security Model
+
+Using this method, we only have about 160 bytes to carry all query,
+response, and control information.  Moreover, we will lose some of
+these in a provider-dependent way to header information and such.
+So we will go with a web-initiated, short token based scheme, which
+should prevent the casual attacker from spoofing the gateway email
+address to circumvent database access controls.  Obviously, since we
+do not use SSL, we would be vulnerable to the sophisticated attacker
+simply sniffing login credentials, so a tigher security regime here
+is not justified.
