@@ -13,6 +13,13 @@ if ($ARGS{Save} eq 'Save') {
     }
 }
 
+# Private namespace
+if ($ARGS{id} =~ /^Private/ || $ARGS{keywords} =~ /^Private/ and not $User->isvalid) {
+    %ARGS = ();
+    $ARGS{action} = 'browse';
+    $ARGS{id} = 'PermDenied';
+}
+
 foreach my $arg (keys %ARGS) {
   push @params, $arg . "=" . 
     $m->interp->apply_escapes( $ARGS{$arg}, 'u' );
