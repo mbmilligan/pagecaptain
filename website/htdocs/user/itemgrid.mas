@@ -34,7 +34,9 @@ $expand => 1
     @mask = (undef, @list);
   }
   $num = $#mask;
-  $width = $width || ( $num < 50 ? ( $num < 15 ? $num : 10 ) : int(sqrt($num))*1.7 );
+  my $twidth = ( $num < 50 ? ( $num < 15 ? $num : 10 ) : int(sqrt($num))*1.7 );
+  $twidth = ( $twidth > 25 ) ? 25 : $twidth;
+  $width = $width || $twidth;
 </%init>
 
 <%def editlink>\
