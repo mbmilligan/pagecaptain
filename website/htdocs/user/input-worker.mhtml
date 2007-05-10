@@ -7,14 +7,13 @@
   if ( window.opener ) { parent = window.opener; } 
   if ( parent.document ) { 
     msg = parent.document.getElementById('msg').firstChild;
+    dbg = parent.document.getElementById('dbg').firstChild;
     if ( success == 1 ) {
   	target = parent.document.getElementById('itemgrid');
 	if ( target ) { items = target.getElementsByTagName('td');
 	  if ( items[inum-1] ) {
 			items[inum-1].bgColor = 'red';
-	  } else { dbg = parent.document.getElementById('dbg').firstChild;
-		   dbg.nodeValue = 'Overran table end; suggest reloading.';
-	  }
+	  } else { dbg.nodeValue = 'Overran table end; suggest reloading.'; }
 	msg.nodeValue = 'Success entering item #' + inum;
 	}
     } else {
@@ -59,7 +58,8 @@ if ( $score =~ m{([0-9.+*\/ -]+) point} ) {
 my $success = 0;
 if ( $PageCapt::Web::tubers{$User->login} or $User->isvalid &&
      PageCapt::DB::get_parameter('entrymode',undef,1) eq "free" ) {
-  if ( PageCapt::DB::create_item( $inum ) ) {
+  if ( PageCapt::DB::create_item( $inum ) or 
+       eval "(PageCapt::DB::load_list({number=>$inum}))[0]->{number}" ) {
     PageCapt::DB::update_list( { number=>$inum, desc=>$desc, score=>$score, 
     				points=>$points, input=>1 } ) and $success = 1;
   }
