@@ -72,7 +72,7 @@ Last modified: Wed May  4 01:57:43 CDT 2005
 FIST: Deleuzean Potato
 </%method>
 
-<%method base>/\
+<%method base><% $PageCapt::Web::base %>/\
 </%method>
 
 <%method headers></%method>
