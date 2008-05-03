@@ -1,4 +1,5 @@
-    <p>Good <% $am %>, <% name $User %></p>
+  <div id="usernav">
+    <p id="timegreeter">Good <% $am %>, <% name $User %></p>
 
 
     <p>User
@@ -23,6 +24,7 @@
 	 %>">
 	LOG OUT</a>
     </p>
+  </div>
 
 <%init>
  my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
