@@ -47,7 +47,7 @@ if ($ARGS{logout}) {
   $r->header_out( 'Set-cookie' =>
 		  PageCapt::Web::logout_cookie() );
   $User->invalidate;
-} else {
+} elsif ($ARGS{loginname}) {
   $User->login($ARGS{loginname});
   $User->validate_password($ARGS{password});
   $ARGS{attempt} = undef if $User->isvalid;
@@ -57,6 +57,10 @@ if ($ARGS{logout}) {
     $r->header_out( 'Set-Cookie' => $cookie );
   }
 
+}
+
+if ($User->isvalid) {
+  $User->reset_last_seen();
 }
 
 </%init>
