@@ -288,6 +288,39 @@ sub notes_time {
   return $data[0]->{timestamp};
 }
 
+=head3 C<reset_last_seen()>
+
+Calling this method creates a new user preference called "LastVisitTime" which
+can be retrieved by C<last_seen()> to determine how much time has elapsed since
+the user was last seen by the system.
+
+=cut
+
+sub reset_last_seen {
+	my $self = shift || return undef;
+	return undef unless $self->uid && $self->isvalid;
+	PageCapt::DB::set_parameter( 'LastVisitTime', [1], $self->uid );
+}
+
+=head3 C<last_seen()>
+
+In scalar context returns the textual timestamp of the "LastVisitTime" set by
+C<reset_last_seen()>.  In list context, returns a list containing the same
+information in three formats: ( timestamp_string, age_string, unix_epoch )
+
+=cut
+
+sub last_seen {
+	my $self = shift || return undef;
+	return undef unless $self->uid && $self->isvalid;
+	my @data = PageCapt::DB::get_parameter_raw( 'LastVisitTime', $self->uid );
+	if (wantarray) {
+		return ( $data[0]->{timestamp}, $data[0]->{age}, $data[0]->{epoch} );
+	} else {
+		return $data[0]->{timestamp};
+	}
+}
+
 =head2 Privilege
 
 =head3 C<assert_validity()>
