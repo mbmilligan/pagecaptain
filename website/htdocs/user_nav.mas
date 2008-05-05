@@ -2,10 +2,10 @@
     <p id="timegreeter">Good <% $am %>, <% name $User %></p>
 
 
-    <p>User
-      <a href="<& SELF:base &>user/userinfo.mhtml">Information</a>
-      <br />
-      The <a href="<& SELF:base &>user/search.mhtml">List</a>
+    <p>
+      The <a href="<& SELF:base &>user/search.mhtml">List</a><br />
+      <a href="<& SELF:base &>user/scheds.mhtml">Team Profiles</a><br />
+      Your <a href="<& SELF:base &>user/userinfo.mhtml">Information</a><br />
 % if ($input) {
       <br />
       <a href="<& SELF:base &>user/jentry.mhtml">Input</a> Items
@@ -13,8 +13,7 @@
 % if ($capt) {
       <br />
       <a href="<& SELF:base &>user/siteconf.mhtml">Site Settings</a><br />
-      <a href="<& SELF:base &>user/scheds.mhtml">User Profiles</a><br />
-      <a href="<& SELF:base &>user/phones.mhtml">User Contact Info</a>
+      <a href="<& SELF:base &>user/phones.mhtml">Contact Info</a>
 % }
     </p>
 
