@@ -312,7 +312,7 @@ information in three formats: ( timestamp_string, age_string, unix_epoch )
 
 sub last_seen {
 	my $self = shift || return undef;
-	return undef unless $self->uid && $self->isvalid;
+	return undef unless $self->uid;
 	my @data = PageCapt::DB::get_parameter_raw( 'LastVisitTime', $self->uid );
 	if (wantarray) {
 		return ( $data[0]->{timestamp}, $data[0]->{age}, $data[0]->{epoch} );

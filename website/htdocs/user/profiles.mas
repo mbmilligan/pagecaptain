@@ -1,0 +1,36 @@
+    <h3>Results (<% $#data + 1 %> people so far)</h3>
+    <table id="survey" title="Survey Responses">
+        <tr><th>FISTie</th><th>Supposed Talents</th><th>Reputed Connections</th><th>Schedule during the Hunt</th></tr>
+% foreach my $row (@data) {
+        <tr><td><& SELF:userlink, row=>$row &></td><td><% $row->[2] %></td><td><% $row->[3] %></td><td><% $row->[4] %></td></tr>
+% }
+    </table>
+
+<%args>
+$days => 3;
+</%args>
+
+<%init>
+
+my @uids = grep { my (undef,undef,$epoch) = PageCapt::User->new($_)->last_seen();
+               (time() - $epoch) < ($days * 24 * 3600); 
+	     } PageCapt::DB::list_user_ids;
+
+my @data = map { my $U = PageCapt::User->new($_); 
+              my %s = PageCapt::DB::load_survey_user($U); 
+	      foreach (("talents", "connections", "schedule")) {
+	        $s{$_}{content} =~ s{\r?\n\r?}{<br \/>}gs;
+	      }
+	      [ $U->uid, $U->name, $s{talents}{content}, $s{connections}{content}, $s{schedule}{content} ]; 
+	    } @uids;
+
+@data = sort { lc($a->[1]) cmp lc($b->[1]) } @data;
+
+</%init>
+
+<%method userlink>
+<%args>
+$row
+</%args>
+<a href="<& SELF:base &>user/userinfo.mhtml?uid=<% $row->[0] %>"><% $row->[1] %></a>
+</%method>
