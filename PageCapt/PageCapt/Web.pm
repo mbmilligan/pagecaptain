@@ -160,6 +160,26 @@ sub generate_password {
   return substr( $hash->b64digest, 1, $length );
 }
 
+=head3 C<generate_addrcookie( $length )>
+
+Generate a random email address cookie of specified length, up to 27
+characters.  By default, 14 characters will be returned.
+
+The data is derived from a BASE64 encoded hash, but this function
+ensures that only characters valid in address cookies are returned.
+
+=cut
+
+sub generate_addrcookie {
+  my $length = shift || 16;
+  my $hash = new Digest::SHA1;
+  $hash->add(rand());
+
+  my $str = substr( $hash->b64digest, 1, $length );
+  $str =~ tr{/+}{XY};
+  return $str;
+}
+
 =head2 Spam Filter System
 
 PageCaptain includes a basic spam-filtering system appropriate for scanning
