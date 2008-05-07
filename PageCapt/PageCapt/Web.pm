@@ -171,13 +171,64 @@ ensures that only characters valid in address cookies are returned.
 =cut
 
 sub generate_addrcookie {
-  my $length = shift || 16;
+  my $length = shift || 14;
   my $hash = new Digest::SHA1;
   $hash->add(rand());
 
   my $str = substr( $hash->b64digest, 1, $length );
   $str =~ tr{/+}{XY};
   return $str;
+}
+
+=head3 C<stash_addrcookie( $cookie, { parameter => value, ... } )>
+
+Stores a hash-ref of parameters and values, constituting a session which
+can be retrieved using the provided $cookie.  The hash contents will be
+string concatenated with '=' and stored in the database.  Thus it is 
+necessary that neither contain the '=' character, and it is probably better
+if '\' and the single-quote are also avoided.  The cookie should be shorter
+than the database varchar key width, currently 16 characters wide.
+
+=cut
+
+sub stash_addrcookie {
+  my $cookie = shift || return undef;
+  my $hashref = shift || return undef;
+  return undef unless ref $hashref eq 'HASH';
+
+  my @strings = map { $_ . '=' . $$hashref{$_} } keys %$hashref;
+  return PageCapt::DB::set_parameter( $cookie, [ @strings ], 
+                        undef, $PageCapt::DB::tip_classes{session} );
+}
+
+=head3 C<restore_addrcookie( $cookie )>
+
+Returns the hash stored by C<stash_addrcookie()>.
+
+=cut
+
+sub restore_addrcookie {
+  my $cookie = shift || return undef;
+  my @strings = PageCapt::DB::get_parameters( $cookie, undef, undef,
+                               $PageCapt::DB::tip_classes{session} );
+  my %pars;
+  foreach my $pair (@strings) {
+    my ($key, $val) = split(/=/, $pair, 2);
+    $pars{$key} = $val;
+  }
+  return %pars;
+}
+
+=head3 C<destroy_addrcookie( $cookie )>
+
+Remove a stored cookie session from the database.
+
+=cut
+
+sub destroy_addrcookie {
+  my $cookie = shift || return undef;
+  return PageCapt::DB::set_parameters( $cookie, [], undef,
+                                $PageCapt::DB::tip_classes{session} );
 }
 
 =head2 Spam Filter System
