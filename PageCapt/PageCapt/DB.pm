@@ -1057,8 +1057,8 @@ sub get_parameter_raw {
 
   return undef unless $key;
   my $stmt = $schema{GET_TIP_STMT};
-  unless ($tip_classes{$class}) {
-    $class = $uid ? $tip_classes{pref} : $tip_classes{config}; }
+  if ($tip_classes{$class}) { $class = $tip_classes{$class}; }
+  else { $class = $uid ? $tip_classes{pref} : $tip_classes{config}; }
   $stmt .= sprintf( $schema{TIP_CLASS_COND}, $class );
   $stmt .= sprintf( $schema{TIP_UID_COND}, $uid ) if $uid;
   $stmt .= sprintf( $schema{TIP_KEY_COND}, $key );
@@ -1094,8 +1094,8 @@ sub add_parameter {
   my $uid = _clean_num(shift);
   my $class = shift;
 
-  unless ($tip_classes{$class}) {
-    $class = $uid ? $tip_classes{pref} : $tip_classes{config}; }
+  if ($tip_classes{$class}) { $class = $tip_classes{$class}; }
+  else { $class = $uid ? $tip_classes{pref} : $tip_classes{config}; }
 
   my $rows = 0;
   for (@$vals) {
@@ -1132,8 +1132,8 @@ sub set_parameter {
   my $uid = _clean_num($args[2]);
   my $class = $args[3];
 
-  unless ($tip_classes{$class}) {
-    $class = $uid ? $tip_classes{pref} : $tip_classes{config}; }
+  if ($tip_classes{$class}) { $class = $tip_classes{$class}; }
+  else { $class = $uid ? $tip_classes{pref} : $tip_classes{config}; }
   _runcmd('BEGIN');
   my $stmt = $schema{DEL_TIP_STMT};
   $stmt .= sprintf( $schema{TIP_CLASS_COND}, $class );
