@@ -14,6 +14,26 @@ T-Mobile reply quoting, and address cookie extraction.
 
 =cut
 
+=head1 CONSTRUCTORS
+
+=head3 C<blank()>
+
+Returns a new PageCapt::Email object with no content.
+
+=cut
+
+sub blank {
+  my $self = shift || undef;
+  my $msg = <<ENDMSG;
+To:
+From:
+Subject:
+
+
+ENDMSG
+  return $self->SUPER::new($msg);
+}
+
 =head1 METHODS
 
 Refer to the methods of Email::Simple and Email::MIME for additional
