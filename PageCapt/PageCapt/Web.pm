@@ -197,8 +197,7 @@ sub stash_addrcookie {
   return undef unless ref $hashref eq 'HASH';
 
   my @strings = map { $_ . '=' . $$hashref{$_} } keys %$hashref;
-  return PageCapt::DB::set_parameter( $cookie, [ @strings ], 
-                        undef, $PageCapt::DB::tip_classes{session} );
+  return PageCapt::DB::set_parameter( $cookie, [ @strings ], undef, 'session' );
 }
 
 =head3 C<restore_addrcookie( $cookie )>
@@ -209,8 +208,7 @@ Returns the hash stored by C<stash_addrcookie()>.
 
 sub restore_addrcookie {
   my $cookie = shift || return undef;
-  my @strings = PageCapt::DB::get_parameter( $cookie, undef, undef,
-                               $PageCapt::DB::tip_classes{session} );
+  my @strings = PageCapt::DB::get_parameter( $cookie, undef, undef, 'session' );
   my %pars;
   foreach my $pair (@strings) {
     my ($key, $val) = split(/=/, $pair, 2);
@@ -227,8 +225,7 @@ Remove a stored cookie session from the database.
 
 sub destroy_addrcookie {
   my $cookie = shift || return undef;
-  return PageCapt::DB::set_parameter( $cookie, [], undef,
-                                $PageCapt::DB::tip_classes{session} );
+  return PageCapt::DB::set_parameter( $cookie, [], undef, 'session' );
 }
 
 =head2 Spam Filter System
