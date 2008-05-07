@@ -6,7 +6,8 @@ my %tip_classes = (
 		   note=>3,
 		   watch=>4,
 		   config=>5,
-		   pref=>6
+		   pref=>6,
+		   session=>7,
 		  );
 
 my %schema =
