@@ -1,6 +1,7 @@
 use PageCapt::User;
 use PageCapt::Web;
 use PageCapt::DB;
+use PageCapt::Email;
 
 #
 # Administrator-configurable parameters follow
