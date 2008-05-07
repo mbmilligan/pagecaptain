@@ -33,6 +33,9 @@ for my $u (PageCapt::DB::get_parameter('tubers')) {
   $PageCapt::Web::tubers{$u} = 1;
 }
 
+$PageCapt::Email::domain = "unrealcity.homeip.net";
+$PageCapt::Email::sms_localpart = "fist.sms";
+
 $PageCapt::Web::secret = "foo";
 $PageCapt::Web::cookiename = "PCauth";
 $PageCapt::Web::pass_length = 6;
