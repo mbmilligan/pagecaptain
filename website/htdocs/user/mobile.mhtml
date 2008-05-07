@@ -1,0 +1,106 @@
+    <h1>PageCaptain Mobile</h1>
+
+% if ($errormsg) {
+    <p><b>Could not complete your request: <% $errormsg %></b></p>
+% } elsif ($success) {
+    <p><b>Operation succeeded: <% $success %></b></p>
+% }
+
+    <form method="GET" action="mobile.mhtml">
+      <h3>Sign Up to Hunt via Text Message</h3>
+      <p>New this year, we've added the ability to access the database
+         on the go from any cell phone with text messaging capabilities.
+	 Enter your cell phone number and select your provider below
+	 to get started.</p>
+
+      <p>Phone Number (with area code!): 
+         <input type="text" name="digits" size="15" value="<% $curr_prov ? $curr_addr : "" %>"></p>
+      <p>My provider: <& select_provider, provs => \@providers, sel => $curr_prov &></p>
+
+      <p><small>Hint: if you don't find your provider in this list, choose
+         <b>other/email paging</b> and go 
+	 <a href="http://en.wikipedia.org/wiki/SMS_gateways">here to figure out</a> 
+	 what email address to enter.</small></p>
+
+      <p><input type="hidden" name="op" value="signup">
+	<input class="formbutton" type="submit" value="Sign Up">
+      </p>
+    </form>
+
+<%args>
+$digits => undef
+$prov => undef
+$op => undef
+</%args>
+
+<%init>
+
+my @providers = (
+  { shortname => 'ATT'      , fullname => 'AT&T Wireless', email => '@mobile.att.net' },
+  { shortname => 'Cingular' , fullname => 'AT&T / Cingular',  email => '@cingularme.com' },
+  { shortname => 'TMobile'  , fullname => 'T-Mobile',  email => '@tmomail.net' },
+  { shortname => 'SprintNex', fullname => 'Sprint/Nextel', email => '@page.nextel.com' },
+  { shortname => 'Sprint'   , fullname => 'Sprint PCS',email =>'@messaging.sprintpcs.com'},
+  { shortname => 'Verizon'  , fullname => 'Verizon',   email => '@vtext.com' },
+  { shortname => 'ALLTEL'   , fullname => 'ALLTEL',    email => '@message.alltel.com' },
+);
+
+my $errormsg = "";
+my $success = "";
+
+my $curr_addr = $User->pref('MobEmailAddr');
+my $curr_domain;
+my $curr_prov;
+if ($curr_addr) {
+  ( $curr_domain ) = $curr_addr =~ m/^[^@]+(@.*)$/g;
+  ( $curr_prov ) = map( { $_->{shortname} } grep( { $_->{email} eq $curr_domain } @providers ) );
+  if ( !$curr_prov ) { $curr_prov = "other"; }
+}
+
+if ($op eq 'signup') {
+  my $msg = blank PageCapt::Email;
+  $msg->sms_set_from;
+  if    ($prov eq 'none') { $errormsg = "Please choose your cell phone provider."; }
+  elsif ($prov eq 'other') {
+    if ($digits !~ /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i) {
+      $errormsg = "If you are trying to enter an email address, do not include any " .
+                  "extra names or punctuation.";
+    } else {
+      # $digits is just an email address
+      $msg->header_set('to',$digits);
+    }
+  } else {
+    # handle phone number and check provider against @providers list
+    $digits =~ s/[^0-9]//g;
+    my ( $domain ) = map( { $_->{email} } grep( { $_->{shortname} eq $prov } @providers ) );
+    if ($digits and $domain ) {
+      $msg->header_set('to', $digits . $domain);
+    } else { $errormsg = "Please enter a phone number and select a provider."; }
+  }
+  if (! $errormsg ) { 
+    my %sess_par = ( op => 'signup', uid => $User->uid );
+    my $cookie = PageCapt::Web::generate_addrcookie;
+
+    $msg->addr_cookie( $cookie );
+    PageCapt::Web::stash_addrcookie( $cookie, \%sess_par );
+    $msg->body_set("Welcome to PageCaptain Mobile!\n".
+                   "Please reply to this message to confirm.  Otherwise just ignore it.\n");
+    $msg->send() and $success = "Check your cell phone for a confirmation message."; 
+  }
+}
+
+</%init>
+
+<%def select_provider>
+<%args>
+@provs
+$sel => undef
+</%args>
+<select name="prov">
+  <option <% $sel ? '' : 'selected' %> value="none">pick your cell phone provider from the list...</option>
+% foreach (@provs) {
+  <option <% do{if ($sel eq $_->{shortname}) {'selected'}} %> value="<% $_->{shortname} %>"><% $_->{fullname} %></option>
+% }
+  <option <% do{if ($sel eq "other") {'selected'}} %> value="other">Other / Email Paging: input an email address above</option>
+</select>
+</%def>
