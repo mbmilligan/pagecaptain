@@ -26,7 +26,6 @@ sub blank {
   my $self = shift || undef;
   my $msg = <<ENDMSG;
 To:
-From:
 Subject:
 
 
@@ -117,5 +116,37 @@ sub addr_cookie_clear {
 	$self->header_set('from',$from);
 	return $self;
 }
+
+=head3 C<send()>
+
+Delivers the message to the local mailer system.  There is considerable
+variation in mailer system interfaces, so we going to try for a lowest
+common demoninator sendmail-based system.  However, be aware that this
+will only have been tested on Exim.
+
+The message recipients will be computed by the mailer from the contents
+of the To:, Cc:, etc. headers, so be sure to fill those in as needed.  If
+the From: header is filled, we will try to override the mailer's default
+sender field, but it is up to your system administrator to ensure that
+the mailer daemon will let you do this.
+
+=cut
+
+sub send {
+  my $self = shift || return undef;
+  my $from = $self->header('from') || undef;
+  my @fargs = ();
+  if ($from) {
+    @fargs = ( "-f", $from );
+  }
+  my $cmd = "/usr/lib/sendmail";
+  my $oldsigpipe = $SIG{PIPE};
+  my $pid = open(SENDMAIL, "|-", $cmd, @fargs, "-t");
+  $SIG{PIPE} = 'IGNORE';
+  print SENDMAIL $self->as_string;
+  close SENDMAIL;
+  $SIG{PIPE} = $oldsigpipe;
+}
+
 
 1;
