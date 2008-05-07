@@ -209,7 +209,7 @@ Returns the hash stored by C<stash_addrcookie()>.
 
 sub restore_addrcookie {
   my $cookie = shift || return undef;
-  my @strings = PageCapt::DB::get_parameters( $cookie, undef, undef,
+  my @strings = PageCapt::DB::get_parameter( $cookie, undef, undef,
                                $PageCapt::DB::tip_classes{session} );
   my %pars;
   foreach my $pair (@strings) {
@@ -227,7 +227,7 @@ Remove a stored cookie session from the database.
 
 sub destroy_addrcookie {
   my $cookie = shift || return undef;
-  return PageCapt::DB::set_parameters( $cookie, [], undef,
+  return PageCapt::DB::set_parameter( $cookie, [], undef,
                                 $PageCapt::DB::tip_classes{session} );
 }
 
