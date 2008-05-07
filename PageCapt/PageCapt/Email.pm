@@ -148,5 +148,17 @@ sub send {
   $SIG{PIPE} = $oldsigpipe;
 }
 
+=head3 C<sms_set_from()>
+
+Construct the SMS reply-to address and set that as the sender.
+
+=cut
+
+sub sms_set_from {
+  my $self = shift || return undef;
+  my $addr = $sms_localpart . '@' . $domain;
+  $self->header_set('from', $addr);
+  return $self;
+}
 
 1;
