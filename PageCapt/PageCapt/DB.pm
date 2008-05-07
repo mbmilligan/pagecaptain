@@ -1014,9 +1014,11 @@ Read a configuration value from the database.  Returns a list of all values
 found.  There is no natural ordering.
 
 By default, fetech the global configuration I<$key>.  If I<$uid> is set, fetch
-the preference value I<$key> for that user.  If I<$scalar> is set and the
+the preference value I<$key> for that user.  If I<$scalar> is set or the function
+is called in scalar context, and the
 returned list would have zero or one element, the result is given as undefined
-or a scalar, respectively.
+or a scalar, respectively.  Undef will also be returned if there is more than
+one item in the result set but the caller wants a scalar.
 
 If I<$class> is set, search the specified class instead of C<config> or C<pref>.
 For instance, this will be applicable when we reimplement surveys as a key-value
@@ -1033,7 +1035,10 @@ sub get_parameter {
   my $class = shift;
 
   my @results = map { $_->{content} } get_parameter_raw($key, $uid, $class);
-  if ( $scalar and $#results < 1 ) { $#results + 1 ? return $results[0] : return undef; }
+  if ( ( $scalar or ! wantarray ) and $#results < 1 ) {
+    $#results + 1 ? return $results[0] : return undef;
+  }
+  if ( $#results > 0 and ! wantarray ) { return undef; }
   else { return @results; }
 }
 

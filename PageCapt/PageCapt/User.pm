@@ -260,6 +260,57 @@ sub create {
 
 =head2 Preferences
 
+=head3 C<pref( $key )>
+
+Returns the value(s), if any, of the preference $key for this user.
+
+=head3 C<pref_add( $key, @values )>
+
+Adds @values to the value(s) of the preference $key for this user.  Requires
+a valid user object.  Returns undef on failure.
+
+=head3 C<pref_reset( $key )>
+
+Clears all values for the preference $key for this user.  Requires a valid
+user object.  Returns undef on failure.
+
+=head3 C<pref_set( $key, @values )>
+
+Equivalent to $this->pref_reset($key), $this->pref_set( $key, [ @values ] );
+
+=cut
+
+sub pref {
+  my $self = shift;
+  my $uid = $self->uid || return undef;
+  my $key = shift || return undef;
+  return PageCapt::DB::get_parameter( $key, $uid );
+}
+
+sub pref_add {
+  my $self = shift;
+  my $uid = $self->uid || return undef;
+  my $key = shift || return undef;
+  return undef unless $self->isvalid;
+  return PageCapt::DB::add_parameter( $key, [ @_ ], $uid );
+}
+
+sub pref_reset {
+  my $self = shift;
+  my $uid = $self->uid || return undef;
+  my $key = shift || return undef;
+  return undef unless $self->isvalid;
+  return PageCapt::DB::set_parameter( $key, [], $uid );
+}
+
+sub pref_set {
+  my $self = shift;
+  my $uid = $self->uid || return undef;
+  my $key = shift || return undef;
+  return undef unless $self->isvalid;
+  return PageCapt::DB::set_parameter( $key, [ @_ ], $uid );  
+}
+
 =head3 C<reset_notes_time()>
 
 Calling this method creates a new user preference called "LastNoteTime" which
