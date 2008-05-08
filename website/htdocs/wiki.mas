@@ -6,7 +6,7 @@ my @params = ( );
 # Spam filtering on page save request
 
 if ($ARGS{Save} eq 'Save' or $ARGS{oldtime} ne "") {
-    if (PageCapt::Web::ratespam($ARGS{text}) > 4) {
+    if (PageCapt::Web::ratespam($ARGS{text}) > 9) {
 	%ARGS = ();
 	$ARGS{action} = 'browse';
 	$ARGS{id} = 'SpamScold';
