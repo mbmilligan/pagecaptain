@@ -60,8 +60,10 @@ if ( $PageCapt::Web::tubers{$User->login} or $User->isvalid &&
      PageCapt::DB::get_parameter('entrymode',undef,1) eq "free" ) {
   if ( PageCapt::DB::create_item( $inum ) or 
        eval "(PageCapt::DB::load_list({number=>$inum}))[0]->{number}" ) {
-    PageCapt::DB::update_list( { number=>$inum, desc=>$desc, score=>$score, 
-    				points=>$points, input=>1 } ) and $success = 1;
+    my $item = { number=>$inum, desc=>$desc, score=>$score,
+		 points=>$points, input=>1 };
+    if($showcase) { $item->{type} = 'Showcase'; }
+    PageCapt::DB::update_list( $item ) and $success = 1;
   }
 } else {
   $success = -1;
@@ -73,6 +75,7 @@ if ( $PageCapt::Web::tubers{$User->login} or $User->isvalid &&
 $inum
 $desc
 $score
+$showcase => undef
 </%args>
 
 <%flags>

@@ -21,6 +21,7 @@
   #<input type="text" name="tinum" value="<% $p_tinum %>" size="5">
   <div>Description:<br /><textarea name="tdesc" cols="50" rows="3"><% $p_tdesc %></textarea></div>
   <div>Scoring:<br /><textarea name="tscore" cols="50" rows="3"><% $p_tscore %></textarea></div>
+  <div><input type="checkbox" name="showcase"> This is a showcase item.</div>
   <input type="hidden" name="inum" value="" />
   <input type="hidden" name="desc" value="" />
   <input type="hidden" name="score" value="" />
@@ -35,6 +36,8 @@
   <li><b>Type naturally.</b>  This page has a buffer system, so even if the 
       network is slow, keep typing.  Items you've already typed will get 
       entered on their own eventually .</li>
+  <li><b>A few fake numbers.</b>  Since RoadTrip items usually share numbers
+      with the rest of the list, we usually number these starting at 400.</li>
   <li><b>Approximate the formatting</b>.
     <ul>
     <li>Write &trade; as (TM)</li>
