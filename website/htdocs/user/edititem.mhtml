@@ -50,10 +50,13 @@
 % }
 
 % if ($watching) {
-	    <a href="<% $watchlink %>">Stop watching this item</a>
+	    <a href="<& watchlink, %ARGS, dowatch => 0 &>">Stop watching this item</a>
 % } else {
-	    <a href="<% $watchlink %>">Add this item to your watchlist</a>
+	    <a href="<& watchlink, %ARGS, dowatch => 1 &>">Add this item to your watchlist</a>
 %}
+	    <br />
+	    <a href="#" onclick='document.getElementById("embedwatchlink").style.display="inline"'>Share a watchlink for this item</a>
+	    <span id="embedwatchlink" style="display: none">Watchlink to copy: <% $PageCapt::Web::short_base %><& watchlink, %ARGS &></span>
 	</tr>
 
 	<tr>
@@ -214,4 +217,19 @@ $watch => undef
 <%args>
 $data
 </%args>
+</%def>
+
+<%def watchlink>\
+<%args>
+$item
+$dowatch => 1
+</%args>\
+<%perl>
+  my $watchlink =
+     PageCapt::Web::url('edititem.mhtml',
+		 { item => $item,
+		   watch => $dowatch,
+		   update => 1 } );
+</%perl>\
+<% $watchlink %>\
 </%def>
