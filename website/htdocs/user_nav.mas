@@ -23,6 +23,12 @@
 	 %>">
 	LOG OUT</a>
     </p>
+    <object width="200" height="68"><param name="movie" value=
+    "http://www.pingie.com/beta/pingie.swf?rss=http://search.twitter.com/search.atom?q=%23fist-coord">
+    <embed src=
+      "http://www.pingie.com/beta/pingie.swf?rss=http://search.twitter.com/search.atom?q=%23fist-coord"
+      width="200" height="68"></embed>
+    </object>
   </div>
 
 <%init>
