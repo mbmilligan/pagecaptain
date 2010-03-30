@@ -31,8 +31,10 @@ $PageCapt::DB::db_string = "dbname=scavhunt user=user password=password";
 
 %PageCapt::Web::tubers = ( mmilligan=>1 ); 
 
-for my $u (PageCapt::DB::get_parameter('tubers')) {
-  $PageCapt::Web::tubers{$u} = 1;
+INIT {
+  for my $u (PageCapt::DB::get_parameter('tubers')) {
+    $PageCapt::Web::tubers{$u} = 1;
+  }
 }
 
 $PageCapt::Email::domain = "unrealcity.homeip.net";

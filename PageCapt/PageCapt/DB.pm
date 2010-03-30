@@ -146,7 +146,7 @@ use Pg;
 
 @ISA = qw/PageCapt/;
 
-my $connection;
+our $connection;
 
 =head1 ROUTINES
 
