@@ -1,0 +1,23 @@
+# Example vhost block for Apache-style configurations
+#
+# On Debian/Ubuntu-ish systems, modify the names below to suit, and
+# save the resulting file in /etc/apache2/sites-available.  Run
+# sudo a2ensite
+# to enable the vhost.
+
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	
+	ServerName pagecaptain.example.com
+	ServerAlias pagecaptain.*
+	DocumentRoot /home/pagecapt/public_html/
+
+	Action html-mason /cgi-bin/mason_handler.pl
+	<FilesMatch "\.mhtml$">
+	  SetHandler html-mason
+	</FilesMatch>
+	<FilesMatch "\.mas$">
+	  Deny from all
+	</FilesMatch>
+</VirtualHost>
+

@@ -1,24 +1,20 @@
 #!/bin/sh
 
-PATH=/bin:/usr/bin
-INSTALL_LOC=/home/mmilligan/perl5/
+set -e
 
-if [ ! -d $INSTALL_LOC ]
-    then echo Bad install location: $INSTALL_LOC
-    exit 1
+PREFIX=${PREFIX:-$HOME}
+SITEDIR=${SITEDIR:-perl5}
+
+if [ ! -z "$1" ]
+    then INSTALL_DIR=$1
 fi
-cp PageCapt/*.pm $INSTALL_LOC/PageCapt
-cp PageCapt.pm $INSTALL_LOC
 
-pushd $INSTALL_LOC
+INSTALL_LOC=${INSTALL_DIR:-$PREFIX/$SITEDIR}
+echo Installing PageCapt modules to $INSTALL_LOC
 
-perl -i -p -e \
-  's{dbname=scavhunt user=user password=password}
-    {dbname=scavhunt user=webserver password=foobar host=ruby};
-   s{(secret = ")foo}{$1nalk827};' PageCapt.pm
-
-popd
-
-touch /home/mmilligan/public_html/cgi/mason_handler.pl
+cd PageCapt
+install -d $INSTALL_LOC/PageCapt
+install -p PageCapt/*.pm $INSTALL_LOC/PageCapt
+install -p PageCapt.pm $INSTALL_LOC
 
 exit 0
