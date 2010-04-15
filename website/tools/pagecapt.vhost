@@ -19,5 +19,14 @@
 	<FilesMatch "\.mas$">
 	  Deny from all
 	</FilesMatch>
+
+	ScriptAlias /cgi-bin/ /home/pagecapt/public_html/cgi-bin/
+	<Directory "/home/pagecapt/public_html/cgi-bin">
+		AllowOverride None
+		Options ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+	</Directory>
+
 </VirtualHost>
 
