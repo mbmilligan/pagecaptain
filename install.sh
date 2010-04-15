@@ -14,7 +14,7 @@ usage () {
 	--webdir <dir>	install web files here [BASE/public_html]
 	--cgidir <dir>	cgi progs go here [WEBDIR/cgi]
 	--perldir <dir>	perl module path [BASE/perl5]
-	--masndat <dir>	Mason data dir path [BASE/.mason-data]
+	--masndat <dir>	Mason data dir path [BASE/mason-data]
 	-h, --help	this help message
 	END
 }
@@ -73,6 +73,7 @@ website/tools/mason_handler.pl > tmp_mason_handler
 
 install -D -m 755 tmp_mason_handler $CGIDIR/mason_handler.pl
 rm tmp_mason_handler
+install -m 777 -d $MASDIR
 echo Created Mason handler script in $CGIDIR
 
 echo "Now configure your local webserver. See website/tools/pagecapt.vhost for an example."

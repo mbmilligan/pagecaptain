@@ -26,15 +26,10 @@ link is in the sidebar.
 
 Superuser ("uber-tuber") abilities are needed to change certain
 site settings, and multiple uber-tubers have to agree in order
-to clear the item list for a new hunt.  In your Pagecapt-local.pm 
-edit PageCapt::Web::tubers to list your login name.  Once this
-change takes effect, you can upgrade other users to uber-tuber
-through their userinfo.mhtml page.
-
-    Note that when using SpeedyCGI, the running PageCaptain will only
-    reload the configuration in PageCapt.pm and friends when the
-    mason_handler.pl changes.  The easiest thing is to touch this file
-    after editing any configuration.
+to clear the item list for a new hunt.  If you followed the INSTALL
+directions you should already be an uber-tuber.  Use the "User
+Promotion" link on the userinfo.mhtml page (via TEAM PROFILES, usually)
+to upgrade additional trusted users.
 
 When the list is released it needs to be loaded into the database.
 Sadly there is no all-purpose way to do this automatically, as such

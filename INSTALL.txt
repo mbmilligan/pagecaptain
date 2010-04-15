@@ -1,0 +1,227 @@
+Setting up PageCaptain
+
+If you are impatient and running Debian/Ubuntu, feel free to skip to QUICKSTART below.
+
+PREREQUISITES
+
+PageCaptain relies on a fairly standard LAMP stack, except that the
+P is perl and we use PostgreSQL instead of MySql.  The requirements
+are:
+
+perl (only 5.6+ is tested, but 5.005 can probably be made to work)
+
+    The following modules are used:
+Pg
+Email::MIME
+Digest::SHA1 (in perl core from 5.8+)
+URI
+CGI
+HTML::Mason
+
+apache2 / lighttpd / etc
+    In principle any web server supporting CGI will do; PageCaptain should
+    make no assumptions beyond the CGI standard.  A sample apache2
+    configuration is provided in website/tools/pagecapt.vhost
+    With this configuration, mod_actions must be enabled.
+    
+    A CGI accelerator is strongly recommended.  PageCaptain has been
+    extensively used in conjunction with SpeedyCGI / PersistentPerl, but
+    apache's mod_perl is also an option.
+    
+    Note that when using SpeedyCGI, the running PageCaptain will only
+    reload the configuration in PageCapt.pm and friends when the
+    mason_handler.pl changes.  The easiest thing is to touch this file
+    after editing any configuration.
+
+sendmail / exim / postfix / etc
+    Almost any mail transport agent (MTA) will support the sendmail
+    interaction standard.  In the default configuration PageCaptain will
+    try to send email to the addresses registered by its users.  If these
+    are external to the local server, remote delivery needs to work.
+
+PostgreSQL
+    Strictly speaking PageCaptain only requires the Postgres client
+    libraries depended on by the Pg perl module.  However unless you
+    are connecting to an already-existing and populated PageCaptain
+    database, you will want the client tools as well.
+    
+    The Postgres database server does not have to run on the same machine
+    as the web server, but it must be installed somewhere.
+
+server
+    Aside from the above requirements very little is assumed about the
+    underlying server.  However, the installation instructions assume
+    that you have access to a POSIX shell login.  It may be possible
+    to install PageCaptain via web control panels like Webmin or cPanel,
+    but this has not been verified.
+
+QUICKSTART
+
+Starting from scratch on a Debian (Etch or newer) or Ubuntu system, the above minimum requirements can be met by running (as root):
+
+    apt-get install postgresql-client libpg-perl libhtml-mason-perl libemail-mime-perl apache2 exim4
+    
+    a2enmod actions
+
+Then, unless you have a database server installed on a separate machine, run:
+
+    apt-get install postgresql
+
+Finally, unless you plan to configure mod_perl by hand, run:
+
+    apt-get install speedy-cgi-perl
+
+QUICK INSTALLATION
+
+Depending on your server configuration you may have to run some or all
+of the commands below as root.  If sudo is installed (this is standard
+on Ubuntu) simply type "sudo " before each command.
+
+1. Installation location
+
+   Traditionally PageCaptain is installed under a user directory.  If
+   you already have a user login, you do not have to do anything.  For
+   administration/security purposes you may want to create a new user
+   for the purpose.  Here, assume you are installing under
+   /home/pagecapt
+
+2. In the same directory as this file, run:
+   $ ./install.sh --base /home/pagecapt
+   
+   This should not have to be run as root.
+
+3. Configure apache
+
+   If you are using apache2, you can simply copy the sample config
+   (likely as root): 
+   $ cp website/tools/pagecapt.vhost /etc/apache2/sites-available/pagecapt
+   
+   Edit the config file to replace /home/pagecapt with the directory you
+   are using, if different.
+   
+   Run (as root): a2ensite pagecapt
+
+4. Configure the database.  This can be done in a number of ways, but
+   the following commands are about as simple as possible:
+
+   $ sudo su postgres
+   $ createuser -P -E pagecapt
+   $ createdb -O pagecapt pagecapt
+   $ exit
+   $ psql -f PageCapt/create-pg.sql
+   
+   Answer no to the y/n questions asked by createuser, and remember the
+   password you entered for the next step.
+
+5. Configure PageCaptain
+
+   Copy the sample PageCapt-local to the perl directory.  E.g.:
+   $ cp PageCapt/tools/PageCapt-local.pm /home/pagecapt/perl5/
+   
+   Edit PageCapt-local.pm to reflect your local configuration.  At
+   absolute minimum, you should set:
+   $PageCapt::DB::db_string = "dbname=pagecapt user=pagecapt 
+       host=localhost password=<the password from step 4>";
+   $PageCapt::Web::secret = "<some random characters>";
+   
+   Edit /home/pagecapt/public_html/cgi-bin/mason_handler.pl
+   (Or wherever you had install.sh create your cgi directory.)
+   If you want to use SpeedyCGI (you probably should), edit the first
+   line to read:
+   #!/usr/bin/speedy
+
+   Now would be a good time to test the site and try to create your
+   user account.  Visit the URL where the site should live:
+   Click on the SURVEY link in the sidebar.
+   Fill out the requested information.
+   Click "update survey", verify your input, and click "send".
+   Try logging in with the username and password you were assigned.
+   
+   Make yourself the superuser.  Edit PageCapt-local.pm again.  Change
+   the tubers line to read:
+   %PageCapt::Web::tubers = ( "your login name"=>1 ); 
+   
+   Then open the mason_handler.pl and save it again.  This forces
+   SpeedyCGI to reload.  Then reload the page in your browser and check
+   that additional links appear in the sidebar.
+
+6. Put out the word!  See README.txt for next steps.
+
+   See below if you ran into trouble.
+
+NOTES - VARIATIONS - TROUBLESHOOTING
+
+** Editing Page Content **
+
+Mason is a templating language, so the .mhtml and .mas files are templates
+for the site HTML controlled by embedded perl code.  Mostly the code is
+kept separate from the HTML, so feel free to edit the text with minimal
+fear.  The lines starting with % or bits inside <% ... %> are code, so
+don't touch those unless you know what you're doing.
+
+Of particular interest may be the index page text in index.mhtml,
+and the sidebar links in nav.mas and user_nav.mas.
+
+** Installing not at / of server/vhost **
+
+Say you are using some shared server and don't control your own domain
+name.  Thus instead of a root URI like http://myteam.net/ you have a
+URI with a path like http://bigserver.com/scavvy42/pagecapt/
+
+The first change is easy: edit PageCapt-local to set:
+$PageCapt::Web::base = "/scavvy42/pagecapt";
+
+Next you need to ensure the mason_handler can translate URIs into
+filenames on the server so that it can find the components to load. The
+simplest thing to do is simply edit the requested path.  Add a line
+right before $h->handle_request that reads:
+$ENV{PATH_INFO} =~ s{.*scavvy42/pagecapt}{};
+
+See the Mason FAQ for more possibilities:
+http://www.masonhq.com/?FAQ:ServerConfiguration
+
+** You don't control the server **
+
+Hopefully you have a friendly admin to install the above packages for
+you, as they are a big pain to compile from scratch and install as a user.
+But let's say your friendly admin will allow this, but won't let you
+touch the server configuration.
+
+Ask for a postgres database.  Your admin will probably give you a 
+dbname, host, username, and password.  Put these in PageCapt-local, and
+give connection options to psql when you set up the database tables:
+psql -d dbname -h host -U username -W -f create-pg.sql
+
+Hopefully you can send email, otherwise there's not much you can do as
+an ordinary user.
+
+The apache configuration can be achieved with .htaccess files.  You
+might not have permission to change the cgi-bin directory, in which case
+you would instead specify a different path to the mason_handler.pl.
+Give install.sh a --cgidir option.
+
+** Security concerns **
+
+Security can be improved by using suEXEC so that the mason_handler runs
+as the pagecapt user instead of the web server user.  This allows you
+to make the web, perl, and mason directories not world-readable.  See:
+http://httpd.apache.org/docs/2.2/suexec.html
+
+Passwords are stored in the clear in the pagecapt database Users table.
+Encourage your users not to use their bank PIN as a password.  Really,
+unless you are running Pagecaptain over an SSL connection, encrypting the
+passwords on the server would only create a false sense of security.
+
+** Wiki **
+
+PageCaptain provides a wiki.mhtml component that is linked from the
+sidebar by default.  This component works with UseModWiki (it may also
+work with other wiki software, feel free to try), which it calls
+as a separate, external process to render HTML.  This HTML is then
+embedded as the body content of the site template.
+
+To use this component, download UseMod from:
+http://www.usemod.com/cgi-bin/wiki.pl?UseModWiki/Download
+
+Configure the wiki as desired and place wiki.pl in the cgi-bin directory
+alongside mason_handler.pl.

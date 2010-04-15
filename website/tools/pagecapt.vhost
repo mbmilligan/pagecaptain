@@ -28,5 +28,6 @@
 		Allow from all
 	</Directory>
 
+	DirectoryIndex index.mhtml
 </VirtualHost>
 
