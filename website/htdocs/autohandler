@@ -24,7 +24,7 @@
 % $m->call_next;
       <hr>
     <address>
-      <a href="mailto:mmilligan AT astro.umn.edu">Michael Milligan</a><br>
+      <% $PageCapt::Web::fromaddr |h %><br>
     </address>
     <p><& SELF:time_stamp &></p>
     </div>

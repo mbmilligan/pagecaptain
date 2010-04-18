@@ -15,7 +15,7 @@ $PageCapt::DB::db_string = "dbname=scavhunt user=user password=password";
 # secret should be a RANDOM string, used to encrypt cookies
 $PageCapt::Web::secret = "foo";
 
-# The return address of emails sent by the site
+# The return address of emails sent by the site -- maybe your site admin?
 $PageCapt::Web::fromaddr = 'ScavHunt Website <nobody@example.com>';
 
 # The leading component, if any, of the Pagecaptain URI path

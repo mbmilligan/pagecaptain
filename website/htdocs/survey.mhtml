@@ -3,6 +3,7 @@
 % if (not $created) {
 %   unless ( $send or $User->isvalid ) {
     <h2> This is a Very Important Poll (TM).</h2>
+    <blockquote>
     <P> Seriously, folks, we need to have this information sorted out into a 
       database before the Hunt begins. I will hunt you down if you do not 
       write me back. And honest answers only, please.
@@ -11,8 +12,8 @@
     <P>Thank you,</P>
 
     <p style="margin-left: 5em">
-      Cate Tolzmann, Spring 2001<BR>
-      scavcat@myrealbox.com</p>
+      Cate Tolzmann, Spring 2001</p>
+    </blockquote>
 
     <p><b>Instructions</b><br>
       Fill out the survey!  If you haven't done it before, this will
@@ -37,8 +38,6 @@
       will be sent in when you hit the <b>Send</b> button.
     </p>
 
-    <p>...Michael Milligan, Tech Turnip</p>
-
 %   }
 %   if ( $send and not $login ) {
     <p><b>You must provide a valid email address; the user creation process
@@ -48,8 +47,7 @@
 %   elsif ( $send and not $User->isvalid ) {
     <p><b>Something went wrong.  The most likely explanation is that you have
 	already created a user account by submitting the survey, but you are
-	not logged in.  You can only change your information if you log in.
-	Contact Michael for help if you don't know what to do now.</b>
+	not logged in.  You can only change your information if you log in.</b>
     </p>
 %   }
 

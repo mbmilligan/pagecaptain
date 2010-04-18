@@ -224,4 +224,13 @@ To use this component, download UseMod from:
 http://www.usemod.com/cgi-bin/wiki.pl?UseModWiki/Download
 
 Configure the wiki as desired and place wiki.pl in the cgi-bin directory
-alongside mason_handler.pl.
+alongside mason_handler.pl.  My suggested configuration would be:
+
+Create /home/pagecapt/usemod-data
+$ chmod 777 /home/pagecapt/usemod-data
+In wiki.pl, set $DataDir = "/home/pagecapt/usemod-data";
+Copy config, intermap to /home/pagecapt/usemod-data
+In /home/pagecapt/usemod-data/config, set:
+  $SiteName = "<something descriptive>";
+  $RedirType = 3;
+  $FullUrl = "/wiki.mhtml";
