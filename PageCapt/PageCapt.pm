@@ -47,6 +47,7 @@ $PageCapt::Web::spamwords = "spamwords.dat";
 $PageCapt::Web::hamwords = "hamwords.dat";
 $PageCapt::Web::sendmail = "/usr/lib/sendmail -t";
 $PageCapt::Web::fromaddr = 'ScavHunt Website <mmilligan@astro.umn.edu>';
+$PageCapt::Web::css = "";
 $PageCapt::Web::base = "";
 $PageCapt::Web::reminder_message = <<'END';
 To: $email

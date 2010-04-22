@@ -5,10 +5,12 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html">
     <title><& SELF:title, %ARGS &></title>
-    <link title="SPH Style" rel="stylesheet"
-      type="text/css" href="http://www.forge22.com/css/fist/fist.css">
-    <link href="<& SELF:base &>fist.css" rel="alternate stylesheet" 
-      title="Old Default Style" type="text/css">
+% if ( length($PageCapt::Web::css) > 0 ) {
+    <link title="Site Style" rel="stylesheet"
+      type="text/css" href="<% $PageCapt::Web::css %>">
+% }
+    <link href="<& SELF:base &>style.css" rel="alternate stylesheet" 
+      title="Default Style" type="text/css">
     <& SELF:headers, %ARGS &>
   </head>
   <body>

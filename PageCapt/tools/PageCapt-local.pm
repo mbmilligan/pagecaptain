@@ -21,7 +21,11 @@ $PageCapt::Web::fromaddr = 'ScavHunt Website <nobody@example.com>';
 # The leading component, if any, of the Pagecaptain URI path
 # e.g. if the index page is example.com/pagecapt/index.mhtml
 # then set base = "/pagecapt"
-$PageCapt::Web::base = "";
+#$PageCapt::Web::base = "";
+
+# The URI of your site stylesheet.  If not set, will use style.css
+# in the PageCaptain base directory.
+#$PageCapt::Web::css = "";
 
 # You may want to customize the welcome email.
 # Including your team name or URL, for instance.
