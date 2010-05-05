@@ -23,6 +23,7 @@
 	 %>">
 	LOG OUT</a>
     </p>
+  </div>
 
 <%init>
  my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
