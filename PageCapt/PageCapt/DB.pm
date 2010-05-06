@@ -824,6 +824,59 @@ sub update_list {
   return ( load_list( {number => $item{number}} ) )[0];
 }
 
+=head3 C<bulk_update_list( I<$data> )>
+
+Perform a bulk load of list items. The format of I<$data> is:
+
+* One item per line (will split on newlines)
+* Delimiter is vertical bar "|" (will split on /|/)
+* Each line is: C<| item # | item text | scoring text | [ category ] |>
+(will reject lines with wrong number of bars)
+
+Provided data will overwrite corresponding items if already present.
+
+Returns ( numitems, errline ):
+
+* numitems = number of items successfully processed
+* errline = line number at which processing stopped, or -1 if no error
+
+=cut
+
+sub guess_points {
+  my $score = shift || return undef;
+  my $points = "";
+  if ( $score =~ m{([0-9.+*\/ -]+) point} ) {
+    my $tp = $1;
+    $points = $tp if (($tp + 1 - 1) eq $tp);
+    $points = eval $tp;
+    if ($points) { return $points; }
+  }
+  return undef;
+}
+
+sub bulk_update_list {
+  my $data = shift || return undef;
+  my @lines = split(/[\n\r]+/, $data);
+  my $errline = -1;
+  my $lineno = -1;
+  my $numitems = 0;
+  foreach (@lines) {
+    $lineno += 1;
+    if (! /^\|.*\|$/) { $errline = $lineno; last; }
+    my (undef, $inum, $desc, $score, $cat) = split(/\|/, $_);
+    $inum = $inum + 1 - 1;
+    if ((! $inum) or ($inum != int($inum))) { $errline = $lineno; last; }
+    if (!($desc and $score)) { $errline = $lineno; last; }
+    my $item = { number=>$inum, desc=>$desc, score=>$score, input=>1 };
+    if ($cat and $ItemTypeMap{$cat}) { $item->{type} = $cat; }
+    if (my $points = guess_points($score)) { $item->{points} = $points; }
+
+    PageCapt::DB::create_item($inum);
+    if (PageCapt::DB::update_list($item)) { $numitems += 1; }
+  }
+  return ( $numitems, $errline );
+}
+
 =head2 Notes Functions
 
 Notes are very similar to dumpster tips, except that they have an associated

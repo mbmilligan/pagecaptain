@@ -1,0 +1,53 @@
+<h1>Bulk List Load</h1>
+% if ($PageCapt::Web::tubers{$User->login}) {
+<h2>Proceed with care</h2>
+
+<& itemgrid.mas, width=>32 &>
+
+<p id="msg"><% $errmsg %></p>
+<p id="dbg"><% $dbgmsg %></p>
+
+<p><b>Instructions</b></p>
+<p>This interface allows bulk input of list items.  Paste data
+into the text box below.  Input data will <b>replace</b> the corresponding
+item data already in the database. The expected format is:
+</p>
+<ul>
+<li>One item per line</li>
+<li>Separator is vertical bar (|)</li>
+<li>Each line is: <b>| item # | item text | scoring text | category |</b></li>
+<li><i>category</i> is optional, first three are mandatory</li>
+</ul>
+
+<form method="PUT" action="loadlist.mhtml">
+  <div><b>List data:</b><br />
+  <textarea name="listdata" cols="100" rows="50"><% $listdata %></textarea></div>
+  <input type="hidden" name="save" value="1" />
+  <input type="submit" value="Save" />
+</form>
+
+
+% } else {
+<h2>Sorry, Uber-Tubers Only</h2>
+% }
+
+<%args>
+$listdata => undef
+$save => undef
+</%args>
+
+<%init>
+
+my ($errmsg, $dbgmsg);
+if ($save and $listdata) {
+  if (not $PageCapt::Web::tubers{$User->login}) {
+    $errmsg = "Only Uber-tubers may use this interface.";
+  } else {
+    my ($numitems, $errline) = PageCapt::DB::bulk_update_list($listdata);
+    if ($errline >= 0) {
+      $errmsg = "Error at line $errline: only saved $numitems items.";
+    } else { $errmsg = "Saved $numitems items."; }
+  }
+}
+
+</%init>

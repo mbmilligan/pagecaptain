@@ -13,7 +13,8 @@
 % if ($capt) {
       <br />
       <a href="<& SELF:base &>user/siteconf.mhtml">Site Settings</a><br />
-      <a href="<& SELF:base &>user/phones.mhtml">Contact Info</a>
+      <a href="<& SELF:base &>user/phones.mhtml">Contact Info</a><br />
+      <a href="<& SELF:base &>user/loadlist.mhtml">Bulk Item Input</a>
 % }
     </p>
 
